@@ -118,6 +118,7 @@ module.exports = {
           {
             options: {
               formatter: eslintFormatter,
+              useEslintrc: true
               
             },
             loader: require.resolve('eslint-loader'),
@@ -164,7 +165,7 @@ module.exports = {
       {
         test: /\.less/,
         exclude: /^node_modules$/,
-        loader:'style-loader!css-loader!less-loader'
+        use:['style-loader','css-loader','less-loader']
       },
       // Process JS with Babel.
       {

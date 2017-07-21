@@ -7,12 +7,15 @@ body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, l
     font-weight: normal;
     text-decoration: none;
     border: none;
-    box-sizing: border-box;
     -webkit-tap-highlight-color:transparent;
     -webkit-font-smoothing: antialiased;
     &:focus {
         outline: none;
     }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
 }
 
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
@@ -103,11 +106,30 @@ img{
 }
 
 /* 公共顶部样式 */
+.header,
+.header .logo a{
+    background: url('../img/topbar.png') no-repeat 0 9999px;
+}
 .header{
   position: relative;
   z-index: 1000;
   height: 70px;
-  background: url('../img/topbar.png') no-repeat 0 9999px;
   background-position: 0 -80px;
   background-repeat: repeat-x;
+  .wrapper{
+    width: 1100px;
+    margin: 0 auto;
+  }
+  .logo{
+    float: left;
+    width: 176px;
+    a{
+      float: left;
+      width: 157px;
+      height: 33px;
+      padding: 22px 20px 0 0;
+      background-position: 0 15px;
+      text-indent: -9999px;
+    }
+  }
 }

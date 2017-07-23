@@ -86,7 +86,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.js', '.json', '.web.jsx', '.jsx'],
+    extensions: ['.web.js', '.js', '.less','.json', '.web.jsx', '.jsx'],
     alias: {
       
       // Support React Native Web
@@ -137,7 +137,7 @@ module.exports = {
         exclude: [
           /\.html$/,
           /\.(js|jsx)$/,
-          /\.css$/,
+          /\.(css|less)$/,
           /\.json$/,
           /\.bmp$/,
           /\.gif$/,
@@ -148,6 +148,11 @@ module.exports = {
         options: {
           name: 'static/media/[name].[hash:8].[ext]',
         },
+      },
+      {
+        test: /\.less$/,
+        exclude: /^node_modules$/,
+        use:['style-loader','css-loader','less-loader']
       },
       // "url" loader works just like "file" loader but it also embeds
       // assets smaller than specified size as data URLs to avoid requests.

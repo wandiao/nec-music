@@ -1,5 +1,5 @@
 //样式重置
-body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, li, a, p, h1, h2, h3, h4,h5, h6, i, b, textarea, button, input, select, figure, figcaption {
+body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, li, a, p, h1, h2, h3, h4,h5, h6, i, b,em,sub, textarea, button, input, select, figure, figcaption {
     padding: 0;
     margin: 0;
     list-style: none;
@@ -51,13 +51,16 @@ textarea { -webkit-appearance: none;}
 html,body{
   height: 100%;
   width: 100%;
-  padding: 0;
-  margin: 0;
-  color:#333;
-  // overflow-x:hidden;
+  font-size: 12px;
+  color: #333;
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-text-size-adjust: none;
 }
 a{
   color:#333;
+  &:hover{
+    text-decoration: underline;
+  }
 }
 img{
   vertical-align: middle;
@@ -90,6 +93,13 @@ img{
     display: none;
 }
 
+.pr{
+  position: relative;
+  zoom:1;
+}
+.pa{
+  position: absolute;
+}
 .show{
     display: block;
 }
@@ -104,32 +114,33 @@ img{
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tid{
+  text-indent: -9999px;
+}
 
-/* 公共顶部样式 */
-.header,
-.header .logo a{
-    background: url('../img/topbar.png') no-repeat 0 9999px;
+/////////////////////////////////
+
+/////////////////////////////////
+.s-fc4,.sfc4:hover{
+  color: #999;
 }
-.header{
-  position: relative;
-  z-index: 1000;
-  height: 70px;
-  background-position: 0 -80px;
-  background-repeat: repeat-x;
-  .wrapper{
-    width: 1100px;
-    margin: 0 auto;
-  }
-  .logo{
-    float: left;
-    width: 176px;
-    a{
-      float: left;
-      width: 157px;
-      height: 33px;
-      padding: 22px 20px 0 0;
-      background-position: 0 15px;
-      text-indent: -9999px;
-    }
-  }
+.s-fc3,.s-fc3:hover{
+  color: #666;
 }
+.s-fc0, a.s-fc0:hover {
+  color: #000;
+}
+/////////////////////////////////
+.f-tdn,.f-tdn:hover{
+  text-decoration: none;
+}
+/////////////////////////////////
+
+/* 顶部样式 */
+@import 'header';
+/* 底部样式 */
+@import 'footer';
+/* 播放控件 */
+@import 'playbar';
+/* 发现音乐 */
+@import 'discover';

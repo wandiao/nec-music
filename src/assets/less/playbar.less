@@ -1,0 +1,343 @@
+//播放控件
+.p-bg{
+  background: url('../img/playbar.png') no-repeat 0 9999px;
+}
+.m-pbar .btn, .m-vol .btn {
+  background: url('../img/iconall.png') no-repeat;
+}
+.g-btmbar{
+  position: fixed;
+  zoom: 1;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  width: 100%;
+  z-index: 1002;
+}
+.m-playbar{
+  position: absolute;
+  zoom: 1;
+  top: -53px;
+  left: 0;
+  width: 100%;
+  height: 53px;
+  margin: 0 auto;
+  .updn{
+    position: relative;
+    z-index: 11;
+    .left{
+      &:extend(.p-bg);
+      position: absolute;
+      top: -14px;
+      right: 15px;
+      width: 52px;
+      height: 67px;
+      background-position: 0 -380px;
+    }
+    .btn{
+      &:extend(.p-bg);
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin: 6px 0 0 17px;
+      background-position: -100px -380px;
+    }
+    .right{
+      &:extend(.p-bg);
+      position: absolute;
+      top: -1px;
+      right: 0;
+      width: 15px;
+      height: 54px;
+      background-position: -52px -393px;
+      pointer-events: none;
+    }
+  }
+  .bg{
+    &:extend(.p-bg);
+    height: 53px;
+    zoom: 1;
+    margin-right: 67px;
+    background-position: 0 0;
+    background-repeat: repeat-x;
+  }
+  .hand{
+    position: absolute;
+    top: -10px;
+    width: 100%;
+    height: 20px;
+    cursor: pointer;
+  }
+  .wrapper{
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    z-index: 15;
+    width: 980px;
+    height: 47px;
+    margin: 0 auto;
+    margin-left: -490px;
+  }
+  .btns,.head,.play,.volume,.oper{
+    float: left;
+  }
+  .btns{
+    width: 137px;
+    padding: 6px 0 0 0;
+    a{
+      &:extend(.p-bg);
+      display: block;
+      float: left;
+      width: 28px;
+      height: 28px;
+      margin-right: 8px;
+      margin-top: 5px;
+      text-indent: -9999px;
+    }
+    .b-prev{
+      background-position: 0 -130px;
+      &:hover{
+        background-position: -30px -130px;
+      }
+    }
+    .b-play{
+      width: 36px;
+      height: 36px;
+      margin-top: 0;
+      background-position: 0 -204px;
+      &:hover{
+        background-position: -40px -204px;
+      }
+    }
+    .b-next{
+      background-position: -80px -130px;
+      &:hover{
+        background-position: -110px -130px;
+      }
+    }
+  }
+  .head{
+    width: 34px;
+    height: 34px;
+    position: relative;
+    margin: 6px 15px 0 0;
+    img{
+      width: 34px;
+      height: 34px;
+    }
+    .mask:extend(.p-bg){
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      display: block;
+      width: 34px;
+      height: 35px;
+      background-position: 0 -80px;
+    }
+  }
+  .play{
+    position: relative;
+    width: 608px;
+  }
+  .words{
+    height: 28px;
+    overflow: hidden;
+    color: #e8e8e8;
+    text-shadow: 0 1px 0 #171717;
+    line-height: 28px;
+  }
+  .oper{
+    width: 60px;
+  }
+  .icn:extend(.p-bg){
+    float: left;
+    width: 25px;
+    height: 25px;
+    margin: 11px 2px 0 0;
+    text-indent: -9999px;
+  }
+  .icn-add{
+    background-position: -88px -163px;
+    &:hover{
+      background-position: -88px -189px;
+    }
+  }
+  .icn-share{
+    background-position: -114px -163px;
+    &:hover{
+      background-position: -114px -189px;
+    }
+  }
+  .ctrl:extend(.p-bg){
+    position: relative;
+    z-index: 10;
+    width: 113px;
+    padding-left: 13px;
+    background-position: -147px -238px;
+  }
+  .icn-vol{
+    background-position: -2px -248px;
+    &:hover{
+      background-position: -31px -248px;
+    }
+  }
+  .icn-shuffle{
+    background-position: -66px -248px;
+    &:hover{
+      background-position: -93px -248px;
+    }
+  }
+  .icn-loop{
+    background-position: -3px -344px;
+    &:hover{
+      background-position: -33px -344px;
+    }
+  }
+  .icn-one{
+    background-position: -66px -344px;
+    &:hover{
+      background-position: -93px -344px;
+    }
+  }
+  .add{
+    float: left;
+    width: 59px;
+    height: 36px;
+  }
+  .tip:extend(.p-bg){
+    position: absolute;
+    top: -51px;
+    left: -65px;
+    clear: both;
+    width: 152px;
+    height: 49px;
+    background-position: 0 -287px;
+    text-align: center;
+    color: #fff;
+    line-height: 37px;
+  }
+  .icn-list{
+    display: block;
+    float: none;
+    width: 38px;
+    padding-left: 21px;
+    background-position: -42px -68px;
+    line-height: 27px;
+    text-align: center;
+    color: #666;
+    text-shadow: 0 1px 0 #080707;
+    text-indent: 0;
+    text-decoration: none;
+    &:hover{
+      background-position: -42px -98px;
+      text-decoration: none;
+    }
+  }
+  .tip-1{
+    top: -35px;
+    left: 12px;
+    width: 81px;
+    height: 39px;
+    line-height: 34px;
+    background-position: 0 -457px;
+  }
+}
+.m-pbar, .m-pbar .barbg {
+    width: 493px;
+}
+.m-pbar{
+  .bar-bg,.cur,.rdy{
+    height: 9px;
+    background-position: right 0;
+    
+  }
+  .bar-bg,.cur,.rdy,.left{
+    background: url('../img/statbar.png') no-repeat 0 9999px;
+  }
+  .rdy{
+    background-position: right -30px;
+  }
+  .cur{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1%;
+    background-position: left -66px;
+  }
+  .btn{
+    position: absolute;
+    top: -7px;
+    right: -13px;
+    width: 22px;
+    height: 24px;
+    margin-left: -11px;
+    background-position: 0 -250px;
+    i{
+      visibility: hidden;
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      width: 12px;
+      height: 12px;
+      background: url(/static/media/loading.gif);
+    }
+    &:hover{
+      background-position: 0 -280px;
+    }
+  }
+  .time{
+    position: absolute;
+    top: -3px;
+    right: -84px;
+    color: #797979;
+    text-shadow: 0 1px 0 #121212;
+    em{
+      color: #a1a1a1;
+    }
+  }
+}
+.m-vol{
+  position: absolute;
+  top: -113px;
+  left: 9px;
+  clear: both;
+  width: 32px;
+  height: 113px;
+  .barbg:extend(.p-bg){
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 113px;
+    background-position: 0 -503px;
+  }
+  .vbg,.curr{
+    position: absolute;
+    top: 11px;
+    left: 14px;
+    width: 4px;
+    height: 93px;
+  }
+  .vbg{
+    padding: 4px 0;
+    top: 7px;
+  }
+  .curr:extend(.p-bg){
+    top: auto;
+    bottom: 4px;
+    left: 0;
+    background-position: -40px bottom;
+    overflow: hidden;
+  }
+  .btn:extend(.p-bg){
+    position: absolute;
+    top: 0;
+    left: -7px;
+    display: block;
+    width: 18px;
+    height: 20px;
+    background-position: -40px -250px;
+    cursor: pointer;
+  }
+}

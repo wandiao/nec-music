@@ -1,6 +1,8 @@
 {
   "extends": "react-app",
   "rules": {
-    
+    "href-no-hash":0,
+    "jsx-a11y/alt-text":0,
+    "jsx-a11y/anchor-has-content":0
   }
 }

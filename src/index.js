@@ -5,8 +5,8 @@ import store from './store'
 import { Provider } from 'react-redux'
 import registerServiceWorker from './registerServiceWorker';
 
-import './index.css'
 import './assets/less/style'
+
 
 ReactDOM.render(
 	<Provider store={store}>

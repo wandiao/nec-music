@@ -2,6 +2,27 @@ import React, { Component} from 'react'
 import { NavLink as Link } from 'react-router-dom'
 
 class Header extends Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			showPlaceholder:true
+		}
+		this.toggleShowPlace = (bool) => {
+			if(this.searchInput.value) {
+				bool = false;
+			}
+			if(!bool) {
+				this.searchInput.focus();
+			}
+			this.setState({
+				showPlaceholder:bool
+			})
+
+		} 
+	}
+	componentDidMount() {
+		
+	}
 	render() {
 		return (
 			<div className="g-topbar">
@@ -51,10 +72,13 @@ class Header extends Component {
 						</div>
 						<a href="" className="m-msg pr" style={{display: 'none'}}></a>
 						<div className="m-search pr">
-							<div className="s-bg">
+							<div className="s-bg" onClick={e => this.toggleShowPlace(false)}>
 								<span className="parent">
-									<input type="text" className="txt" name="" />
-									<label className="ph">单曲/歌手/专辑/歌单/MV/用户</label>
+									<input 
+									ref={(input) => { this.searchInput = input; }}
+									onBlur={e => this.toggleShowPlace(true)}
+									  type="text" className="txt" name="" />
+									<label style={{display:this.state.showPlaceholder?'block':'none'}} className="ph">单曲/歌手/专辑/歌单/MV/用户</label>
 								</span>
 							</div>
 						</div>

@@ -242,6 +242,366 @@
     line-height: 34px;
     background-position: 0 -457px;
   }
+  .list{
+    position: absolute;
+    left: 50%;
+    bottom: 47px;
+    width: 986px;
+    height: 301px;
+    margin-left: -493px;
+    .nocnt{
+      padding-top: 85px;
+      text-align: center;
+      line-height: 43px;
+      color: #aaa;
+      a{
+        color: #aaa;
+      }
+      .ico{
+        float: none;
+        display: inline-block;
+        position: relative;
+        top: -4px;
+        width: 36px;
+        height: 29px;
+        margin-right: 3px;
+        background-position: -138px 0;
+        vertical-align: middle;
+      }
+    }
+  }
+  .listhd,.listbd{
+    background: url(../img/playlist_bg.png) no-repeat;
+    padding: 0 5px;
+  }
+  .listhd{
+    background-position: 0 0;
+    height: 41px;
+  }
+  .ico{
+    float: left;
+    margin: 0 6px 0 0;
+    height: 16px;
+    background: url(../img/playlist.png) no-repeat 0 9999px;
+  }
+  .listhdc{
+    position: relative;
+    height: 40px;
+    h4{
+      position: absolute;
+      left: 25px;
+      top: 0;
+      height: 39px;
+      line-height: 39px;
+      font-size: 14px;
+      color: #e2e2e2;
+    }
+    .clear,.addall{
+      position: absolute;
+      left: 490px;
+      top: 12px;
+      height: 15px;
+      line-height: 15px;
+      cursor: pointer;
+    }
+    .addall{
+      left: 398px;
+    }
+    a{
+      color: #ccc;
+      &:hover{
+        color: #e2e2e2;
+      }
+    }
+    .line{
+      position: absolute;
+      top: 13px;
+      left: 477px;
+      height: 15px;
+      border-left: 1px solid #000;
+      border-right: 1px solid #2c2c2c;
+    }
+  }
+  .ico-add{
+    width: 16px;
+    background-position: -24px 0;
+  }
+  a:hover .ico-add,.ico-add:hover{
+    background-position: -24px -20px;
+  }
+  .ico-dl{
+    width: 14px;
+    background-position: -57px -50px;
+  }
+  a:hover .ico-dl,.ico-dl:hover{
+    background-position: -80px -50px;
+  }
+  .ico-del{
+    width: 13px;
+    background-position: -51px 0;
+  }
+  a:hover .ico-del,.ico-del:hover{
+    background-position: -51px -20px;
+  }
+  .ico-share{
+    width: 14px;
+    background-position: 0 0;
+  }
+  a:hover .ico-share,.ico-share:hover{
+    background-position: 0 -20px;
+  }
+  .ico-src{
+    width: 14px;
+    margin-left: 0;
+    background-position: -80px 0px;
+  }
+  a:hover .ico-src,.ico-src:hover{
+    background-position: -80px -20px;
+  }
+  .ico-ask{
+    display: inline-block;
+    width: 21px;
+    height: 21px;
+    background-position: 0 -50px;
+    text-indent: 0;
+    &:hover{
+      background-position: -24px -50px;
+    }
+  }
+  .lytit{
+    position: absolute;
+    left: 595px;
+    top: 0;
+    width: 346px;
+    text-align: center;
+    height: 39px;
+    line-height: 39px;
+    color: #fff;
+    font-size: 14px;
+  }
+  .close{
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    text-indent: -999px;
+    cursor: pointer;
+    background: url(../img/playlist.png) no-repeat 0 9999px;
+    background-position: -195px 9px;
+  }
+  .listbd{
+    position: absolute;
+    left: 0;
+    top: 41px;
+    width: 976px;
+    height: 260px;
+    overflow: hidden;
+    background-position: -1014px 0;
+    background-repeat: repeat-y;
+    .bline{
+      position: absolute;
+      left: 555px;
+      _left: 553px;
+      top: -1px;
+      z-index: 2;
+      width: 6px;
+      height: 260px;
+      background: #000;
+      opacity: .5;
+      filter: Alpha(opacity=50);
+    }
+    .bline-1{
+      left: auto;
+      right: 2px;
+    }
+    .scrol{
+      position: absolute;
+      left: 0;
+      top: 0px;
+      width: 4px;
+      border-radius: 5px;
+      height: 100px;
+      cursor: pointer;
+      background: #868686;
+      border: 1px solid #a6a6a6;
+      opacity: .8;
+      filter: Alpha(opacity=80);
+    }
+    .scrol-1{
+      left: auto;
+      right: 0;
+    }
+  }
+  .imgbg{
+    position: absolute;
+    left: 2px;
+    _left: 0;
+    top: -1px;
+    z-index: 1;
+    width: 980px;
+    height: auto;
+    opacity: .2;
+    filter: Alpha(opacity=20);
+  }
+  .msk{
+    position: absolute;
+    left: 2px;
+    _left: 0;
+    top: 0;
+    z-index: 2;
+    width: 558px;
+    height: 260px;
+    background: #121212;
+    opacity: .5;
+    filter: Alpha(opacity=50);
+  }
+  .ask{
+    position: absolute;
+    right: 25px;
+    top: 12px;
+    cursor: pointer;
+    z-index: 5;
+  }
+  .listbdc{
+    position: absolute;
+    left: 2px;
+    _left: 0;
+    top: 0;
+    z-index: 4;
+    height: 260px;
+    width: 553px;
+    overflow: hidden;
+    ul{
+      color: #ccc;
+      overflow: hidden;
+    }
+    li{
+      float: left;
+      width: 100%;
+      &.active{
+        background-color: rgba(0,0,0,0.3);
+      }
+      &:hover{
+        background-color: rgba(0,0,0,0.4);
+        .icns{
+          display: block;
+        }
+      }
+      &.active,&:hover{
+        color:#fff;
+        a,.col{
+          color:#fff;
+        }
+      }
+    }
+  }
+  .col{
+    float: left;
+    padding-left: 10px;
+    height: 28px;
+    line-height: 28px;
+    _line-height: 29px;
+    overflow: hidden;
+    cursor: pointer;
+    .icns{
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 100px;
+      height: 23px;
+    }
+    .ico{
+      float: right;
+      overflow: hidden;
+      margin: 7px 0 0 10px;
+      text-indent: -9999px;
+    }
+    a,a:hover{
+      color: #9b9b9b;
+    }
+  }
+  .col-1{
+    width: 10px;
+  }
+  .col-2,.col-4{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .col-2{
+    width: 256px;
+  }
+  .col-3{
+    width: 78px;
+    position: relative;
+  }
+  .col-4{
+    width: 70px
+  }
+  .col-5{
+    width: 35px;
+    color: #666;
+  }
+  .col-6{
+    width: 37px;
+    padding-left: 6px;
+  }
+  .upload{
+    position: absolute;
+    right: 12px;
+    top: 40px;
+    box-shadow: 0 2px 3px rgba(0,0,0,.75);
+    width: 81px;
+    z-index: 5;
+    display: none;
+    a{
+      display: block;
+      text-align: center;
+      padding: 8px 0;
+      color: #666;
+      background: #ebebeb;
+      text-shadow: 0 1px 0 #fff;
+      &:hover{
+        text-decoration: none;
+        background: #dedede;
+      }
+    }
+  }
+  .msk2{
+    position: absolute;
+    left: 560px;
+    _left: 560px;
+    top: 0;
+    z-index: 3;
+    width: 420px;
+    height: 250px;
+    background: #121212;
+    opacity: .01;
+    filter: Alpha(opacity=1);
+  }
+  .listlyric{
+    position: absolute;
+    right: 40px;
+    top: 0;
+    z-index: 4;
+    margin: 21px 0 20px 0;
+    height: 219px;
+    width: 354px;
+    overflow: hidden;
+    p{
+      color: #989898;
+      word-wrap: break-word;
+      text-align: center;
+      line-height: 32px;
+      height: auto !important;
+      height: 32px;
+      min-height: 32px;
+      transition: color 0.7s linear;
+    }
+  }
 }
 .m-pbar, .m-pbar .barbg {
     width: 493px;
@@ -280,7 +640,7 @@
       top: 5px;
       width: 12px;
       height: 12px;
-      background: url(/static/media/loading.gif);
+      background: url(/static/img/loading.gif);
     }
     &:hover{
       background-position: 0 -280px;

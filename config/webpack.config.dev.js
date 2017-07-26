@@ -122,7 +122,7 @@ module.exports = {
               
             },
             loader: require.resolve('eslint-loader'),
-          },
+          }
         ],
         include: paths.appSrc,
       },
@@ -159,7 +159,7 @@ module.exports = {
         loader: require.resolve('url-loader'),
         options: {
           limit: 10000,
-          name: 'static/media/[name].[hash:8].[ext]',
+          name: 'static/img/[name].[hash:8].[ext]',
         },
       },
       {
@@ -177,7 +177,7 @@ module.exports = {
           // This is a feature of `babel-loader` for webpack (not Babel itself).
           // It enables caching results in ./node_modules/.cache/babel-loader/
           // directory for faster rebuilds.
-          cacheDirectory: true,
+          cacheDirectory: true
         },
       },
       // "postcss" loader applies autoprefixer to our CSS.

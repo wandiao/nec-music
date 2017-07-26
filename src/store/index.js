@@ -1,6 +1,6 @@
-import { createStore } from 'redux'
-import todoApp from './reducers'
+import { createStore,combineReducers } from 'redux'
+import reducers from './reducers'
 
-let store = createStore(todoApp)
+const store = createStore(combineReducers(reducers))
 
 export default store

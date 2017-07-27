@@ -35,4 +35,7 @@ export const getTopArtists = (offset=0,limit=10) => axios.get('top/artists',{
 export const getDjRecommend = () => axios.get('dj/recommend');
 
 //获取歌单详情
-export const getPlayListDetail = id => axios.get(`/playlist/detail?id=${id}`)
+export const getPlayListDetail = id => axios.get(`playlist/detail?id=${id}`)
+
+//获取音乐url
+export const getMusicUrl = id => axios.get(`music/url?id=${id}`)

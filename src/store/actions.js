@@ -4,6 +4,7 @@
 
 
 export const CHANGE_PLAY_LIST = 'CHANGE_PLAY_LIST'
+export const CHANGE_CURR_MUSIC = 'CHANGE_CURR_MUSIC'
 
 
 /*
@@ -11,6 +12,10 @@ export const CHANGE_PLAY_LIST = 'CHANGE_PLAY_LIST'
  */
 
  //切换歌单
-export function changePlayList(listObj) {
-	return {type:CHANGE_PLAY_LIST,listObj}
+export function changePlayList(obj) {
+	return {type:CHANGE_PLAY_LIST,obj}
+}
+ //切换当前歌曲
+export function changeCurrMusic(obj,status) {
+	return {type:CHANGE_CURR_MUSIC,obj,status}
 }

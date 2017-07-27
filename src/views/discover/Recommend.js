@@ -1,8 +1,17 @@
 import React, { Component} from 'react';
-import {getBanner, getPersonalized, getRecDjprogram, getTopAlbum, getTopList, getTopArtists, getDjRecommend,getPlayListDetail} from '../../api';
+import {
+  getBanner, 
+  getPersonalized, 
+  getRecDjprogram, 
+  getTopAlbum, 
+  getTopList, 
+  getTopArtists, 
+  getDjRecommend,
+  getPlayListDetail,
+  getMusicUrl} from '../../api';
 import {numberFormat} from '../../util';
 import { connect } from 'react-redux';
-import { changePlayList } from '../../store/actions'
+import { changePlayList, changeCurrMusic } from '../../store/actions'
 import {chunk} from '../../util/array';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -217,8 +226,22 @@ class HotRcmd extends Component {
       getPlayListDetail(index).then(res => {
         console.log(res);
         if(res.data.code == 200) {
-          dispatch(changePlayList(res.data.playlist))
+          const playList = res.data.playlist
+          if(!playList.tracks.length) {
+            return false;
+          }
+          dispatch(changePlayList(playList))
+          return getMusicUrl(playList.tracks[0].id)
         }
+      })
+      .then(res => {
+        console.log(res)
+        if(res.data.code == 200) {
+          const music = res.data.data[0];
+          dispatch(changeCurrMusic(music,true))
+        }
+      }).catch(err => {
+        console.log(err)
       })
       
     }
@@ -507,5 +530,11 @@ class Sidebar extends Component {
     )
   }
 }
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
 
-export default connect((state) =>{return {playList:state.playList}})(Recommend)
+export default connect(select)(Recommend)

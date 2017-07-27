@@ -15,7 +15,7 @@ class PlayBar extends Component {
     }
   }
   render() {
-    const {playList} = this.props
+    const {playList,currMusic} = this.props
     return (
       <div className="g-btmbar">
         <div className="m-playbar m-playbar-lock">
@@ -30,7 +30,7 @@ class PlayBar extends Component {
           <div className="wrapper">
             <div className="btns">
               <a href="" className="b-prev">上一首</a>
-              <a href="" className="b-play">播放/暂停</a>
+              <a href="javascript:;" className={currMusic.isPlay?'b-pause':'b-play'}>播放/暂停</a>
               <a href="" className="b-next">下一首</a>
             </div>
             <div className="head">
@@ -76,6 +76,7 @@ class PlayBar extends Component {
           </div>
           <ListTab {...this.props} show={this.state.showList} onClose={this.toggleList} />
         </div>
+        <audio id="player" controls></audio>
       </div>
     );
   }
@@ -118,7 +119,7 @@ class ListTab extends Component {
                           <span title={item.ar.map(i => i.name).join('/')}>
                           {
                             item.ar.map((ari,index) =>(
-                            <span key={ari.id}>
+                            <span key={index}>
                               <a className="" href={`/artist?id=${ari.id}`} >{ari.name}</a>
                               {index == item.ar.length-1?'':'/'}
                             </span>
@@ -184,6 +185,11 @@ class ListTab extends Component {
     )
   }
 }
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
 
-
-export default connect((state) =>{return {playList:state.playList}})(PlayBar)
+export default connect(select)(PlayBar)

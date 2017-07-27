@@ -181,7 +181,7 @@
   .ctrl:extend(.p-bg){
     position: relative;
     z-index: 10;
-    width: 113px;
+    width: 126px;
     padding-left: 13px;
     background-position: -147px -238px;
   }
@@ -229,7 +229,7 @@
   .icn-list{
     display: block;
     float: none;
-    width: 38px;
+    width: 61px;
     padding-left: 21px;
     background-position: -42px -68px;
     line-height: 27px;
@@ -491,6 +491,9 @@
       width: 100%;
       &.active{
         background-color: rgba(0,0,0,0.3);
+        .playicn{
+          display: block;
+        }
       }
       &:hover{
         background-color: rgba(0,0,0,0.4);
@@ -503,8 +506,17 @@
         a,.col{
           color:#fff;
         }
+        
       }
     }
+  }
+  .playicn{
+    display: none;
+    margin-top: 8px;
+    width: 10px;
+    height: 13px;
+    background: url(../img/playlist.png) no-repeat 0 9999px;
+    background-position: -182px 0;
   }
   .col{
     float: left;
@@ -533,7 +545,7 @@
     }
   }
   .col-1{
-    width: 10px;
+    width: 20px;
   }
   .col-2,.col-4{
     overflow: hidden;
@@ -541,21 +553,21 @@
     text-overflow: ellipsis;
   }
   .col-2{
-    width: 256px;
+    width: 266px;
   }
   .col-3{
-    width: 78px;
+    width: 88px;
     position: relative;
   }
   .col-4{
-    width: 70px
+    width: 80px
   }
   .col-5{
-    width: 35px;
+    width: 45px;
     color: #666;
   }
   .col-6{
-    width: 37px;
+    width: 43px;
     padding-left: 6px;
   }
   .upload{

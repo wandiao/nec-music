@@ -3,47 +3,53 @@ import { BrowserRouter, HashRouter, Switch, Route, Redirect} from 'react-router-
 import createBrowserHistory from 'history/createBrowserHistory'
 
 import App from '../App'
-import Recommend from '../views/discover/Recommend'
-import TopList from '../views/discover/TopList'
-import PlayList from '../views/discover/PlayList'
-import DjRadio from '../views/discover/DjRadio'
-import Artist from '../views/discover/Artist'
-import Album from '../views/discover/Album'
+import DRecommend from '../views/discover/Recommend'
+import DTopList from '../views/discover/TopList'
+import DPlayList from '../views/discover/PlayList'
+import DDjRadio from '../views/discover/DjRadio'
+import DArtist from '../views/discover/Artist'
+import DAlbum from '../views/discover/Album'
+import PlayList from '../views/playlist/PlayList'
 
 const history = createBrowserHistory();
 
 
 const routes = [
-	//推荐
+	//发现音乐/推荐
 	{
 		path:'/',
 		exact:true,
-		component:Recommend
+		component:DRecommend
 	},
-	//排行榜
+	//发现音乐/排行榜
 	{
 		path:'/discover/toplist',
-		component:TopList
+		component:DTopList
 	},
-	//歌单
+	//发现音乐/歌单
 	{
 		path:'/discover/playlist',
-		component:PlayList
+		component:DPlayList
 	},
-	//主播电台
+	//发现音乐/主播电台
 	{
 		path:'/discover/djradio',
-		component:DjRadio
+		component:DDjRadio
 	},
-	//歌手
+	//发现音乐/歌手
 	{
 		path:'/discover/artist',
-		component:Artist
+		component:DArtist
 	},
-	//新碟上架
+	//发现音乐/新碟上架
 	{
 		path:'/discover/album',
-		component:Album
+		component:DAlbum
+	},
+	//歌单详情
+	{
+		path:'/playlist',
+		component:PlayList
 	}
 ]
 

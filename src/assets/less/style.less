@@ -6,6 +6,7 @@ body, div, span, header, footer, nav, section, aside, article, ul,ol, dl, dt, dd
     font-style: normal;
     text-decoration: none;
     border: none;
+    box-sizing: border-box;
     -webkit-tap-highlight-color:transparent;
     -webkit-font-smoothing: antialiased;
     &:focus {
@@ -44,90 +45,8 @@ img{
   border: none;
 }
 
-
-.clearfix:after{
-    content: '';
-    display: block;
-    clear: both;
-}
-
-.clearfix{
-    zoom:1;
-}
-.margin{
-    margin: 0 auto;
-}
-
-.fl{
-    float: left;
-}
-
-.fr{
-    float: right;
-}
-
-.hide{
-    display: none;
-}
-
-.pr{
-  position: relative;
-  zoom:1;
-}
-.pa{
-  position: absolute;
-}
-.show{
-    display: block;
-}
-.center{
-  display: flex;
-  justify-content:center;
-  align-items:center;
-}
-
-.ellipsis{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.tid{
-  text-indent: -9999px;
-}
-
-/////////////////////////////////
-
-/////////////////////////////////
-.s-fc4,.sfc4:hover{
-  color: #999;
-}
-.s-fc3,.s-fc3:hover{
-  color: #666;
-}
-.s-fc0, a.s-fc0:hover {
-  color: #000;
-}
-/////////////////////////////////
-.f-tdn,.f-tdn:hover{
-  text-decoration: none;
-}
-.f-thide{
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  word-wrap: normal;
-}
-.f-fs1 {
-  font-size: 14px;
-}
-.f-ib {
-  display: inline-block;
-}
-.f-tdu, .f-tdu:hover {
-  text-decoration: underline;
-}
-/////////////////////////////////
-
+/* 公共样式 */
+@import 'common';
 /* 顶部样式 */
 @import 'header';
 /* 底部样式 */
@@ -136,3 +55,5 @@ img{
 @import 'playbar';
 /* 发现音乐 */
 @import 'discover';
+/* 歌单详情页 */
+@import 'playlist';

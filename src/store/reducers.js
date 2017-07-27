@@ -5,7 +5,9 @@ const initState = {
     tracks:[]
   },
   currMusic:{//当前音乐
-    music:null,
+    index:0,
+    info:null,
+    url:null,
     isPlay:false
   }
 }
@@ -21,8 +23,10 @@ function currMusic(state=initState.currMusic,action) {
   switch(action.type) {
     case CHANGE_CURR_MUSIC:
       return {
-        music:action.obj || state.music,
-        isPlay:action.status || state.status
+        index:action.index || state.index,
+        info:action.info || state.music,
+        url:action.url || state.url,
+        isPlay:action.isPlay
       }
     default:
       return state;

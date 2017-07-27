@@ -223,10 +223,11 @@ class HotRcmd extends Component {
     super(props)
     const {dispatch} = this.props
     this.changePlaylist = (index) => {
+      let playList = null;
       getPlayListDetail(index).then(res => {
         console.log(res);
         if(res.data.code == 200) {
-          const playList = res.data.playlist
+          playList = res.data.playlist
           if(!playList.tracks.length) {
             return false;
           }
@@ -237,8 +238,13 @@ class HotRcmd extends Component {
       .then(res => {
         console.log(res)
         if(res.data.code == 200) {
-          const music = res.data.data[0];
-          dispatch(changeCurrMusic(music,true))
+          const url = res.data.data[0].url;
+          dispatch(changeCurrMusic({
+            index:0,
+            info:playList.tracks[0],
+            url:url,
+            isPlay:true
+          }))
         }
       }).catch(err => {
         console.log(err)

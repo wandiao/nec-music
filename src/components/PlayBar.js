@@ -1,5 +1,7 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
+import {changeCurrMusic } from '../store/actions'
+import {getMusicUrl} from '../api'
 
 class PlayBar extends Component {
   constructor(props) {
@@ -13,9 +15,51 @@ class PlayBar extends Component {
       }
       ))
     }
+    this.play = () => {
+      if(this.player && this.player.readyState == 4) {
+        this.player.play();
+      }  
+    }
+    this.prev = (index,isPlay) => {
+      const {playList,currMusic,dispatch} = this.props
+      if(index <= 0) {
+        index = playList.tracks.length-1
+      }else{
+        index = currMusic.index-1
+      }
+      console.log(index)
+      getMusicUrl(playList.tracks[index].id).then(res => {
+        if(res.data.code == 200) {
+          const url = res.data.data[0].url;
+          dispatch(changeCurrMusic({
+            index:index,
+            info:playList.tracks[index],
+            url:url,
+            isPlay:currMusic.isPlay
+          }))
+        }
+      })
+    }
+    this.pause = () => {
+      if(this.player) {
+        this.player.pause()
+      }
+    }
+  }
+  componentDidMount() {
+    this.player.oncanplay = () => {
+      if(this.props.currMusic.isPlay) {
+        this.play();
+      }
+    } 
   }
   render() {
-    const {playList,currMusic} = this.props
+    const {playList,currMusic,dispatch} = this.props
+    if(currMusic.isPlay) {
+      this.play()
+    }else{
+      this.pause()
+    }
     return (
       <div className="g-btmbar">
         <div className="m-playbar m-playbar-lock">
@@ -29,8 +73,8 @@ class PlayBar extends Component {
           <div className="hand" title="展开播放条"></div>
           <div className="wrapper">
             <div className="btns">
-              <a href="" className="b-prev">上一首</a>
-              <a href="javascript:;" className={currMusic.isPlay?'b-pause':'b-play'}>播放/暂停</a>
+              <a onClick={e => this.prev(currMusic.index,currMusic.isPlay)} href="javascript:;" className="b-prev">上一首</a>
+              <a onClick={e => dispatch(changeCurrMusic({isPlay:!currMusic.isPlay}))} href="javascript:;" className={currMusic.isPlay?'b-pause':'b-play'}>播放/暂停</a>
               <a href="" className="b-next">下一首</a>
             </div>
             <div className="head">
@@ -76,7 +120,7 @@ class PlayBar extends Component {
           </div>
           <ListTab {...this.props} show={this.state.showList} onClose={this.toggleList} />
         </div>
-        <audio id="player" controls></audio>
+        <audio ref={(audio) => { this.player = audio; }} src={currMusic.url} id="player"></audio>
       </div>
     );
   }

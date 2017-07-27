@@ -39,3 +39,6 @@ export const getPlayListDetail = id => axios.get(`playlist/detail?id=${id}`)
 
 //获取音乐url
 export const getMusicUrl = id => axios.get(`music/url?id=${id}`)
+
+//获取音乐详情
+export const getSongDetail = ids => axios.get(`song/detail?ids=${ids}`)

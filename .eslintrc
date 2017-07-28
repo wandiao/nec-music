@@ -5,6 +5,7 @@
     "jsx-a11y/alt-text":0,
     "jsx-a11y/anchor-has-content":0,
     "no-script-url":0,
-    "eqeqeq":0
+    "eqeqeq":0,
+    "no-useless-constructor":0
   }
 }

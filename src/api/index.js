@@ -42,3 +42,14 @@ export const getMusicUrl = id => axios.get(`music/url?id=${id}`)
 
 //获取音乐详情
 export const getSongDetail = ids => axios.get(`song/detail?ids=${ids}`)
+
+//获取歌单列表
+export const getPlayList = ({cat="全部",order="hot",offset=0,limit=20}) => axios.get('top/playlist',{
+	params:{
+		cat,
+		order,
+		offset,
+		limit
+	}
+})
+

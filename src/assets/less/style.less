@@ -15,7 +15,10 @@ body, div, span, header, footer, nav, section, aside, article, ul,ol, dl, dt, dd
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-size: 100%;
+  font-size: 100%;
+}
+h1,h2,h3{
+  font-weight: bold;
 }
 
 
@@ -23,20 +26,30 @@ input[type="button"], input[type="submit"], input[type="search"], input[type="re
     -webkit-appearance: none;
 }
 
-textarea { -webkit-appearance: none;}
-
+textarea {
+  resize: none;
+  overflow: auto;
+}
+table{
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+body, textarea, select, input, button {
+  font-size: 12px;
+  color: #333;
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-text-size-adjust: none;
+}
 html,body{
   height: 100%;
   width: 100%;
-  font-size: 12px;
-  color: #333;
   background: rgb(245,245,245);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-text-size-adjust: none;
 }
 a{
   color:#333;
   &:hover{
+    color: #333;
     text-decoration: underline;
   }
 }
@@ -47,6 +60,7 @@ img{
 
 /* 公共样式 */
 @import 'common';
+@import 'common1';
 /* 顶部样式 */
 @import 'header';
 /* 底部样式 */

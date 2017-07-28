@@ -117,7 +117,6 @@
     }
   }
 }
-////
 .s-bg,.v-hd2,.n-disk li{
   background: url('../img/discover/index.png') no-repeat 0 9999px;
 }
@@ -159,17 +158,6 @@
 }
 .s-bg-12 {
   background-position: -297px -268px;
-}
-.g-mn1{
-  float: left;
-  width: 100%;
-  margin-right: -250px;
-}
-.g-mn1c{
-  margin-right: 251px;
-}
-.g-wrap3{
-  padding: 20px 20px 40px;
 }
 .v-hd2{
   height: 33px;
@@ -253,11 +241,6 @@
   position: absolute;
   top: 0;
   left: 0;
-}
-.u-icn2-jp3 {
-  width: 40px;
-  height: 40px;
-  background-position: -135px -220px;
 }
 .u-cover-4{
   width: 80px;
@@ -450,12 +433,6 @@
   }
 }
 ///////////////////////////////////
-.g-sd1{
-  position: relative;
-  float: right;
-  width: 250px;
-  zoom: 1;
-}
 .n-myinfo {
   height: 185px;
   padding-top: 20px;
@@ -542,34 +519,6 @@
     width: 90%;
   }
 }
-.u-btn2 {
-  padding: 0 5px 0 0;
-  white-space: nowrap;
-  i{
-    padding: 0 15px 0 20px;
-    pointer-events: none;
-  }
-}
-.u-btn2, .u-btn2 i {
-  display: inline-block;
-  height: 31px;
-  line-height: 31px;
-  overflow: hidden;
-  vertical-align: top;
-  text-align: center;
-  cursor: pointer;
-}
-.u-btn2, .u-btn2:hover {
-  text-decoration: none;
-}
-.u-btn2-1 {
-  color: #333;
-  background-position: right -100px;
-  i{
-    color: #333;
-    background-position: 0 -59px;
-  }
-}
 .n-dj-1{
   margin-top: 30px;
 }
@@ -606,5 +555,217 @@
     zoom: 1;
     max-width: 88%;
     vertical-align: middle;
+  }
+}
+
+
+/**
+ * 排行榜
+ *
+ */
+ .n-minelst{
+  h2.scd{
+    margin-top: 20px;
+  }
+  ul *{
+    cursor: pointer;
+    vertical-align: middle;
+  }
+  li{
+    position: relative;
+    zoom: 1;
+    padding: 6px 0 6px 20px;
+    &.selected:hover,&.selected{
+      background: #e6e6e6;
+    }
+    &:hover{
+      background-color: #f4f2f2;
+    }
+  }
+  .item{
+    height: 42px;
+    padding-left: 50px;
+  }
+  .left{
+    display: inline;
+    float: left;
+    margin-left: -50px;
+    overflow: hidden;
+    width: 40px;
+  }
+  .avatar{
+    display: block;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    img{
+      width: 40px;
+      height: 40px;
+    }
+    .msk{
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-position: -310px -330px;
+    }
+  }
+  .name{
+    width: 150px;
+    overflow: hidden;
+    margin-bottom: 5px;
+    a{
+      white-space: nowrap;
+    }
+  }
+}
+.n-minelst-2 {
+  margin-top: 40px;
+  li{
+    padding: 10px 0 10px 20px;
+  }
+  h2{
+    padding: 0 10px 12px 15px;
+    font-size: 14px;
+    color: #000;
+  }
+}
+.m-info-rank{
+  .cntc{
+    margin-left: 187px;
+  }
+  .hd{
+    margin: 16px 0 4px;
+  }
+  .sep{
+    margin-left: 5px;
+  }
+}
+.m-table-rank{
+  .hd{
+    .num{
+      float: left;
+      width: 25px;
+      margin-left: 0;
+      text-align: center;
+    }
+  }
+  .rk{
+    float: right;
+    width: 32px;
+    margin-right: -5px;
+    text-align: center;
+    .u-icn-75{
+      display: block;
+      float: none;
+      margin: 0 auto;
+      padding-left: 0;
+    }
+  }
+  td.rank{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    .ttc{
+      margin-top: 16px;
+    }
+    .ply{
+      margin-top: 17px;
+    }
+  }
+  .rpic{
+    float: left;
+    width: 50px;
+    height: 50px;
+    margin-right: 14px;
+  }
+  .txt{
+    max-width: 75%;
+  }
+}
+
+/**
+ * 歌单
+ *
+ */
+ .u-btn-hot {
+  width: 93px;
+  height: 29px;
+  background-position: 0 0;
+}
+.u-btn-g {
+  width: 75px;
+  height: 26px;
+  background-position: 0 -64px;
+  text-align: center;
+  line-height: 26px;
+}
+.n-sltlyr {
+  display: none;
+  position: absolute;
+  top: 75px;
+  left: 0;
+  z-index: 5;
+  width: 720px;
+  .icn{
+    background: url(../img/iconall.png) no-repeat;
+  }
+  .hd{
+    height: 32px;
+  }
+  .hd,.bd,.ft{    
+    background: url(../img/sltlyr.png) no-repeat;
+  }
+  .icn{
+    position: absolute;
+    top: 2px;
+    left: 132px;
+    display: inline-block;
+    width: 24px;
+    height: 11px;
+    background-position: -48px 0;
+    vertical-align: middle;
+  }
+  .bd{
+    width: 720px;
+    padding: 0 10px;
+    background-position: -720px 0;
+    background-repeat: repeat-y;
+  }
+  h3{
+    height: 38px;
+    padding-left: 26px;
+    border-bottom: 1px solid #e6e6e6;
+    font-weight: normal;
+  }
+  dt{
+    float: left;
+    display: inline;
+    width: 70px;
+    margin: 0 -100px 0 26px;
+    padding-top: 15px;
+    font-weight: bold;
+  }
+  dd{
+    margin-left: 96px;
+    padding: 16px 15px 0 15px;
+    border-left: 1px solid #e6e6e6;
+    line-height: 24px;
+    .line{
+      margin: 0 8px 0 10px;
+      color: #d8d8d8;
+    }
+    &.last{
+      padding-bottom: 25px;
+    }
+  }
+  .u-icn{
+    margin-right: 8px;
+    margin-bottom: 4px;
+  }
+  .ft{
+    height: 20px;
+    background-position: -1440px -12px;
   }
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { BrowserRouter, HashRouter, Switch, Route, Redirect} from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory'
 
@@ -56,7 +56,7 @@ const routes = [
 
 let Router = process.env.NODE_ENV !== 'production' ? BrowserRouter : HashRouter;
 const router = (
-	<Router>
+	<Router history={history}>
 		<App>
 			<Switch>
 				{routes.map((route, index) => (

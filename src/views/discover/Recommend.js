@@ -8,8 +8,10 @@ import {
   getTopArtists, 
   getDjRecommend,
   getPlayListDetail,
-  getMusicUrl} from '../../api';
-import {numberFormat} from '../../util';
+  getMusicUrl,
+  getLyric
+} from '../../api';
+import {numberFormat,parseLrc} from '../../util';
 import { connect } from 'react-redux';
 import { changePlayList, changeCurrMusic } from '../../store/actions'
 import {chunk} from '../../util/array';
@@ -29,6 +31,14 @@ class Recommend extends Component {
     }    
   }
   componentDidMount() {
+    let playList = null;
+    if(localStorage.playList) {
+      playList = JSON.parse(localStorage.playList)
+      this.props.dispatch(changePlayList(playList))
+    }
+    if(localStorage.currMusic) {
+      this.props.dispatch(changeCurrMusic(JSON.parse(localStorage.currMusic)))
+    }
     //获取banner数据
     getBanner().then(res => {
       if(res.data.code == 200) {
@@ -225,7 +235,6 @@ class HotRcmd extends Component {
     this.changePlaylist = (index) => {
       let playList = null;
       getPlayListDetail(index).then(res => {
-        console.log(res);
         if(res.data.code == 200) {
           playList = res.data.playlist
           if(!playList.tracks.length) {
@@ -236,7 +245,6 @@ class HotRcmd extends Component {
         }
       })
       .then(res => {
-        console.log(res)
         if(res.data.code == 200) {
           const url = res.data.data[0].url;
           dispatch(changeCurrMusic({
@@ -245,8 +253,18 @@ class HotRcmd extends Component {
             url:url,
             isPlay:true
           }))
+          return getLyric(playList.tracks[0].id)
         }
-      }).catch(err => {
+      })
+      .then(res => {
+        if(res.data.code == 200) {
+          const lrc = res.data.lrc?parseLrc(res.data.lrc.lyric):[]
+          dispatch(changeCurrMusic({
+            lrc:lrc
+          }))
+        }
+      })
+      .catch(err => {
         console.log(err)
       })
       

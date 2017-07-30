@@ -8,12 +8,14 @@ const initState = {
     index:0,
     info:null,
     url:null,
-    isPlay:false
+    isPlay:false,
+    lrc:[]
   }
 }
 function playList(state=initState.playList,action) {
   switch(action.type) {
     case CHANGE_PLAY_LIST:
+      localStorage.playList = JSON.stringify(action.obj)
       return action.obj
     default:
       return state;
@@ -22,12 +24,17 @@ function playList(state=initState.playList,action) {
 function currMusic(state=initState.currMusic,action) {
   switch(action.type) {
     case CHANGE_CURR_MUSIC:
-      return {
+      let music = {
         index:action.index || state.index,
-        info:action.info || state.music,
+        info:action.info || state.info,
         url:action.url || state.url,
-        isPlay:action.isPlay
+        isPlay:false,
+        lrc:action.lrc || state.lrc
       }
+      localStorage.currMusic = JSON.stringify(music)
+      const isPlay = action.isPlay === false ? false : action.isPlay || state.isPlay
+      music.isPlay = isPlay;
+      return music;
     default:
       return state;
   }

@@ -155,6 +155,27 @@
     color: #e8e8e8;
     text-shadow: 0 1px 0 #171717;
     line-height: 28px;
+    .name{
+      max-width: 300px;
+    }
+    .fc1{
+      color: #e8e8e8;
+    }
+    .by{
+      max-width: 220px;
+      margin-left: 15px;
+      color: #9b9b9b;
+      a{
+        color: #9b9b9b;
+      }
+    }
+    .src:extend(.p-bg){
+      float: left;
+      width: 14px;
+      height: 15px;
+      margin: 7px 0 0 13px;
+      background-position: -110px -103px;
+    }
   }
   .oper{
     width: 60px;
@@ -404,7 +425,7 @@
     position: absolute;
     left: 0;
     top: 41px;
-    width: 976px;
+    width: 986px;
     height: 260px;
     overflow: hidden;
     background-position: -1014px 0;
@@ -612,6 +633,13 @@
     height: 219px;
     width: 354px;
     overflow: hidden;
+    .lrcs{
+      position: absolute;
+      top:0;
+      left:0;
+      width:100%;
+      transition:top .3s ease;
+    }
     p{
       color: #989898;
       word-wrap: break-word;
@@ -621,6 +649,10 @@
       height: 32px;
       min-height: 32px;
       transition: color 0.7s linear;
+      &.curr{
+        color: #fff;
+        font-size: 14px;
+      }
     }
   }
 }
@@ -696,9 +728,9 @@
   .vbg,.curr{
     position: absolute;
     top: 11px;
-    left: 14px;
+    left: 10px;
     width: 4px;
-    height: 93px;
+    height: 100px;
   }
   .vbg{
     padding: 4px 0;

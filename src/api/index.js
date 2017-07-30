@@ -43,6 +43,9 @@ export const getMusicUrl = id => axios.get(`music/url?id=${id}`)
 //获取音乐详情
 export const getSongDetail = ids => axios.get(`song/detail?ids=${ids}`)
 
+//获取音乐歌词
+export const getLyric = id => axios.get(`lyric?id=${id}`);
+
 //获取歌单列表
 export const getPlayList = ({cat="全部",order="hot",offset=0,limit=20}) => axios.get('top/playlist',{
 	params:{
@@ -50,6 +53,26 @@ export const getPlayList = ({cat="全部",order="hot",offset=0,limit=20}) => axi
 		order,
 		offset,
 		limit
+	}
+})
+
+//搜索
+export const search = (keywords,type=1,limit=30,offset=0) => axios.get('search',{
+	params:{
+		keywords,
+		offset,
+		limit,
+		type
+	}
+})
+
+//搜索建议
+export const searchSuggest = (keywords,type=1,limit=30,offset=0) => axios.get('search',{
+	params:{
+		keywords,
+		offset,
+		limit,
+		type
 	}
 })
 

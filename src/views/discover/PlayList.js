@@ -1,4 +1,5 @@
 import React, { Component} from 'react';
+import { Pagination } from 'antd';
 
 //歌单页面
 class PlayList extends Component {
@@ -61,6 +62,32 @@ class PlayList extends Component {
       			</div>
       			<div className="ft"></div>
       		</div>
+      		<ul className="m-cvrlst f-cb">
+      			{Array(35).fill(1).map((i,index) =>
+							<li key={index}>
+								<div className="u-cover u-cover-1">
+									<img src="http://p1.music.126.net/7uwXpWCjW98Z6bPIQ3_idg==/19152393044496489.jpg?param=140y140" />
+									<a title="秒懂这些歌曲是你我之间的小默契" href="/playlist?id=826797842" className="msk"></a>
+									<div className="bottom">
+										<a href="" className="icon-play f-fr"></a>
+										<span className="icon-headset"></span>
+										<span className="nb">38万</span>
+									</div>
+								</div>
+								<p className="dec">
+									<a href="" className="tit f-thide s-fc0">秒懂这些歌曲是你我之间的小默契</a>
+								</p>
+								<p>
+									<span className="s-fc4">by </span> 
+									<a title="扥你" href="/user/home?id=95142402" className="nm nm-icn f-thide s-fc3"> 扥你  </a> <sup className="u-icn u-icn-1 "></sup>
+								</p>
+							</li>
+      			)
+      			}
+      		</ul>
+      		<div className="u-page">
+						<Pagination defaultCurrent={1} total={50} />
+					</div>
       	</div>
       </div>
     );

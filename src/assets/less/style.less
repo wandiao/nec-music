@@ -41,6 +41,9 @@ body, textarea, select, input, button {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-text-size-adjust: none;
 }
+sup{
+  top:0;
+}
 html,body{
   height: 100%;
   width: 100%;
@@ -56,6 +59,27 @@ a{
 img{
   vertical-align: middle;
   border: none;
+}
+////////////////////////////
+.ant-slider{
+  margin: 0;
+  &:hover{
+    .ant-slider-handle{
+      border-color: #c00c0c;
+    }
+    .ant-slider-track{
+      background-color: #d00c0c;
+    }
+  }
+}
+.ant-slider-handle{
+  border: solid 2px #c00c0c;
+  &:hover{
+    border-color: #c00c0c;
+  }
+}
+.ant-slider-track{
+  background-color: #c00c0c;
 }
 
 /* 公共样式 */

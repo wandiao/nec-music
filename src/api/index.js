@@ -13,10 +13,11 @@ export const getPersonalized = () => axios.get('personalized');
 export const getRecDjprogram = () => axios.get('personalized/djprogram');
 
 //新碟上架
-export const getTopAlbum = (offset=0,limit=10) => axios.get('top/album',{
+export const getTopAlbum = (offset=0,limit=10,type) => axios.get('top/album',{
 	params:{
 		offset,
-		limit
+		limit,
+		type
 	}
 });
 

@@ -732,3 +732,304 @@
 .p-pl .m-cvrlst {
   margin: 30px 0 0 -50px;
 }
+/**
+ * 专辑
+ *
+ */
+ .n-alblist{
+  .m-cvrlst{
+    margin: 20px 0 0 -33px;
+  }
+  .m-cvrlst-alb2{
+    li{
+      padding-left: 33px;
+    }
+  }
+ }
+ .m-cvrlst-alb2{
+  li{
+    width: 186px;
+    height: 208px;
+  }
+ }
+ .u-cover-alb2 {
+  width: 130px;
+  height: 130px;
+  .msk{
+    width: 153px;
+    height: 130px;
+    background-position: 0 -845px;
+  }
+  .icon-play{
+    left: 94px;
+    width: 28px;
+    height: 28px;
+    background-position: 0 -140px;
+  }
+  &:hover{
+    .icon-play{
+      display: block;
+      background-position: 0 -170px;
+    }
+  }
+}
+
+
+
+/**
+ * 歌手
+ *
+ */
+.n-sgernav {
+  margin-top: 51px;
+  .tit{
+    height: 25px;
+    padding-left: 14px;
+    font-size: 16px;
+    font-family: "Microsoft Yahei";
+  }
+  li, li a{
+    float: left;
+    width: 160px;
+    height: 29px;
+    line-height: 29px;
+  }
+  li{
+    margin-bottom: 2px;
+    a{
+      width: 160px;
+      padding-left: 27px;
+          background: url(../img/singer.png) no-repeat 0 9999px;
+      background-position: 0 -30px;
+      color: #333;
+      &.active{
+        background-position: 0 0;
+        text-decoration: none;
+        color: #c20c0c;
+      }
+    }
+  }
+  .blk{
+    margin: 5px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid #d3d3d3;
+  }
+}
+.m-sgerlist{
+  .m-cvrlst {
+    margin: 20px 0 0 -17px;
+    li{
+      width: 147px;
+      padding-left: 17px;
+      p{
+        margin-top: 8px;
+      }
+    }
+  } 
+}
+.m-cvrlst-5{
+  li{
+    width: 130px;
+    height: 184px;
+    .nm-icn{
+      float: left;
+      max-width: 80%;
+    }
+    .u-icn-5{
+      position: relative;
+      float: right;
+    }
+  }
+}
+.n-ltlst {
+  margin-top: 20px;
+  margin-left: -3px;
+  li{
+    display: inline;
+    float: left;
+    margin-left: 3px;
+    font-size: 14px;
+    .ch{
+      width: 45px;
+      height: 24px;
+    }
+    a{
+      float: left;
+      width: 21px;
+      line-height: 24px;
+      text-align: center;
+      &.active{
+        background: #c20c0c;
+        border-radius: 2px;
+        color: #fff;
+      }
+    }
+  }
+}
+
+/**
+ * 主播电台
+ *
+ */
+.m-radio{
+  .rditype{
+    margin-bottom: 20px;
+    .boxes{
+      overflow: hidden;
+      max-height: 194px;
+      &.muti{
+        height: 194px;
+      }
+    }
+    ul{
+      margin-left: -33px;
+    }
+    .box{
+      display: none;
+      &.show{
+        display: block;
+      }
+    }
+    li{
+      float: left;
+      margin: 0 0 25px 33px;
+    }
+    a{
+      display: block;
+      width: 70px;
+      height: 70px;
+      background-position: 0 9999px;
+      text-align: center;
+      color: #888;
+      background-image: url(../img/discover/radio_bg.png);
+      background-repeat: no-repeat;
+      em{
+        margin-top: -3px;
+      }
+    }
+    .icon{
+      width: 48px;
+      height: 48px;
+      margin: 2px auto 0;
+      background-position: 0 0;
+    }
+    .turn{
+      position: absolute;
+      top: 50%;
+      width: 20px;
+      height: 30px;
+      margin-top: -15px;
+      opacity: 0.25;
+      filter: alpha(opacity=25);
+      text-indent: -9999px;
+      cursor: pointer;
+      &:hover{
+        opacity: 0.4;
+      }
+      &.z-dis{
+        opacity: 0.08;
+      }
+    }
+    .turn,.dot{
+      background: url(../img/discover/radio_slide.png) no-repeat;
+      
+    }
+    .turn-left{
+      left: -26px;
+      background-position: 0 -30px;
+    }
+    .turn-right{
+      right: -26px;
+      background-position: -30px -30px;
+    }
+    .dotpage{
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0px;
+      width: 100%;
+      height: 20px;
+      text-align: center;
+      line-height: 0;
+    }
+    .dot{
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background-position: 0 0;
+      text-indent: -9999px;
+      cursor: pointer;
+      &.curr{
+        background-position: -30px 0;
+      }
+    }
+  }
+  .rditop,.new{
+    margin-top: 10px;
+  }
+  .rditop .blk{
+    width: 426px;
+  }
+  .toplist{
+    height: 601px;
+    border: 1px solid #e2e2e2;
+    border-top: none;
+    .itm{
+      width: 424px;
+      height: 60px;
+      padding: 10px 0;
+      line-height: 40px;
+    }
+    .cvr{
+      margin-left: 20px;
+    }
+    .cnt{
+      width: 254px;
+      margin: 1px 0 0 10px;
+      line-height: 20px;
+    }
+    .tag{
+      margin: 1px 0 0 10px;
+    }
+  }
+  .rdimore{
+    margin-top: 35px;
+  }
+  .rdilist{
+    margin-left: -30px;
+    li{
+      float: left;
+      width: 435px;
+      height: 160px;
+      margin-left: 30px;
+      padding: 20px 0;
+      border-bottom: 1px solid #e7e7e7;
+      &.bb0{
+        border-bottom: 0;
+      }
+    }
+    .cvr{
+      margin-right: -200px;
+    }
+    .cnt{
+      margin-left: 140px;
+    }
+    h3{
+      margin: 16px 0 20px;
+    }
+    .note{
+      margin-bottom: 6px;
+      line-height: 20px;
+    }
+  }
+}
+.m-plylist{
+  .itm{
+    float: left;
+    width: 100%;
+    background: #fff;
+  }
+  .bg{
+    background: #f7f7f7;
+  }
+} 

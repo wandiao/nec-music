@@ -1,13 +1,18 @@
 import React from 'react';
 import { BrowserRouter, HashRouter, Switch, Route, Redirect} from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory'
-
+import ExtendRoute from '../components/ExtendRoute'
 import App from '../App'
 import DRecommend from '../views/discover/Recommend'
 import DTopList from '../views/discover/TopList'
 import DPlayList from '../views/discover/PlayList'
 import DDjRadio from '../views/discover/DjRadio'
-import DArtist from '../views/discover/Artist'
+
+import DArtist from '../views/discover/artist/Index'
+import DArtistCat from '../views/discover/artist/Cat'
+import DArtistRcmd from '../views/discover/artist/Recommend'
+import DArtistSigned from '../views/discover/artist/Signed'
+
 import DAlbum from '../views/discover/Album'
 import PlayList from '../views/playlist/PlayList'
 
@@ -39,7 +44,23 @@ const routes = [
 	//发现音乐/歌手
 	{
 		path:'/discover/artist',
-		component:DArtist
+		component:DArtist,
+		routes:[
+			{
+				path:'/discover/artist',
+				exact:true,
+				component:DArtistRcmd
+			},
+			{
+				path:'/discover/artist/cat',
+				component:DArtistCat
+			},
+			{
+				path:'/discover/artist/signed',
+				component:DArtistSigned
+			}
+
+		]
 	},
 	//发现音乐/新碟上架
 	{
@@ -59,11 +80,8 @@ const router = (
 	<Router history={history}>
 		<App>
 			<Switch>
-				{routes.map((route, index) => (
-				    <Route
-					    key={index}
-					    {...route}
-				    />
+				{routes.map((route, i) => (
+				  <ExtendRoute key={i} {...route}/>
 		    	))}
 		    	<Redirect from="/discover" to="/" />
 			</Switch>

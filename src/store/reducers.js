@@ -1,4 +1,4 @@
-import { CHANGE_PLAY_LIST, CHANGE_CURR_MUSIC } from './actions'
+import { CHANGE_PLAY_LIST, CHANGE_CURR_MUSIC,CHOOSE_BOX } from './actions'
 
 const initState = {
   playList:{//播放列表
@@ -10,8 +10,13 @@ const initState = {
     url:null,
     isPlay:false,
     lrc:[]
+  },
+  logBox:{
+    name:'登录',
+    show:false
   }
 }
+
 function playList(state=initState.playList,action) {
   switch(action.type) {
     case CHANGE_PLAY_LIST:
@@ -21,6 +26,7 @@ function playList(state=initState.playList,action) {
       return state;
   }
 }
+
 function currMusic(state=initState.currMusic,action) {
   switch(action.type) {
     case CHANGE_CURR_MUSIC:
@@ -40,5 +46,17 @@ function currMusic(state=initState.currMusic,action) {
   }
 }
 
+function logBox(state=initState.logBox,action) {
+  switch(action.type) {
+    case CHOOSE_BOX:
+      return {
+        name:action.name,
+        show:action.show
+      }
+    default:
+    return state
+  }
+}
 
-export default {playList,currMusic}
+
+export default {playList,currMusic,logBox}

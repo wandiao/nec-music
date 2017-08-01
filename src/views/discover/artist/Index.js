@@ -1,6 +1,7 @@
 import React, { Component} from 'react';
 import ExtendRoute from '../../../components/ExtendRoute'
 import { NavLink as Link } from 'react-router-dom'
+import qs from 'query-string'
 
 const singerTypes = [
 	{
@@ -49,9 +50,12 @@ const singerTypes = [
 class Artist extends Component {
 	constructor(props) {
 		super(props);
-		this.checkActive = (match,location) => {
-			console.log(match)
-			console.log(location)
+		this.checkActive = (location,id) => {
+			const currid = qs.parse(location.search).id;
+			if(currid == id) {
+				return true;
+			}
+			return false;
 		}
 	}
   render() {
@@ -75,7 +79,7 @@ class Artist extends Component {
 		      				<ul className="nav f-cb">
 		      				{
 		      					i.types.map((type,index1) =>
-											<li key={index1}><Link  activeClassName="active" to={`/discover/artist/cat?id=${type.id}`}>{type.name}</Link>
+											<li key={index1}><Link isActive={(m,l) => this.checkActive(l,type.id)}  activeClassName="active" to={`/discover/artist/cat?id=${type.id}`}>{type.name}</Link>
 											</li>
 		      					)
 		      				}

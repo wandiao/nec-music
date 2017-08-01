@@ -287,7 +287,7 @@ class ListTab extends Component {
     }
   }
   render() {
-    const {show,playList,currIndex,currMusic,currTime} = this.props
+    const {show,playList,currIndex,currMusic} = this.props
     const lrclist = currMusic.lrc
     let playListCon = null;
     if(!playList.tracks.length) {

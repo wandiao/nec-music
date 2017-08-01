@@ -34,27 +34,7 @@ class Comments extends Component {
 						<h3 className="u-hd4">精彩评论</h3>
 						{
 						Array(20).fill(1).map((i,index) => (
-							<div className="itm" key={index}>
-								<div className="head">
-									<a href="/user/home?id=135905540">
-										<img src="http://p1.music.126.net/VpbKn7xtQuAuEHCO0Z3ZJw==/1400777815058422.jpg?param=50y50" />
-									</a>
-								</div>
-								<div className="cntwrap">
-									<div className="cnt f-brk">
-										<a href="/user/home?id=135905540" className="s-fc7">虚幻黑梦</a>
-										：林俊杰压力很大，如果做不好音乐就要回到新加坡去继承千亿家产。所以他一直很努力
-									</div>
-									<div className="rp">
-										<div className="time s-fc4">昨天17:08</div>
-										<a href="">
-											<i className="zan u-icn2 u-icn2-12"></i> (1172)
-										</a>
-										<span className="sep">|</span>
-										<a href="" className="s-fc3">回复</a>
-									</div>
-								</div>
-							</div>
+							<Comment key={index} />
 						))
 						}
 					</div>
@@ -65,5 +45,33 @@ class Comments extends Component {
 			</div>
 		)
 	}
+}
+class Comment extends Component {
+	render() {
+		return (
+			<div className="itm">
+				<div className="head">
+					<a href="/user/home?id=135905540">
+						<img src="http://p1.music.126.net/VpbKn7xtQuAuEHCO0Z3ZJw==/1400777815058422.jpg?param=50y50" />
+					</a>
+				</div>
+				<div className="cntwrap">
+					<div className="cnt f-brk">
+						<a href="/user/home?id=135905540" className="s-fc7">虚幻黑梦</a>
+						：林俊杰压力很大，如果做不好音乐就要回到新加坡去继承千亿家产。所以他一直很努力
+					</div>
+					<div className="rp">
+						<div className="time s-fc4">昨天17:08</div>
+						<a href="">
+							<i className="zan u-icn2 u-icn2-12"></i> (1172)
+						</a>
+						<span className="sep">|</span>
+						<a href="" className="s-fc3">回复</a>
+					</div>
+				</div>
+			</div>
+		)
+	}
+	
 }
 export default Comments

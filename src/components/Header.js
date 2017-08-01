@@ -1,7 +1,18 @@
 import React, { Component} from 'react'
 import { NavLink as Link } from 'react-router-dom'
 import {search,searchSuggest} from '../api'
+import { connect } from 'react-redux'
+import {chooseBox} from '../store/actions'
 import axios from 'axios'
+
+const navConfig = [
+	{path:'/',name:'推荐',exact:true},
+	{path:'/discover/toplist',name:'排行榜'},
+	{path:'/discover/playlist',name:'歌单'},
+	{path:'/discover/djradio',name:'主播电台'},
+	{path:'/discover/artist',name:'歌手'},
+	{path:'/discover/album',name:'新碟上架'},
+]
 
 class Header extends Component {
 	constructor(props) {
@@ -42,6 +53,14 @@ class Header extends Component {
 				}
 			]
 		}
+		// this.checkActive = (location,pathname) => {
+		// 	console.log(pathname)
+		// 	if(location.pathname == pathname) {
+		// 		console.log(pathname)
+		// 		return true;
+		// 	}
+		// 	return false;
+		// }
 		this.toggleShowPlace = (bool) => {
 			if(this.searchInput.value) {
 				bool = false;
@@ -89,11 +108,9 @@ class Header extends Component {
 			}		
 		}
 	}
-	componentDidMount() {
-		
-	}
 	render() {
 		const {searchSuggests} = this.state
+		const {dispatch} = this.props
 		return (
 			<div className="g-topbar">
 				<div className="m-top">
@@ -101,12 +118,12 @@ class Header extends Component {
 						<h1 className="logo"><a href="/">网易云音乐</a></h1>
 						<Nav />
 						<div className="m-dt pr">
-							<a href="javascipt:;" className="link">登录</a>
+							<a onClick={e => dispatch(chooseBox('登录'))} href="javascipt:;" className="link">登录</a>
 							<div className="dropdown-layer">
 								<div className="inner">
 									<ul className="dl-list clearfix">
 										<li>
-											<a className="item-1" href="">
+											<a onClick={e => dispatch(chooseBox('手机号登录'))} className="item-1" href="javascipt:;">
 												<i className="icn icn-mb"></i>
 												<em>手机号登录</em>
 											</a>
@@ -130,7 +147,7 @@ class Header extends Component {
 											</a>
 										</li>
 										<li>
-											<a className="item-2" href="">
+											<a onClick={e => dispatch(chooseBox('邮箱登录'))} className="item-2" href="javascipt:;">
 												<i className="icn icn-wy"></i>
 												<em>网易邮箱帐号登录</em>
 											</a>
@@ -187,36 +204,15 @@ class Header extends Component {
 				<div className="m-subnav">
 					<div className="wrapper pr">
 						<ul className="nav">
-							<li>
-								<Link to="/" exact activeClassName="active">
-									<em>推荐</em>
-								</Link>
-							</li>
-							<li>
-								<Link to="/discover/toplist" activeClassName="active">
-									<em>排行榜</em>
-								</Link>
-							</li>
-							<li>
-								<Link to="/discover/playlist" activeClassName="active">
-									<em>歌单</em>
-								</Link>
-							</li>
-							<li>
-								<Link to="/discover/djradio" activeClassName="active">
-									<em>主播电台</em>
-								</Link>
-							</li>
-							<li>
-								<Link to="/discover/artist" activeClassName="active">
-									<em>歌手</em>
-								</Link>
-							</li>
-							<li>
-								<Link to="/discover/album" activeClassName="active">
-									<em>新碟上架</em>
-								</Link>
-							</li>
+							{
+								navConfig.map((i,index) =>
+									<li key={index}>
+										<Link to={i.path} exact={i.exact} activeClassName="active">
+											<em>{i.name}</em>
+										</Link>
+									</li>
+								)
+							}
 						</ul>
 					</div>
 				</div>
@@ -282,4 +278,10 @@ class Nav extends Component {
 	}
 }
 
-export default Header
+function select(state) {
+  return {
+    logBox:state.logBox
+  }
+}
+
+export default connect(select,undefined,undefined,{pure:false})(Header)

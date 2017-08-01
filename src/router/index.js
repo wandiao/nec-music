@@ -14,7 +14,8 @@ import DArtistRcmd from '../views/discover/artist/Recommend'
 import DArtistSigned from '../views/discover/artist/Signed'
 
 import DAlbum from '../views/discover/Album'
-import PlayList from '../views/playlist/PlayList'
+import PlayList from '../views/playlist/Index'
+import Song from '../views/song/Index'
 
 const history = createBrowserHistory();
 
@@ -71,6 +72,11 @@ const routes = [
 	{
 		path:'/playlist',
 		component:PlayList
+	},
+	//歌曲详情
+	{
+		path:'/song',
+		component:Song
 	}
 ]
 

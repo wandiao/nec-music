@@ -38,7 +38,8 @@
         z-index:15
       }
     }
-    img{
+
+    .ban-list,img{
     	display: block;
 	    width: 730px;
 	    height: 336px;
@@ -623,6 +624,12 @@
       margin: 0 auto;
       padding-left: 0;
     }
+    .ico{
+      padding-left: 8px;
+      line-height: 17px;
+      font-size: 10px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
   }
   td.rank{
     padding-top: 10px;
@@ -649,11 +656,6 @@
  * 歌单
  *
  */
- .u-btn-hot {
-  width: 93px;
-  height: 29px;
-  background-position: 0 0;
-}
 .u-btn-g {
   width: 75px;
   height: 26px;
@@ -719,6 +721,9 @@
     &.last{
       padding-bottom: 25px;
     }
+    span{
+      display: inline-block;
+    }
   }
   .u-icn{
     margin-right: 8px;
@@ -761,15 +766,19 @@
     background-position: 0 -845px;
   }
   .icon-play{
+    display: none;
     left: 94px;
     width: 28px;
     height: 28px;
     background-position: 0 -140px;
+    &:hover{
+      background-position: 0 -170px;
+    }
   }
   &:hover{
     .icon-play{
       display: block;
-      background-position: 0 -170px;
+      
     }
   }
 }
@@ -871,6 +880,17 @@
  * 主播电台
  *
  */
+ .u-icn-72, .u-icn-73, .u-icn-74 {
+  width: 6px;
+  height: 6px;
+  background-position: -74px -274px;
+}
+.u-icn-73 {
+  background-position: -74px -304px;
+}
+.u-icn-74 {
+  background-position: -74px -324px;
+}
 .m-radio{
   .rditype{
     margin-bottom: 20px;
@@ -903,6 +923,10 @@
       color: #888;
       background-image: url(../img/discover/radio_bg.png);
       background-repeat: no-repeat;
+      &:hover{
+        background-position: 0 0;
+        text-decoration: none;
+      }
       em{
         margin-top: -3px;
       }
@@ -990,6 +1014,31 @@
     }
     .tag{
       margin: 1px 0 0 10px;
+    }
+    .rank{
+      width: 47px;
+      text-align: center;
+      line-height: normal;
+      margin: 6px 0px 0px;
+      .red{
+        color: rgb(218, 69, 69);
+      }
+      em{
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+    }
+    .hot{
+      margin-top: 16px;
+    }
+  }
+  .toplist-r{
+    .cvr{
+      margin-left: 0px;
+    }
+    .cnt{
+      width: 208px;
     }
   }
   .rdimore{

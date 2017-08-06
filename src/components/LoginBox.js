@@ -6,7 +6,6 @@ class LoginBox extends Component {
 	render() {
 		const {logBox,dispatch} = this.props
 		let box = null;
-		console.log(logBox)
 		switch(logBox.name) {
 			case '登录':
 				box = <div className="lyct lyct-1">

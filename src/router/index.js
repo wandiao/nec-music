@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, HashRouter, Switch, Route, Redirect} from 'react-router-dom';
+import { BrowserRouter, HashRouter, Switch, Redirect} from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory'
 import ExtendRoute from '../components/ExtendRoute'
 import App from '../App'

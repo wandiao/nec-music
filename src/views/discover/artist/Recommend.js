@@ -1,7 +1,52 @@
 import React, { Component} from 'react';
+import * as api from '../../../api'
+import {Spin} from 'antd'
+import { Link } from 'react-router-dom';
 
 class Recommend extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			signedsingers:[],
+			singers:[]
+
+		}
+	}
+	componentDidMount() {
+		api.getArtistsList(5001,undefined,0,10).then(res => {
+			if(res.data.code == 200) {
+				// console.log(res.data)
+				this.setState({
+					signedsingers:res.data.artists
+				})
+			}
+		})
+		api.getTopArtists(0,100).then(res => {
+			if(res.data.code == 200) {
+				console.log(res.data)
+				this.setState({
+					singers:res.data.artists
+				})
+			}
+		})
+	}
 	render() {
+		const {signedsingers,singers} = this.state
+		let signedList,list;
+		if(!signedsingers.length) {
+			signedList = <div style={{height:'184px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			signedList = signedsingers.map((i,index) => 
+				<SingerItem singer={i} key={index} index={index} />
+			)
+		} 
+		if(!singers.length) {
+			list = <div style={{height:'184px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			list = singers.map((i,index) => 
+				<SingerItem singer={i} key={index} index={index} />
+			)
+		} 
 		return (
 			<div className="g-wrap">
 				<div className="u-title f-cb">
@@ -10,12 +55,7 @@ class Recommend extends Component {
 				</div>
 				<div className="m-sgerlist">
 					<div className="m-cvrlst m-cvrlst-5 f-cb">
-					{
-						Array(10).fill(1).map((i,index) => 
-							<SingerItem key={index} index={index} />
-						)
-					}
-						
+					{signedList}	
 					</div>
 				</div>
 				<div className="u-title f-cb">
@@ -23,11 +63,7 @@ class Recommend extends Component {
 				</div>
 				<div className="m-sgerlist">
 					<div className="m-cvrlst m-cvrlst-5 f-cb">
-					{
-						Array(50).fill(1).map((i,index) => 
-							<SingerItem key={index} index={index} />
-						)
-					}	
+					{list}	
 					</div>
 				</div>
 			</div>
@@ -40,26 +76,27 @@ class SingerItem extends Component {
 		super(props)
 	}
 	render() {
-		if(this.props.index < 10) {
+		const {singer,index} = this.props
+		if(index < 10) {
 			return (
-				<li className={this.props.index <5?null:'line'}>
+				<li className={index <5?null:'line'}>
 					<div className="u-cover u-cover-5">
-						<img src="http://p4.music.126.net/F9asgcj7C7qSl_je9XDvRw==/603631883675241.jpg" />
-						<a href="/artist?id=10559" className="msk" title="张惠妹的音乐"></a>
+						<img src={singer.img1v1Url} />
+						<Link to={`/artist?id=${singer.id}`} className="msk" title={`${singer.name}的音乐`}></Link>
 					</div>
 					<p>
-						<a href="/artist?id=10559" className="nm nm-icn f-thide s-fc0" title="张惠妹的音乐">张惠妹</a>
-						<a className="f-tdn" href="/user/home?id=29879272" title="张惠妹的个人主页">
+						<Link to={`/artist?id=${singer.id}`} className="nm nm-icn f-thide s-fc0" title={`${singer.name}的音乐`}>{singer.name}</Link>
+						{singer.accountId?<Link className="f-tdn" to={`/user/home?id=${singer.accountId}`} title={`${singer.name}的个人主页`}>
 							<i className="u-icn u-icn-5"></i>
-						</a>
+						</Link>:null}
 					</p>
 				</li>
 			)
 		}else{
 			return (
 				<li className="sml">
-					<a href=" /artist?id=6066" className="nm nm-icn f-thide s-fc0" title="杨宗纬的音乐">杨宗纬</a>&nbsp;
-					<a className="icn u-icn u-icn-5" href="/user/home?id=818067" title="杨宗纬的个人主页"></a>
+					<Link to={`/artist?id=${singer.id}`} className="nm nm-icn f-thide s-fc0" title={`${singer.name}的音乐`}>{singer.name}</Link>&nbsp;
+					{singer.accountId?<Link className="icn u-icn u-icn-5" to={`/user/home?id=${singer.accountId}`} title={`${singer.name}的个人主页`}></Link>:null}
 				</li>
 			)
 		}

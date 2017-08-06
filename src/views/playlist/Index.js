@@ -1,8 +1,103 @@
 import React, { Component} from 'react';
 import Comments from '../../components/Comments'
+import qs from 'query-string'
+import  * as api from '../../api';
+import {dateFormat} from '../../util/date'
+import {formatSongTime} from '../../util'
+import {Link} from 'react-router-dom'
+import {Spin} from 'antd'
 
+//歌单详情页面
 class PlayList extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			plDetail:null,
+			showMoreDesc:false,
+			commentData:null,
+			hotList:[]
+		}
+		this.choosePage = (page,pageSize,pos) => {
+			console.log(page-1)
+			const id = qs.parse(this.props.location.search).id;
+			api.getPlayListComment(id,page-1).then(res => {
+				if(res.data.code == 200) {
+					window.scrollTo.apply(null,pos)
+					this.setState({
+						commentData:res.data
+					})
+				}
+			})	
+		}
+	}
+	componentDidMount() {
+		const id = qs.parse(this.props.location.search).id;
+		if(!id){
+			return false;
+		}
+		api.getPlayListDetail(id).then(res => {
+			if(res.data.code == 200) {
+				this.setState({
+					plDetail:res.data.playlist
+				})
+			}
+		})
+		api.getPlayListComment(id).then(res => {
+			if(res.data.code == 200) {
+				this.setState({
+					commentData:res.data
+				})
+			}
+		})
+		api.getPlayList({
+			limit:5
+		}).then(res => {
+			if(res.data.code == 200) {
+				console.log(res)
+				this.setState({
+					hotList:res.data.playlists
+				})
+			}
+		})
+
+	}
   render() {
+  	const {plDetail,showMoreDesc,commentData,hotList} = this.state
+  	let hotListEl = null
+  	if(!plDetail){
+  		return <div className="g-bd4 clearfix">
+  						<div style={{height:(document.body.clientHeight-105)+'px'}} className="loading"><Spin tip="Loading..." /></div>
+  					</div>
+  	}
+  	if(!hotList.length) {
+  		hotListEl = null
+  	}else{
+  		hotListEl = <ul className="m-rctlist f-cb">
+			      			{
+			      				hotList.map((i,index) =>
+											<li key={index}>
+				      					<div className="cver u-cover u-cover-3">
+				      						<a href="">
+				      							<img src={i.coverImgUrl} />
+				      						</a>
+				      					</div>
+				      					<div className="info">
+				      						<p className="f-thide">
+				      							<Link to={`playlist?id=${i.id}`} className="sname f-fs1 s-fc0">{i.name}</Link>
+
+				      						</p>
+				      						<p>
+				      							<span className="by s-fc4">by</span>
+				      							<Link to={`/user/home?id=${i.creator.userId}`} className="nm nm f-thide s-fc3">{i.creator.nickname}</Link>
+				      							{i.creator.expertTags?<sup className="u-icn u-icn-84"></sup>:null}
+				      						</p>
+				      					</div>
+				      				</li>
+			      				)
+			      			}	
+		      			</ul>
+  	}
+
     return (
       <div className="g-bd4 clearfix">
       	<div className="g-mn4">
@@ -10,7 +105,7 @@ class PlayList extends Component {
       			<div className="g-wrap6">
       				<div className="m-info clearfix">
       					<div className="cover u-cover u-cover-dj">
-      						<img src="http://p3.music.126.net/r4Pz0IGT7TiSv_rITBm6dg==/109951162985249088.jpg?param=200y200" />
+      						<img src={plDetail.coverImgUrl} />
       						<span className="msk"></span>
       					</div>
       					<div className="cnt">
@@ -18,18 +113,18 @@ class PlayList extends Component {
       							<div className="hd clearfix">
       								<i className="f-fl u-icn u-icn-13"></i>
       								<div className="tit">
-      									<h2 className="f-ff2 f-brk">华语R&amp;B · 30°C的夏天需要点节奏</h2>
+      									<h2 className="f-ff2 f-brk">{plDetail.name}</h2>
       								</div>
       							</div>
       							<div className="user clearfix">
       								<a className="face">
-      									<img src="http://p1.music.126.net/Rjpe1fUw8cJsW-NSGKpF6w==/109951162864851765.jpg?param=40y40" />
+      									<img src={plDetail.creator.avatarUrl} />
       								</a>
       								<span className="name">
-      									<a href="/user/home?id=59291942" className="s-fc7">-武姜儿-</a>
+      									<a href="/user/home?id=59291942" className="s-fc7">{plDetail.creator.nickname}</a>
       								</span>
       								<sup className="u-icn u-icn-84 "></sup>
-      								<span className="time s-fc4">2017-07-21&nbsp;创建</span>
+      								<span className="time s-fc4">{dateFormat(plDetail.createTime,'yyyy-MM-dd')}&nbsp;创建</span>
       							</div>
       							<div className="btns clearfix">
       								<a href="" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
@@ -39,44 +134,63 @@ class PlayList extends Component {
       								</a>
       								<a href="" className="u-btni u-btni-add"></a>
       								<a href="" className="u-btni u-btni-fav ">
-      									<i>(2034)</i>
+      									<i>({plDetail.subscribedCount})</i>
       								</a>
       								<a href="" className="u-btni u-btni-share">
-      									<i>(14)</i>
+      									<i>({plDetail.shareCount})</i>
       								</a>
       								<a href="" className="u-btni u-btni-dl ">
       									<i>下载</i>
       								</a>
       								<a href="" className="u-btni u-btni-cmmt ">
-      									<i>(84)</i>
+      									<i>({plDetail.commentCount})</i>
       								</a>
       							</div>
       							<div className="tags clearfix">
       								<b>标签：</b>
       								{
-      									Array(3).fill(1).map((i,index) => 
-													<a key={index} className="u-tag">
-		      									<i>华语</i>
-		      								</a>
+      									plDetail.tags.map((tag,index) => 
+													<Link to={`/discover/playlist?cat=${tag}&order=hot`} key={index} className="u-tag">
+		      									<i>{tag}</i>
+		      								</Link>
       									)
       								}
       							</div>
-      							<p id="album-desc-more" className="intr f-brk">
+      							<p className="intr f-brk" style={{display:showMoreDesc?'none':'block'}}>
       								<b>介绍：</b>
-											在馥郁的季节 <br/>
-											因花落 因寂寞 因你的回眸 <br/>
-											而使我含泪唱出的 <br/>
-											不过是 一首无调的歌 <br/>
-											却在突然之间 <br/>
-											因幕起 因灯亮 因众人的鼓掌 <br/>
-											才发现 我的歌 <br/>
-											竟然 是这一剧中的辉煌<br/>
-											</p>
+											<span dangerouslySetInnerHTML={{__html:(plDetail.description.substring(0,98)+'...').replace(/\n/g,'<br />')}}></span>
+										</p>
+										<p className="intr f-brk" style={{display:showMoreDesc?'block':'none'}}>
+											<b>介绍：</b>
+											<span dangerouslySetInnerHTML={{__html:plDetail.description.replace(/\n/g,'<br />')}}></span>
+										</p>
+										<div className={plDetail.description.length<=98?'f-cb f-hide':'f-cb'}>
+											<a onClick={e => this.setState({showMoreDesc:!showMoreDesc})} href="javascript:;" className="s-fc7 f-fr">
+											{showMoreDesc?<span>收起 <i className="u-icn u-icn-70"></i></span>:<span>展开 <i className="u-icn u-icn-69"></i></span>}
+											</a>
+										</div>
       						</div>
       					</div>
       				</div>
-      				<SongTab />
-      				<Comments />
+      				<div className="n-songtb">
+								<div className="u-title u-title-1 f-cb">
+									<h3>
+										<span className="f-ff2">歌曲列表</span>
+									</h3>
+									<span className="sub s-fc3">
+										<span>{plDetail.tracks.length}</span>首歌
+									</span>
+									<div className="more s-fc3">
+										播放：<strong className="s-fc6">{plDetail.playCount}</strong>次
+									</div>
+									<div className="out out-list s-fc3">
+										<i className="u-icn u-icn-95 f-fl"></i>
+										<a href="javascript:;" className="des s-fc7">生成外链播放器</a>
+									</div>
+								</div>
+								<SongList tracks={plDetail.tracks}/>
+							</div>
+      				<Comments type="playlist" onChange={this.choosePage} id={plDetail.id} data={commentData} />
       			</div>
       		</div>
       	</div>
@@ -86,28 +200,7 @@ class PlayList extends Component {
       			<h3 className="u-hd3">
       				<span className="f-fl">热门歌单</span>
       			</h3>
-      			<ul className="m-rctlist f-cb">
-	      			{
-	      				Array(5).fill(1).map((i,index) =>
-									<li key={index}>
-		      					<div className="cver u-cover u-cover-3">
-		      						<a href="">
-		      							<img src="http://p1.music.126.net/c9uJ_08enpZHe6k4PN24kw==/19156791091005417.jpg?param=50y50" />
-		      						</a>
-		      					</div>
-		      					<div className="info">
-		      						<p className="f-thide">
-		      							<a href="" className="sname f-fs1 s-fc0">假装去过大不列颠</a>
-		      						</p>
-		      						<p>
-		      							<span className="by s-fc4">by</span>
-		      							<a className="nm nm f-thide s-fc3">Desperado石竹</a>
-		      						</p>
-		      					</div>
-		      				</li>
-	      				)
-	      			}	
-      			</ul>
+      			{hotListEl}
       			<div className="m-multi">
       				<h3 className="u-hd3">
 								<span className="f-fl">网易云音乐多端下载</span>
@@ -133,101 +226,93 @@ class PlayList extends Component {
 }
 
 //音乐列表
-class SongTab extends Component {
+class SongList extends Component {
 	render() {
-	return (
-		<div className="n-songtb">
-			<div className="u-title u-title-1 f-cb">
-				<h3>
-					<span className="f-ff2">歌曲列表</span>
-				</h3>
-				<span className="sub s-fc3">
-					<span>38</span>首歌
-				</span>
-				<div className="more s-fc3">
-					播放：<strong className="s-fc6">2363040</strong>次
-				</div>
-				<div className="out out-list s-fc3">
-					<i className="u-icn u-icn-95 f-fl"></i>
-					<a className="des s-fc7">生成外链播放器</a>
-				</div>
-			</div>
-			<div className="track-list">
-				<table className="m-table">
-					<thead>
-						<tr>
-							<th className="first w1">
-								<div className="wp"></div>
-							</th>
-							<th>
-								<div className="wp">歌曲标题</div>
-							</th>
-							<th className="w2">
-								<div className="wp">时长</div>
-							</th>
-							<th className="w3">
-								<div className="wp">歌手</div>
-							</th>
-							<th className="w4">
-								<div className="wp">专辑</div>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						{
-						Array(50).fill(1).map((i,index) => (
-							<tr key={index} className={index%2 == 0?'even':null}>
-								<td className="left">
-									<div className="hd">
-										<span className="ply"></span>
-										<span className="num">{index+1}</span>
-									</div>
-								</td>
-								<td>
-									<div className="clearfix">
-										<div className="tt">
-											<div className="ttc">
-												<div className="txt">
-													<a href="/song?id=25642889">
-														<b title="你和我">你和我</b>
-													</a>
-													<span title="电影《夏有乔木雅望天堂》推广曲" className="s-fc8"> - (电影《夏有乔木雅望天堂》推广曲)</span>
-													<span className="mv">mv</span>
+		const { tracks } = this.props
+		if(!tracks.length) {
+			return null
+		}
+		return (
+				<div className="track-list">
+					<table className="m-table">
+						<thead>
+							<tr>
+								<th className="first w1">
+									<div className="wp"></div>
+								</th>
+								<th>
+									<div className="wp">歌曲标题</div>
+								</th>
+								<th className="w2">
+									<div className="wp">时长</div>
+								</th>
+								<th className="w3">
+									<div className="wp">歌手</div>
+								</th>
+								<th className="w4">
+									<div className="wp">专辑</div>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							{
+							tracks.map((track,index) => (
+								<tr key={index} className={index%2 == 0?'even':null}>
+									<td className="left">
+										<div className="hd">
+											<span className="ply"></span>
+											<span className="num">{index+1}</span>
+										</div>
+									</td>
+									<td>
+										<div className="clearfix">
+											<div className="tt">
+												<div className="ttc">
+													<div className="txt">
+														<Link to={`/song?id=${track.id}`}>
+															<b title={track.name}>{track.name}</b>
+														</Link>
+														{track.alia.length?<span title={track.alia.join('/')} className="s-fc8"> - ({track.alia.join('/')})</span>:null}
+														{track.mv?<Link to={`/mv?id=${track.mv}`} className="mv">mv</Link>:null}
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-								</td>
-								<td className="s-fc3">
-									<span className="u-dur">04:38</span>
-									<div className="opt hshow">
-										<a href="" className="u-icn u-icn-81 icn-add"></a>
-										<span className="icn icn-fav"></span>
-										<span className="icn icn-share"></span>
-										<span className="icn icn-dl"></span>
-									</div>
-								</td>
-								<td>
-									<div className="text" title="王力宏">
-										<span title="王力宏">
-											<a className="" href="/artist?id=5346">王力宏</a>
-										</span>
-									</div>
-								</td>
-								<td>
-									<div className="text">
-										<a href="/album?id=2263149" title="不可思议">不可思议</a>
-									</div>
-								</td>
-							</tr>
-						))
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
-		)
-	}
+									</td>
+									<td className="s-fc3">
+										<span className="u-dur">{formatSongTime(track.dt/1000)}</span>
+										<div className="opt hshow">
+											<a href="javascript:;" className="u-icn u-icn-81 icn-add"></a>
+											<span className="icn icn-fav"></span>
+											<span className="icn icn-share"></span>
+											<span className="icn icn-dl"></span>
+										</div>
+									</td>
+									<td>
+										<div className="text" title={track.ar.map(i => i.name).join('/')}>
+											{
+												track.ar.map((i,index) => 
+													<span key={index}>
+														<Link className="" to={`/artist?id=${i.id}`}>{i.name}</Link>{index >= track.ar.length-1?null:'/'}
+													</span>
+												)
+											}
+											
+										</div>
+									</td>
+									<td>
+										<div className="text">
+											<a href={`/album?id=${track.al.id}`} title={track.al.name}>{track.al.name}</a>
+										</div>
+									</td>
+								</tr>
+							))
+							}
+						</tbody>
+					</table>
+				</div>
+			)
+		}
 }
 
 

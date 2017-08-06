@@ -500,7 +500,21 @@ a.s-fc12:hover {
   }
 }
 .u-txtwrap {
-  padding-right: 14px;
+  padding-right: 0px;
+}
+.u-rnk-up {
+  color: #ba2226;
+}
+.u-rnk {
+  line-height: normal;
+  font-size: 10px;
+  i{
+    margin: -1px 2px 0 0;
+    vertical-align: middle;
+  }
+}
+.u-rnk-dn {
+  color: #4abbeb;
 }
 /////////////////////////////////
 .u-cover .ply, .u-cover .icon-headset, .u-cover .icon-play, .u-face .msk, .n-note .head .msk, .icn-vip, .icn-daren, .u-checkbox {
@@ -509,6 +523,7 @@ a.s-fc12:hover {
 .u-icn, .u-title-1 .out .icon {
     background: url(../img/icon.png) no-repeat 0 9999px;
 }
+
 .u-slg, .u-slg2, .u-slg3, .u-blg, .u-mlg, .u-mlg2, .u-errlg {
   background: url(../img/logo.png) no-repeat 0 9999px;
 }
@@ -524,12 +539,38 @@ a.s-fc12:hover {
 .u-btn{
   background: url(../img/button.png) no-repeat 0 9999px;
 }
+.u-icn3, .u-hot, .u-hot i {
+    background: url(../img/table.png) no-repeat 0 9999px;
+}
 .u-btn{
   display: inline-block;
 }
 .u-slg, .u-slg2, .u-slg3, .u-blg, .u-mlg, .u-mlg2, .u-importlg, .u-errlg {
   display: inline-block;
   vertical-align: middle;
+}
+.u-hot {
+  display: block;
+  position: relative;
+  width: 100px;
+  background-position: 0 -240px;
+  line-height: normal;
+  i{
+    overflow: hidden;
+    padding: 0 4px;
+    background-position: right -318px;
+    box-sizing: content-box;
+    i{
+      margin-left: -4px;
+      padding: 0 0 0 4px;
+      background-position: 0 -304px;
+      box-sizing: content-box;
+    }
+  }
+}
+.u-hot, .u-hot i {
+  display: block;
+  height: 8px;
 }
 .u-cover{
   position: relative;
@@ -605,6 +646,15 @@ a.s-fc12:hover {
     background-position: -230px -380px;
     top: 3px;
     left: 3px;
+  }
+}
+.u-cover-tiny {
+  width: 40px;
+  height: 40px;
+  &:hover{
+    .ply{
+      display: block;
+    }
   }
 }
 .u-cover-tiny .ply {
@@ -1746,6 +1796,16 @@ a:hover .u-icn-86 {
     background-position: 0 -128px;
 }
 //////
+.u-btn-hot {
+  width: 93px;
+  height: 29px;
+  background-position: 0 0;
+}
+.u-btn-new {
+  width: 93px;
+  height: 29px;
+  background-position: 0 -32px;
+}
 .u-btn-1 {
   width: 46px;
   height: 25px;
@@ -2684,7 +2744,7 @@ a:hover .u-icn-86 {
     display: inline-block;
     position: relative;
     top: -1px;
-    height: 16px;
+    height: 18px;
     overflow: hidden;
     padding: 0 6px;
     border: 1px solid #999;

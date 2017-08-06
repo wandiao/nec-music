@@ -1,22 +1,12 @@
 import React, { Component} from 'react';
-import {
-  getBanner, 
-  getPersonalized, 
-  getRecDjprogram, 
-  getTopAlbum, 
-  getTopList, 
-  getTopArtists, 
-  getDjRecommend,
-  getPlayListDetail,
-  getMusicUrl,
-  getLyric
-} from '../../api';
-import {numberFormat,parseLrc} from '../../util';
+import  * as api from '../../api';
+import {numberFormat} from '../../util';
 import { connect } from 'react-redux';
-import { changePlayList, changeCurrMusic } from '../../store/actions'
+import { changePlayList,asyncChangeCurrMusic as ac } from '../../store/actions'
 import {chunk} from '../../util/array';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import {Spin} from 'antd'
 
 class Recommend extends Component {
   constructor(props) {
@@ -31,16 +21,8 @@ class Recommend extends Component {
     }    
   }
   componentDidMount() {
-    let playList = null;
-    if(localStorage.playList) {
-      playList = JSON.parse(localStorage.playList)
-      this.props.dispatch(changePlayList(playList))
-    }
-    if(localStorage.currMusic) {
-      this.props.dispatch(changeCurrMusic(JSON.parse(localStorage.currMusic)))
-    }
     //获取banner数据
-    getBanner().then(res => {
+    api.getBanner().then(res => {
       if(res.data.code == 200) {
         this.setState({
           banners:res.data.banners
@@ -48,7 +30,7 @@ class Recommend extends Component {
       }
     })
     //获取推荐歌单和电台数据
-    axios.all([getPersonalized(),getRecDjprogram()])
+    axios.all([api.getPersonalized(),api.getRecDjprogram()])
     .then(axios.spread((p,d) => {
       // console.log(p)
       if(p.data.code == 200 && d.data.code == 200){
@@ -63,7 +45,7 @@ class Recommend extends Component {
       }
     }))
     //获取新碟上架数据
-    getTopAlbum().then(res => {
+    api.getTopAlbum(undefined,0,10).then(res => {
       // console.log(res)
       if(res.data.code == 200) {
         let topAlbums = chunk(res.data.albums,5);
@@ -75,7 +57,7 @@ class Recommend extends Component {
       }
     })
     //获取排行榜数据
-    axios.all([getTopList(3),getTopList(0),getTopList(2)])
+    axios.all([api.getTopList(19723756),api.getTopList(3779629),api.getTopList(2884035)])
     .then(axios.spread((b,x,y) => {
       const topLists = [b.data.result,x.data.result,y.data.result];
       this.setState({
@@ -84,7 +66,7 @@ class Recommend extends Component {
     }))
 
     //获取入驻歌手
-    getTopArtists(0,5).then(res => {
+    api.getTopArtists(0,5).then(res => {
       if(res.data.code == 200) {
         this.setState({
           artists:res.data.artists
@@ -93,7 +75,7 @@ class Recommend extends Component {
     })
 
     //获取热门dj
-    getDjRecommend().then(res => {
+    api.getDjRecommend().then(res => {
       if(res.data.code === 200) {
         let djs = res.data.djRadios.slice(0,5).map(i => i.dj)
         this.setState({
@@ -169,7 +151,7 @@ class Banner extends Component {
     let {banners} = this.props;
     let bannerList = null;
     if(!banners.length) {
-      bannerList = <div />
+      bannerList = <div className="loading"><Spin tip="Loading..." /></div>
     }else{
       bannerList = banners.map((banner,index) =>(
               <a key={index} href={banner.url} className={'b-item '+ (index==currIndex?'active':'')}>
@@ -181,7 +163,7 @@ class Banner extends Component {
 			<div className="n-ban">
 				<div className="wrap">
 					<div className="ban pr" onMouseEnter={this.clear} onMouseLeave={e => {this.autoPlay()}}>
-            {bannerList}
+            <div className="ban-list">{bannerList}</div>
 						<a onClick={e => this.changeIndex(currIndex-1)} href="javascript:;" className="btnl">&gt;</a>
 						<a onClick={e => this.changeIndex(currIndex+1)} href="javascript:;" className="btnr">&lt;</a>
 						<div className="dots">
@@ -228,40 +210,27 @@ class MainCon extends Component {
 }
 
 //热门推荐
+const recCat = ['华语','流行','摇滚','民谣','电子']
 class HotRcmd extends Component {
   constructor(props) {
     super(props)
     const {dispatch} = this.props
     this.changePlaylist = (index) => {
       let playList = null;
-      getPlayListDetail(index).then(res => {
+      api.getPlayListDetail(index).then(res => {
         if(res.data.code == 200) {
+
           playList = res.data.playlist
           if(!playList.tracks.length) {
             return false;
           }
-          dispatch(changePlayList(playList))
-          return getMusicUrl(playList.tracks[0].id)
-        }
-      })
-      .then(res => {
-        if(res.data.code == 200) {
-          const url = res.data.data[0].url;
-          dispatch(changeCurrMusic({
-            index:0,
-            info:playList.tracks[0],
-            url:url,
-            isPlay:true
-          }))
-          return getLyric(playList.tracks[0].id)
-        }
-      })
-      .then(res => {
-        if(res.data.code == 200) {
-          const lrc = res.data.lrc?parseLrc(res.data.lrc.lyric):[]
-          dispatch(changeCurrMusic({
-            lrc:lrc
-          }))
+          var tracks = playList.tracks.map(i => {
+            i.source = `/playlist?id=${playList.id}`
+            return i;
+          })
+          console.log(playList)
+          dispatch(changePlayList(tracks))
+          dispatch(ac(0,playList.tracks[0].id,true))
         }
       })
       .catch(err => {
@@ -275,14 +244,14 @@ class HotRcmd extends Component {
     const {hotRecommends} = this.props
     let hotlist = null
     if(!hotRecommends.length) {
-      hotlist = <div />
+      hotlist = <div style={{height:'200px'}} className="loading"><Spin tip="Loading..." /></div>
     }else{
       hotlist = hotRecommends.map((item,index) => 
         <li key={item.id}>
           <div className="u-cover u-cover-1">
             <img src={item.picUrl} />
             {item.highQuality?<i className="u-jp u-icn2 u-icn2-jp3"></i>:''}
-            <a title={item.name} href={item.program?`/dj?id=${item.id}`:`/playlist?id=${item.id}`} className="msk"></a>
+            <Link title={item.name} to={item.program?`/dj?id=${item.id}`:`/playlist?id=${item.id}`} className="msk"></Link>
             <div className="bottom">
               <a href="javascript:;" onClick={e => this.changePlaylist(item.id)} className="icon-play fr"></a>
               <span className="icon-headset"></span>
@@ -295,7 +264,6 @@ class HotRcmd extends Component {
         </li>
       ) 
     }
-    const recCat = ['华语','流行','摇滚','民谣','电子']
     return (
       <div className="n-rcmd">
         <div className="v-hd2">
@@ -370,7 +338,7 @@ class Disk extends Component {
     const {currIndex,changing} = this.state
     let albumList = null
     if(!topAlbums.length) {
-      albumList = <div />
+      albumList = <div className="loading"><Spin tip="Loading..." /></div>
     }else{
       albumList = topAlbums.map((group,index) => (
         <ul key={index} style={{left:index == currIndex?'0':index<currIndex?'-645px':'645px',transition:changing?'left .5s':'none'}}>
@@ -425,7 +393,7 @@ class Bill extends Component {
     const {topLists} = this.props
     let billList = null;
     if(!topLists.length) {
-      billList = <div></div>
+      billList = <div className="loading"><Spin tip="Loading..." /></div>
     }else{
       billList = topLists.map((topList,index) => 
         <dl className="blk" key={index}>

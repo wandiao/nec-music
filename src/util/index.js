@@ -20,7 +20,6 @@ export function numberFormat(num) {
  * @returns {String} 返回格式化之后的时间字符串.
  */
 export function formatSongTime(time) {
-  var time = time
   var minute = Math.floor(time / 60);
   var second = Math.floor(time - (minute * 60))
   if(minute < 10) {
@@ -78,4 +77,22 @@ export function getUrlParam(name) {
   var r = window.location.search.substr(1).match(reg); //匹配目标参数
   if(r != null) return unescape(r[2]);
   return null; //返回参数值
+}
+
+/**
+ *函数去抖
+ *@param {function} fn 需要执行的函数
+ *@param {number} delay 延迟时间
+ *@return {function} 调用函数
+ *
+ */
+export function debounce(fn,delay) {
+  var last
+  return function(){
+    var ctx = this, args = arguments
+    clearTimeout(last)
+    last = setTimeout(function(){
+        fn.apply(ctx, args)
+    }, delay)
+  }
 }

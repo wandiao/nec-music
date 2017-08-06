@@ -1,8 +1,7 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
-import {changeCurrMusic } from '../store/actions'
-import {getMusicUrl,getLyric} from '../api'
-import {formatSongTime,parseLrc} from '../util'
+import {changeCurrMusic,changePlayList,asyncChangeCurrMusic as ac } from '../store/actions'
+import {formatSongTime} from '../util'
 import {initScroll} from '../util/dom'
 import { Slider } from 'antd';
 
@@ -66,44 +65,26 @@ class PlayBar extends Component {
       switch(type){
         case 'prev':
           if(index <= 0) {
-            index = playList.tracks.length-1
+            index = playList.length-1
           }else{
             index-=1
           }
           break;
         case 'next':
-          if(index >= playList.tracks.length-1) {
+          if(index >= playList.length-1) {
             index = 0
           }else{
             index+=1
           }
           break;
         case 'random':
-          index = Math.floor(Math.random()*playList.tracks.length)
+          index = Math.floor(Math.random()*playList.length)
           break;
         default:
           index = type;
       }
-      const id = playList.tracks[index].id;
-      getMusicUrl(id).then(res => {
-        if(res.data.code == 200) {
-          const url = res.data.data[0].url;
-          dispatch(changeCurrMusic({
-            index:index,
-            info:playList.tracks[index],
-            url:url,
-            isPlay:currMusic.isPlay
-          }))
-          return getLyric(id)
-        }
-      }).then(res => {
-        if(res.data.code == 200) {
-          const lrc = res.data.lrc?parseLrc(res.data.lrc.lyric):[]
-          dispatch(changeCurrMusic({
-            lrc:lrc
-          }))
-        }
-      })
+      const id = playList[index].id;
+      dispatch(ac(index,id,currMusic.isPlay))
     }
     //修改播放时间
     this.changePlayTime = (value) => {
@@ -141,6 +122,16 @@ class PlayBar extends Component {
     }
   }
   componentDidMount() {
+    let playList,currMusic;
+    if(localStorage.playList) {
+      playList = JSON.parse(localStorage.playList)
+      this.props.dispatch(changePlayList(playList))
+    }
+    if(localStorage.currMusic) {
+      currMusic = JSON.parse(localStorage.currMusic)
+      const id = currMusic.info.id;
+      this.props.dispatch(ac(currMusic.index,id,false))
+    }
     this.player.oncanplay = () => {
       const {currMusic} = this.props
       if(currMusic.isPlay) {
@@ -202,7 +193,7 @@ class PlayBar extends Component {
                                 <a className="" href="/artist?id=5346">{currMusic.info.ar.map(i => i.name).join('/')}</a>
                               </span>
                             </span>
-                            <a href="javascript:;" className="src"></a>
+                            <a href={currMusic.info.source} className="src"></a>
                           </div>:null
                 
                 }
@@ -230,7 +221,7 @@ class PlayBar extends Component {
               <a title={modes[currModeIndex].label} onClick={e => this.changeMode(currModeIndex+1)} href="javascript:;" className={`icn ${modes[currModeIndex].icon}`}></a>
               <span className="add pr" onClick={this.toggleList}>
                 <span className="tip" style={{display:'none'}}>已添加到播放列表</span>
-                <a href="javascript:;" className="icn icn-list s-fc3">{playList.tracks.length}</a>
+                <a href="javascript:;" className="icn icn-list s-fc3">{playList.length}</a>
               </span>
               <div className="tip tip-1" style={{display: this.state.showTip?'block':'none'}}>{modes[currModeIndex].label}</div>
             </div>
@@ -269,7 +260,7 @@ class ListTab extends Component {
     })
   }
   componentDidUpdate(pp,ps) {
-    if(pp.playList.tracks.length) {
+    if(pp.playList.length) {
       const drag = document.getElementById('songScroll')
       const out = document.getElementById('slistWrapper') 
       const con = document.getElementById('slist')
@@ -282,15 +273,16 @@ class ListTab extends Component {
       const con = document.getElementById('lrcList')
       const box = document.getElementById('lbox')
       initScroll(out,con,box,drag)
-      drag.style.top = ((ps.currWordIndex*32/con.clientHeight)*box.clientHeight) + 'px'
+      // drag.style.top = ((ps.currWordIndex*32/con.clientHeight)*box.clientHeight) + 'px'
 
     }
   }
   render() {
     const {show,playList,currIndex,currMusic} = this.props
     const lrclist = currMusic.lrc
+
     let playListCon = null;
-    if(!playList.tracks.length) {
+    if(!playList.length) {
       playListCon = <div className="nocnt">
                       <i className="ico ico-face"></i> 
                         你还没有添加任何歌曲<br/>去首页
@@ -302,7 +294,7 @@ class ListTab extends Component {
     }else{
       playListCon = <ul className="clearfix pa" id="slist">
                     {
-                      playList.tracks.map((item,index) =>(
+                      playList.map((item,index) =>(
                       <li onClick={e => this.changeSong(e,index)} key={item.id} className={index==currIndex?'active':null}>
                         <div className="col col-1">
                           <div className="playicn"></div>
@@ -331,7 +323,7 @@ class ListTab extends Component {
                         </div>
                         <div className="col col-5">{formatSongTime(item.dt/1000)}</div>
                         <div className="col col-6">
-                          <a href={`/playlist?id=${playList.id}`} className="ico ico-src" title="来自歌单">来源</a>
+                          <a href={item.source} className="ico ico-src" title="来自歌单">来源</a>
                         </div>
                       </li>
                       ))
@@ -342,7 +334,7 @@ class ListTab extends Component {
       <div className="list" style={{display:show?'block':'none'}}>
         <div className="listhd">
           <div className="listhdc">
-            <h4>播放列表（{playList.tracks.length}）</h4>
+            <h4>播放列表（{playList.length}）</h4>
             <a href="javascript:;" className="addall">
               <span className="ico ico-add"></span> 收藏全部 
             </a>

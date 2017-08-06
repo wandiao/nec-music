@@ -1,9 +1,7 @@
 import { CHANGE_PLAY_LIST, CHANGE_CURR_MUSIC,CHOOSE_BOX } from './actions'
 
 const initState = {
-  playList:{//播放列表
-    tracks:[]
-  },
+  playList:[],//播放列表
   currMusic:{//当前音乐
     index:0,
     info:null,
@@ -20,8 +18,8 @@ const initState = {
 function playList(state=initState.playList,action) {
   switch(action.type) {
     case CHANGE_PLAY_LIST:
-      localStorage.playList = JSON.stringify(action.obj)
-      return action.obj
+      localStorage.playList = JSON.stringify(action.list)
+      return action.list
     default:
       return state;
   }
@@ -30,12 +28,13 @@ function playList(state=initState.playList,action) {
 function currMusic(state=initState.currMusic,action) {
   switch(action.type) {
     case CHANGE_CURR_MUSIC:
+      const index = action.index === 0 ? 0 : action.index || state.index
       let music = {
-        index:action.index || state.index,
+        index:action.index || index,
         info:action.info || state.info,
         url:action.url || state.url,
         isPlay:false,
-        lrc:action.lrc || state.lrc
+        lrc:action.lrc || state.lrc,
       }
       localStorage.currMusic = JSON.stringify(music)
       const isPlay = action.isPlay === false ? false : action.isPlay || state.isPlay

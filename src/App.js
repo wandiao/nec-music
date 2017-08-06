@@ -3,10 +3,12 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import PlayBar from './components/PlayBar'
 import LoginBox from './components/LoginBox'
+import { BackTop } from 'antd';
 
 class App extends Component {
-
+  
   render() {
+    window.scrollTo(0,0);
     return (
       <div>
         <Header />
@@ -14,6 +16,7 @@ class App extends Component {
         <Footer/>
         <PlayBar/>
         <LoginBox />
+        <BackTop />
       </div>
     )
   }

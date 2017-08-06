@@ -1,3 +1,12 @@
+/**
+ * 自定义滚动条
+ *
+ * @param {HTMLElement} out 滚动的容器.
+ * @param {HTMLElement} con 滚动的内容.
+ * @param {HTMLElement} box 滚动条容器.
+ * @param {HTMLElement} drag 滚动条按钮.
+ * @returns
+ */
 export function initScroll(out,con,box,drag) {
 	var heightPercen = (out.clientHeight/con.clientHeight).toFixed(2)
 	if(heightPercen >= 1) {
@@ -99,4 +108,20 @@ export function initScroll(out,con,box,drag) {
       };
       }
   };
+}
+
+/**
+ * 获取元素在文档中的位置
+ *
+ * @param {HTMLElement} elem 元素.
+ * @returns {Array} 返回元素的位置信息
+ */
+export function pos(elem) {
+    var x = elem.offsetLeft,  y = elem.offsetTop;
+    while (elem.offsetParent) {
+        elem = elem.offsetParent
+        x += elem.offsetLeft;
+        y += elem.offsetTop;
+    }
+    return [x, y];
 }

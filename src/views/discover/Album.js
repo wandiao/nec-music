@@ -1,9 +1,111 @@
 import React, { Component} from 'react';
 import { Pagination } from 'antd';
+import * as api from '../../api'
+import {Link} from 'react-router-dom'
+import qs from 'query-string'
+import {Spin} from 'antd'
 
 //新碟上架
 class Album extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hotAlbumList:[],
+      albumList:[],
+      total:0,
+      page:1,
+      area:'ALL'
+
+    }
+    this.choosePage = (page,pageSize) => {
+      const area = qs.parse(this.props.location.search).area;
+      const query = qs.stringify({area,page})
+      this.props.history.push({
+        path:'/discover/playlist',
+        search:`?${query}`
+      })
+    }
+  }
+  componentDidMount() {
+     const query = qs.parse(this.props.location.search);
+     let area = query.area;
+     let page = query.page
+     if(!area) {
+      area = 'ALL'
+     }
+     if(!page){
+      page = 1
+     }
+     this.setState({
+      page:page,
+      area:area,
+      albumList:[]
+     })
+     api.getHotAlbum().then(res => {
+      if(res.data.code == 200) {
+        this.setState({
+          hotAlbumList:res.data.albums.slice(0,10)
+        })
+      }
+     })
+      api.getTopAlbum(area,page-1).then(res => {
+        if(res.data.code == 200) {
+          this.setState({
+            albumList:res.data.albums,
+            total:res.data.total
+          })
+        }
+      })
+  }
+  componentWillReceiveProps(np) {
+    const query = qs.parse(np.location.search);
+    let area = query.area;
+    let page = query.page
+    if(!area) {
+    area = 'ALL'
+    }
+    if(!page){
+      page = 1
+    }
+    this.setState({
+      page:page,
+      area:area,
+      albumList:[]
+    })
+    api.getTopAlbum(area,page-1).then(res => {
+      if(res.data.code == 200) {
+        this.setState({
+          albumList:res.data.albums,
+          total:res.data.total
+        })
+      }
+    })
+  }
   render() {
+    const {hotAlbumList,albumList,total,page} = this.state;
+    let hotAlbums,albums;
+    if(!hotAlbumList.length) {
+      hotAlbums = <div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>
+    }else{
+      hotAlbums = <ul className="m-cvrlst m-cvrlst-alb2 f-cb">
+              {
+                hotAlbumList.map((i,index) => 
+                  <AlbumItem key={index} album={i} />
+                )
+              }
+            </ul>
+    }
+    if(!albumList.length) {
+      albums = <div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>
+    }else{
+      albums = <ul className="m-cvrlst m-cvrlst-alb2 f-cb">
+              {
+                albumList.map((i,index) => 
+                  <AlbumItem key={index} album={i} />
+                )
+              }
+            </ul>
+    }
     return (
       <div className="g-bd">
       	<div className="g-wrap n-alblist f-pr">
@@ -12,68 +114,55 @@ class Album extends Component {
       				<span className="f-ff2">热门新碟</span>
       			</h3>
       		</div>
-    			<ul className="m-cvrlst m-cvrlst-alb2 f-cb">
-    				{
-    				Array(10).fill(1).map((i,index) => 
-							<li key={index}>
-								<div className="u-cover u-cover-alb2">
-									<img src="http://p3.music.126.net/vsjj0af7iWFDZaRdImQbpg==/19085322835194337.jpg?param=130y130" />
-									<a href="" className="msk"></a>
-									<a href="" className="icon-play f-fr"></a>
-								</div>
-								<p className="dec">
-									<a className="tit f-thide s-fc0" href="/album?id=35835442" title="Super Tizzy">Super Tizzy</a>
-								</p>
-								<p className="f-thide">
-									<span className="nm f-thide" title="Tizzy T">
-										<a className="s-fc3" href="/artist?id=1204010">Tizzy T</a>
-									</span>
-								</p>
-							</li>
-    				)
-    				}
-    			</ul>
-    			<div className="u-title f-cb">
+    			{hotAlbums}
+    			<div className="u-title f-cb" id="allAlbum">
     				<h3><span className="f-ff2">全部新碟</span></h3>
     				<div className="tab">
-    					<a href="/discover/album?area=ALL" className="s-fc6">全部</a>
+    					<Link to="/discover/album?area=ALL" className="s-fc6">全部</Link>
     					<span className="line">|</span>
-    					<a href="/discover/album?area=ZH" className="s-fc6">华语</a>
+    					<Link to="/discover/album?area=ZH" className="s-fc6">华语</Link>
     					<span className="line">|</span>
-    					<a href="/discover/album?area=EA" className="s-fc6">欧美</a>
+    					<Link to="/discover/album?area=EA" className="s-fc6">欧美</Link>
     					<span className="line">|</span>
-    					<a href="/discover/album?area=KR" className="s-fc6">韩国</a>
+    					<Link to="/discover/album?area=KR" className="s-fc6">韩国</Link>
     					<span className="line">|</span>
-    					<a href="/discover/album?area=JP" className="s-fc6">日本</a>
+    					<Link to="/discover/album?area=JP" className="s-fc6">日本</Link>
     				</div>
     			</div>
-    			<ul className="m-cvrlst m-cvrlst-alb2 f-cb">
-    				{
-    				Array(20).fill(1).map((i,index) => 
-							<li key={index}>
-								<div className="u-cover u-cover-alb2">
-									<img src="http://p3.music.126.net/vsjj0af7iWFDZaRdImQbpg==/19085322835194337.jpg?param=130y130" />
-									<a href="" className="msk"></a>
-									<a href="" className="icon-play f-fr"></a>
-								</div>
-								<p className="dec">
-									<a className="tit f-thide s-fc0" href="/album?id=35835442" title="Super Tizzy">Super Tizzy</a>
-								</p>
-								<p className="f-thide">
-									<span className="nm f-thide" title="Tizzy T">
-										<a className="s-fc3" href="/artist?id=1204010">Tizzy T</a>
-									</span>
-								</p>
-							</li>
-    				)
-    				}
-    			</ul>
+    			{albums}
     			<div className="u-page">
-						<Pagination defaultCurrent={1} total={50} />
+						<Pagination onChange={this.choosePage} current={Number(page)} pageSize={35} total={total} />
 					</div>
       	</div>
       </div>
     );
+  }
+}
+
+class AlbumItem extends Component {
+  render() {
+    const {album} = this.props
+    return (
+      <li>
+        <div className="u-cover u-cover-alb2">
+          <img src={album.picUrl} />
+          <Link to={`/album?id=${album.id}`} className="msk"></Link>
+          <a href="javascript:;" className="icon-play f-fr"></a>
+        </div>
+        <p className="dec">
+          <Link className="tit f-thide s-fc0" to={`/album?id=${album.id}`} title={album.name}>{album.name}</Link>
+        </p>
+        <p className="f-thide">
+          {album.artists.map((i,index) =>
+            <span key={index} className="nm f-thide" title={i.name}>
+              <Link className="s-fc3" to={`/artist?id=${i.id}`}>{i.name}</Link>
+              {index<album.artists.length-1?'/':null}
+            </span>
+          )}
+          
+        </p>
+      </li>
+    )
   }
 }
 

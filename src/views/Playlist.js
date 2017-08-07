@@ -1,9 +1,9 @@
 import React, { Component} from 'react';
-import Comments from '../../components/Comments'
+import Comments from '../components/Comments'
 import qs from 'query-string'
-import  * as api from '../../api';
-import {dateFormat} from '../../util/date'
-import {formatSongTime} from '../../util'
+import  * as api from '../api';
+import {dateFormat} from '../util/date'
+import {formatSongTime} from '../util'
 import {Link} from 'react-router-dom'
 import {Spin} from 'antd'
 

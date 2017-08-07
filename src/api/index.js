@@ -28,6 +28,18 @@ export const getTopProgram = (offset=0,limit=10) => axios.get('program/toplist',
 	}
 })
 
+//获取节目详情
+export const getDjProgramDetail = id => axios.get(`dj/program/detail?id=${id}`);
+
+//获取节目评论
+export const getDjComment = (id,offset=0,limit=20) => axios.get('comment/dj',{
+	params:{
+		id,
+		offset:offset*limit,
+		limit
+	}
+})
+
 //新碟上架
 export const getTopAlbum = (area,offset=0,limit=35) => axios.get('top/album',{
 	params:{
@@ -142,6 +154,15 @@ export const getDjRecommendByCate = (type,offset=0,limit=4) => axios.get('dj/rec
 		type,
 		offset,
 		limit
+	}
+})
+
+//获取电台节目列表
+export const getDjPrograms = (rid,offset=0,limit=5) => axios.get('dj/program',{
+	params:{
+		rid,
+		offset:offset*limit,
+		limit,
 	}
 })
 

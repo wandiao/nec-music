@@ -1,11 +1,11 @@
 import React, { Component} from 'react';
-import Comments from '../../components/Comments'
-import * as api from '../../api'
+import Comments from '../components/Comments'
+import * as api from '../api'
 import qs from 'query-string'
 import {Spin} from 'antd'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
-import {parseLrc} from '../../util'
+import {parseLrc} from '../util'
 
 class Song extends Component {
 	constructor(props) {

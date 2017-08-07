@@ -3,10 +3,99 @@ import Comments from '../components/Comments'
 import {Link} from 'react-router-dom'
 import {Spin} from 'antd'
 import {dateFormat} from '../util/date'
-import {formatSongTime} from '../util'
+import * as api from '../api'
+import qs from 'query-string'
 
+function formatSongTime(time) {
+  var minute = Math.floor(time / 60);
+  var second = Math.floor(time - (minute * 60))
+  time = minute + "分" + second + '秒'
+  return time
+}
 class Program extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			program:null,
+			showList:true,
+			commentData:null,
+			otherPrograms:[]
+		}
+		this.toggleShowList = () => {
+			this.setState(ps => {
+				return {
+					showList:!ps.showList
+				}
+			})
+		}
+		this.choosePage = (page,pageSize,pos) => {
+			console.log(page-1)
+			const id = qs.parse(this.props.location.search).id;
+			api.getDjComment(id,page-1).then(res => {
+				if(res.data.code == 200) {
+					window.scrollTo.apply(null,pos)
+					this.setState({
+						commentData:res.data
+					})
+				}
+			})	
+		}
+	}
+	componentDidMount() {
+		const id = qs.parse(this.props.location.search).id
+		api.getDjProgramDetail(id).then(res =>{
+			console.log(res.data)
+			if(res.data.code == 200) {
+				this.setState({
+					program:res.data.program
+				})
+				const rid = res.data.program.radio.id
+				return api.getDjPrograms(rid,0,6)
+			}
+		})
+		.then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					otherPrograms:res.data.programs.slice(1)
+				})
+			}
+		})
+		api.getDjComment(id).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					commentData:res.data
+				})
+			} 
+		})
+	}
 	render() {
+		const {program,showList,commentData,otherPrograms} = this.state;
+		let otherList = null
+		if(!program) {
+			return <div className="g-bd4 clearfix">
+  						<div style={{height:(document.body.clientHeight-105)+'px'}} className="loading"><Spin tip="Loading..." /></div>
+  					</div>
+		}
+		if(!otherPrograms.length) {
+			otherList = <div style={{height:'200px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			otherList = otherPrograms.map((i,index) =>
+				<li key={index}>
+					<div className="cver u-cover u-cover-3">
+						<Link to={`/program?id=${i.id}`}>
+							<img src={i.coverUrl} />
+						</Link>
+					</div>
+					<div className="info">
+						<p className="f-thide"><Link className="sname f-fs1 s-fc0" to={`/program?id=${i.id}`} title={i.name}>{i.name}</Link></p>
+						<p><span className="by s-fc4">Vol.{i.serialNum}</span></p>
+					</div>
+				</li>
+			)
+		}
+
 		return (
 		<div className="g-bd4 f-cb">
 			<div className="g-mn4">
@@ -14,7 +103,7 @@ class Program extends Component {
 					<div className="g-wrap6">
 						<div className="m-info m-info-program f-cb">
 							<div className="cover u-cover u-cover-program">
-								<img src="http://p1.music.126.net/2kek-rvQ7r1cRGtPzmwp1Q==/18861022463151838.jpg?param=140y140" />
+								<img src={program.coverUrl} />
 							</div>
 							<div className="cnt">
 								<div className="cntc">
@@ -22,15 +111,15 @@ class Program extends Component {
 										<div className="hd f-cb">
 											<i className="f-fl u-icn2 u-icn2-7"></i>
 											<div className="tit tit3">
-												<h2 className="f-ff2">车窗外的风景</h2>
+												<h2 className="f-ff2">{program.name}</h2>
 											</div>
 										</div>
 										<div className="rdiname">
 											<i className="icon u-icn2 u-icn2-8 f-fl"></i>
-											<a title="王东电台" href="/djradio?id=12" className="f-fl f-fs2 f-ff2 s-fc3">王东电台</a>
+											<Link title={program.radio.name} to={`/djradio?id=${program.radio.id}`} className="f-fl f-fs2 f-ff2 s-fc3">{program.radio.name}</Link>
 											<span>
-												<a href="" className="u-btni u-btni-dy">
-													<i><em className="u-icn2 u-icn2-dy"></em>订阅(90441)</i>
+												<a href="javascript:;" className="u-btni u-btni-dy">
+													<i><em className="u-icn2 u-icn2-dy"></em>订阅({program.radio.subCount})</i>
 												</a>
 											</span>
 										</div>
@@ -40,19 +129,19 @@ class Program extends Component {
 						</div>
 						<div className="m-prointr">
 							<div className="btns f-cb">
-								<a href="" className="u-btni u-btni-play">
-									<i>播放 36分13秒</i>
+								<a href="javascript:;" className="u-btni u-btni-play">
+									<i>播放 {formatSongTime(program.duration/1000)}</i>
 								</a>
-								<a href="" className="u-btn2 u-btn2-1 u-btn2-icn">
-									<i><em className="icn icn-praise"></em><span className="f-fl">(221)</span></i>
+								<a href="javascript:;"  className="u-btn2 u-btn2-1 u-btn2-icn">
+									<i><em className="icn icn-praise"></em><span className="f-fl">({program.likedCount})</span></i>
 								</a>
-								<a href="" className="u-btni u-btni-cmmt">
-									<i>(77)</i>
+								<a href="javascript:;"  className="u-btni u-btni-cmmt">
+									<i>({program.commentCount})</i>
 								</a>
-								<a href="" className="u-btni u-btni-share">
-									<i>(26)</i>
+								<a href="javascript:;"  className="u-btni u-btni-share">
+									<i>({program.shareCount})</i>
 								</a>
-								<a href="" className="u-btni u-btni-dl">
+								<a href="javascript:;" className="u-btni u-btni-dl">
 									<i>下载</i>
 								</a>
 								<span className="u-outlink">
@@ -61,33 +150,33 @@ class Program extends Component {
 								</span>
 							</div>
 							<div className="sub">
-								<a href="/discover/djradio/category?id=2" className="cat u-type u-type-red">音乐故事</a>
+								<Link to={`/discover/djradio/category?id=${program.radio.categoryId}`} className="cat u-type u-type-red">{program.radio.category}</Link>
 								<strong className="f-fs1">
-									<span className="f-thide f-ib f-vam" title="王东电台">王东电台</span> 第157期
+									<span className="f-thide f-ib f-vam" title={program.radio.name}>{program.radio.name}</span> 第{program.serialNum}期
 								</strong>
-								<span className="s-fc4 sep">2017-08-05 创建</span>
-								<span className="sep s-fc4">播放：<em id="play-count" className="f-fw1 s-fc6">76442</em>次</span>
+								<span className="s-fc4 sep">{dateFormat(program.createTime,'yyyy-MM-dd')} 创建</span>
+								<span className="sep s-fc4">播放：<em id="play-count" className="f-fw1 s-fc6">{program.listenerCount}</em>次</span>
 							</div>
 							<p className="s-fc3">
-								介绍： 车启动了，窗外的一切便有了生命。欢迎收听#王东电台#——车窗外的风景……（喜欢就请你转发，手机收听，点一下可见歌单。）
+								介绍： {program.description}
 							</p>
 							<p className="s-fc3 f-hide">
-								介绍： 车启动了，窗外的一切便有了生命。欢迎收听#王东电台#——车窗外的风景……（喜欢就请你转发，手机收听，点一下可见歌单。）
+								介绍： {program.description}
 							</p>
 						</div>
 						<div className="n-songtb">
 							<div className="prohead">
-								<a href="" className="open s-fc3">
-									收起<i className="icn u-icn2 u-icn2-9"></i>
+								<a onClick={this.toggleShowList} href="javascript:;" className={showList?'open s-fc3':'open-close open sfc3'}>
+									{showList?'收起':'展开'}<i className="icn u-icn2 u-icn2-9"></i>
 								</a>
 								<div className="total">
 									<strong className="f-fw1">节目包含歌曲列表</strong>
-									<span className="s-fc3">（8首歌）</span>
+									<span className="s-fc3">（{program.songs.length}首歌）</span>
 								</div>
 							</div>
-							<SongList tracks={[]}/>
+							<SongList show={showList} tracks={program.songs}/>
 						</div>
-						<Comments />
+						<Comments onChange={this.choosePage} data={commentData} />
 					</div>
 				</div>
 			</div>
@@ -95,23 +184,11 @@ class Program extends Component {
 				<div className="g-wrap7">
 					<div className="m-sidead f-hide"></div>
 					<h3 className="u-hd3">
-						<span className="f-fl"><a href="/djradio?id=12">更多节目</a></span>
-						<a href="/djradio?id=12" className="more f-ff1 s-fc3">全部&gt;</a>
+						<span className="f-fl"><Link to={`/djradio?id=${program.radio.id}`}>更多节目</Link></span>
+						<Link to={`/djradio?id=${program.radio.id}`} className="more f-ff1 s-fc3">全部&gt;</Link>
 					</h3>
 					<ul className="m-rctlist f-cb">
-						{Array(5).fill(1).map((i,index) =>
-							<li key={index}>
-								<div className="cver u-cover u-cover-3">
-									<a href="/program?id=908369264">
-										<img src="http://p1.music.126.net/l11UW4HJM7nDKw3VhkBNlQ==/19140298416592852.jpg?param=50y50" />
-									</a>
-								</div>
-								<div className="info">
-									<p className="f-thide"><a className="sname f-fs1 s-fc0" href="/program?id=908369264" title="夏日傍晚的沙滩Party">夏日傍晚的沙滩Party</a></p>
-									<p><span className="by s-fc4">Vol.156</span></p>
-								</div>
-							</li>
-						)}
+					{otherList}
 					</ul>
 					<div className="m-multi">
       				<h3 className="u-hd3">
@@ -140,32 +217,13 @@ class Program extends Component {
 //音乐列表
 class SongList extends Component {
 	render() {
-		const { tracks } = this.props
+		const { tracks,show } = this.props
 		if(!tracks.length) {
 			return null
 		}
 		return (
-				<div className="track-list">
+				<div className="track-list" style={{display:show?'block':'none'}}>
 					<table className="m-table">
-						<thead>
-							<tr>
-								<th className="first w1">
-									<div className="wp"></div>
-								</th>
-								<th>
-									<div className="wp">歌曲标题</div>
-								</th>
-								<th className="w2">
-									<div className="wp">时长</div>
-								</th>
-								<th className="w3">
-									<div className="wp">歌手</div>
-								</th>
-								<th className="w4">
-									<div className="wp">专辑</div>
-								</th>
-							</tr>
-						</thead>
 						<tbody>
 							{
 							tracks.map((track,index) => (
@@ -184,7 +242,7 @@ class SongList extends Component {
 														<Link to={`/song?id=${track.id}`}>
 															<b title={track.name}>{track.name}</b>
 														</Link>
-														{track.alia.length?<span title={track.alia.join('/')} className="s-fc8"> - ({track.alia.join('/')})</span>:null}
+														{track.alias.length?<span title={track.alias.join('/')} className="s-fc8"> - ({track.alias.join('/')})</span>:null}
 														{track.mv?<Link to={`/mv?id=${track.mv}`} className="mv">mv</Link>:null}
 													</div>
 												</div>
@@ -192,7 +250,7 @@ class SongList extends Component {
 										</div>
 									</td>
 									<td className="s-fc3">
-										<span className="u-dur">{formatSongTime(track.dt/1000)}</span>
+										<span className="u-dur">{dateFormat(track.duration,'mm:ss')}</span>
 										<div className="opt hshow">
 											<a href="javascript:;" className="u-icn u-icn-81 icn-add"></a>
 											<span className="icn icn-fav"></span>
@@ -201,11 +259,11 @@ class SongList extends Component {
 										</div>
 									</td>
 									<td>
-										<div className="text" title={track.ar.map(i => i.name).join('/')}>
+										<div className="text" title={track.artists.map(i => i.name).join('/')}>
 											{
-												track.ar.map((i,index) => 
+												track.artists.map((i,index) => 
 													<span key={index}>
-														<Link className="" to={`/artist?id=${i.id}`}>{i.name}</Link>{index >= track.ar.length-1?null:'/'}
+														<Link className="" to={`/artist?id=${i.id}`}>{i.name}</Link>{index >= track.artists.length-1?null:'/'}
 													</span>
 												)
 											}
@@ -214,7 +272,7 @@ class SongList extends Component {
 									</td>
 									<td>
 										<div className="text">
-											<a href={`/album?id=${track.al.id}`} title={track.al.name}>{track.al.name}</a>
+											<a href={`/album?id=${track.album.id}`} title={track.album.name}>{track.album.name}</a>
 										</div>
 									</td>
 								</tr>

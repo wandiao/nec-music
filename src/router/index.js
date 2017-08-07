@@ -14,8 +14,8 @@ import DArtistRcmd from '../views/discover/artist/Recommend'
 import DArtistSigned from '../views/discover/artist/Signed'
 
 import DAlbum from '../views/discover/Album'
-import PlayList from '../views/playlist/Index'
-import Song from '../views/song/Index'
+import PlayList from '../views/Playlist'
+import Song from '../views/Song'
 import Program from '../views/Program'
 
 const history = createBrowserHistory();

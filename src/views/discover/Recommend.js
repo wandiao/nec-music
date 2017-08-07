@@ -251,7 +251,7 @@ class HotRcmd extends Component {
           <div className="u-cover u-cover-1">
             <img src={item.picUrl} />
             {item.highQuality?<i className="u-jp u-icn2 u-icn2-jp3"></i>:''}
-            <Link title={item.name} to={item.program?`/dj?id=${item.id}`:`/playlist?id=${item.id}`} className="msk"></Link>
+            <Link title={item.name} to={item.program?`/program?id=${item.id}`:`/playlist?id=${item.id}`} className="msk"></Link>
             <div className="bottom">
               <a href="javascript:;" onClick={e => this.changePlaylist(item.id)} className="icon-play fr"></a>
               <span className="icon-headset"></span>

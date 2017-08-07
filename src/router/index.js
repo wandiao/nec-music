@@ -16,6 +16,7 @@ import DArtistSigned from '../views/discover/artist/Signed'
 import DAlbum from '../views/discover/Album'
 import PlayList from '../views/playlist/Index'
 import Song from '../views/song/Index'
+import Program from '../views/Program'
 
 const history = createBrowserHistory();
 
@@ -77,6 +78,11 @@ const routes = [
 	{
 		path:'/song',
 		component:Song
+	},
+	//节目详情
+	{
+		path:'/program',
+		component:Program
 	}
 ]
 

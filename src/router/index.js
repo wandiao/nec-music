@@ -2,21 +2,21 @@ import React from 'react';
 import { BrowserRouter, HashRouter, Switch, Redirect} from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory'
 import ExtendRoute from '../components/ExtendRoute'
+
 import App from '../App'
 import DRecommend from '../views/discover/Recommend'
 import DTopList from '../views/discover/TopList'
 import DPlayList from '../views/discover/PlayList'
 import DDjRadio from '../views/discover/DjRadio'
-
 import DArtist from '../views/discover/artist/Index'
 import DArtistCat from '../views/discover/artist/Cat'
 import DArtistRcmd from '../views/discover/artist/Recommend'
 import DArtistSigned from '../views/discover/artist/Signed'
-
 import DAlbum from '../views/discover/Album'
 import PlayList from '../views/Playlist'
 import Song from '../views/Song'
 import Program from '../views/Program'
+import DjRadio from '../views/DjRadio'
 
 const history = createBrowserHistory();
 
@@ -83,6 +83,11 @@ const routes = [
 	{
 		path:'/program',
 		component:Program
+	},
+	//电台详情
+	{
+		path:'/djradio',
+		component:DjRadio
 	}
 ]
 

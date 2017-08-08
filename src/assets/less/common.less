@@ -525,6 +525,31 @@ a.s-fc12:hover {
   margin-left: 16px;
   margin-top: 7px;
 }
+.u-sort .desc, .u-sort .asc, .u-goon .close, .m-table-program .last {
+  background: url(../img/cnt_radio.png) no-repeat 0 9999px;
+}
+.u-sort{
+  .desc,.asc{
+    float: left;
+    height: 25px;
+    width: 29px;
+  }
+  .desc{
+    background-position: 0 0;
+    &.sel{
+      background-position: 0 -30px;
+      cursor: default;
+    }
+  }
+  .asc{
+    width: 28px;
+    background-position: -40px 0;
+    &.sel{
+      background-position: -40px -30px;
+      cursor: default;
+    }
+  }
+}
 /////////////////////////////////
 .u-cover .ply, .u-cover .icon-headset, .u-cover .icon-play, .u-face .msk, .n-note .head .msk, .icn-vip, .icn-daren, .u-checkbox {
   background: url(../img/iconall.png) no-repeat;
@@ -2900,6 +2925,9 @@ a.u-type-red:hover {
 .u-title {
     height: 42px;
     border-bottom: 2px solid #c20c0c;
+    .out{
+      margin-right: 20px;
+    }
 }
 
 .u-title h3 {

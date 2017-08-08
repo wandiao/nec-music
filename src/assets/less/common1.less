@@ -111,6 +111,13 @@
       float: left;
       margin: 9px 0 0 3px;
     }
+    .face{
+      margin-right: 10px;
+    }
+    .u-icn2-music2{
+      float: left;
+      margin: 11px 0 0 3px;
+    }
   }
   .face,.face img{
     float: left;
@@ -153,9 +160,38 @@
     b{
       display: inline-block;
     }
+    .cat{
+      margin-right: 7px;
+    }
   }
 }
 
+//播放列表
+.n-songtb {
+  margin-top: 27px;
+  .prohead{
+    height: 34px;
+    padding: 0 10px;
+    margin-bottom: -1px;
+    overflow: hidden;
+    background: #f7f7f7;
+    border: 1px solid #d9d9d9;
+    line-height: 33px;
+    .open{
+      float: right;
+      margin: 7px 6px 0 0;
+      line-height: 17px;
+      .icn{
+        margin-left: 5px;
+      }
+    }
+    .open-close{
+      .icn{
+        background-position: -75px -20px;
+      }
+    }
+  }
+}
 .m-table{
   th,td,.wp,.ply,.mv,.icn{
     background: url(../img/table.png) no-repeat 0 9999px;
@@ -287,6 +323,9 @@
     }
   }
   tr:hover{
+    td{
+      background-color: #e6e6e6 !important;
+    }
     .hshow{
       display: block;
       position: relative;
@@ -318,4 +357,36 @@
     top: 0;
     right: 0;
   }
+}
+.m-table-program {
+  border-top: none;
+  tr{
+    height: 55px;
+  }
+  td{
+    padding: 0 10px;
+  }
+  .col1{
+    width: 82px;
+  }
+  .col2{
+    width: 240px;
+    padding-left: 0;
+  }
+  .col3{
+    width: 80px;
+  }
+  .col4{
+    width: 90px;
+  }
+  .col5{
+    width: 86px;
+  }
+  .tt{
+    margin-right: -100px;
+  }
+  .opt{
+    float: right;
+  }
+
 }

@@ -17,6 +17,12 @@ import PlayList from '../views/Playlist'
 import Song from '../views/Song'
 import Program from '../views/Program'
 import DjRadio from '../views/DjRadio'
+import UserHome from '../views/user/Home'
+import Artist from '../views/artist/Index'
+import ATop50 from '../views/artist/Top50'
+import AAlbum from '../views/artist/Album'
+import AMV from '../views/artist/MV'
+import ADesc from '../views/artist/Desc'
 
 const history = createBrowserHistory();
 
@@ -48,15 +54,18 @@ const routes = [
 		path:'/discover/artist',
 		component:DArtist,
 		routes:[
+			//推荐歌手
 			{
 				path:'/discover/artist',
 				exact:true,
 				component:DArtistRcmd
 			},
+			//分类歌手
 			{
 				path:'/discover/artist/cat',
 				component:DArtistCat
 			},
+			//入驻歌手
 			{
 				path:'/discover/artist/signed',
 				component:DArtistSigned
@@ -88,6 +97,39 @@ const routes = [
 	{
 		path:'/djradio',
 		component:DjRadio
+	},
+	//用户主页
+	{
+		path:'/user/home',
+		component:UserHome
+	},
+	//歌手详情页
+	{
+		path:'/artist',
+		component:Artist,
+		routes:[
+			//歌手热门单曲
+			{
+				path:'/artist',
+				exact:true,
+				component:ATop50
+			},
+			//歌手专辑
+			{
+				path:'/artist/album',
+				component:AAlbum
+			},
+			//歌手mv
+			{
+				path:'/artist/mv',
+				component:AMV
+			},
+			//歌手介绍
+			{
+				path:'/artist/desc',
+				component:ADesc
+			}
+		]
 	}
 ]
 

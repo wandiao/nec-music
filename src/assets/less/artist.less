@@ -1,0 +1,103 @@
+//歌手
+.n-artist{
+	position: relative;
+	zoom: 1;
+	height: 333px;
+	margin-top: -20px;
+  .sname{
+    float: left;
+    max-width: 100%;
+    height: 34px;
+    line-height: 24px;
+    font-weight: normal;
+    font-size: 24px;
+    color: #333;
+  }
+  .sname-max{
+    max-width: 75%;
+  }
+  .salias{
+    float: left;
+    max-width: 23%;
+    padding-left: 10px;
+    font-size: 14px;
+    line-height: 32px;
+    color: #999;
+    font-weight: normal;
+  }
+	img,.mask{
+		display: block;
+    width: 640px;
+    height: 300px;
+	}
+  .mask{
+    position: absolute;
+    top: 34px;
+    left: 0;
+    background: url(../img/ban_mask.png) no-repeat;
+  }
+  .btn-rz{
+    display: block;
+    position: absolute;
+    bottom: 18px;
+    right: 116px;
+    width: 96px;
+    height: 32px;
+    background: url(../img/iconall.png) no-repeat;
+    background-position: 0 -1156px;
+    &:hover{
+      background-position: 0 -1196px;
+    }
+  }
+  .btnfav{
+    display: block;
+    position: absolute;
+    bottom: 18px;
+    right: 20px;
+    width: 76px;
+    height: 32px;
+    background: url(../img/iconall.png) no-repeat;
+    background-position: 0 -500px;
+    &:hover{
+      background-position: 0 -540px;
+    }
+  }
+}
+.m-tabs{
+  height: 39px;
+  border: 1px solid #ccc;
+  border-width: 0 1px;
+  background-position: 0 0;
+  background-repeat: repeat-x;
+  li,a,em{
+    float: left;
+    height: 39px;
+    font-size: 14px;
+  }
+  li{
+    position: relative;
+    left: -1px;
+  }
+  a{
+    padding-left: 2px;
+    &.sel{
+      background-position: left -90px;
+      em{
+        background-position: right -90px;
+      }
+    }
+  }
+  em{
+    height: 39px;
+    width: 136px;
+    padding: 2px 2px 0 0;
+    line-height: 37px;
+    cursor: pointer;
+    text-align: center;
+  }
+}
+.n-top50{
+  .btns{
+    margin: 20px 0 10px;
+  }
+}

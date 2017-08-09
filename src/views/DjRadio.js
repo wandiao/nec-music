@@ -3,8 +3,10 @@ import qs from 'query-string'
 import  * as api from '../api';
 import {dateFormat} from '../util/date'
 import {numberFormat} from '../util'
+import {pos} from '../util/dom'
 import {Link} from 'react-router-dom'
-import {Spin} from 'antd'
+import {Spin,Pagination} from 'antd'
+import axios from 'axios'
 
 class DjRadio extends Component {
 	constructor(props) {
@@ -12,11 +14,40 @@ class DjRadio extends Component {
 		this.state = {
 			djRadio:null,
 			programs:[],
-			order:0
+			order:0,
+			currPage:1,
+			total:1,
+			hotDjs:[]
+		}
+		this.choosePage = (page,pageSize) => {
+			const id = qs.parse(this.props.location.search).id;
+			const order = qs.parse(this.props.location.search).order;
+			const songtb = document.getElementById('songtb');
+			const sp = pos(songtb) 
+			const query = qs.stringify({id,order,page})
+			this.props.history.push({
+				path:'/djradio',
+				search:query
+			})
+			setTimeout(() => {
+				window.scrollTo.apply(null,sp)
+			},1)
+			
 		}
 	}
 	componentDidMount() {
-		const id = qs.parse(this.props.location.search).id;
+		const query = qs.parse(this.props.location.search)
+		const id = query.id;
+		const order = query.order || 0;
+		const page = query.page || 1;
+		if(!id) {
+			return false
+		}
+		this.setState({
+			order:order,
+			currPage:page
+		})
+		let currDj = null;
 		api.getDjDetail(id).then(res => {
 			// console.log(res)
 			if(res.data.code == 200) {
@@ -24,26 +55,109 @@ class DjRadio extends Component {
 				this.setState({
 					djRadio:res.data.djRadio
 				})
-				return api.getDjPrograms(id,0,999)
+				currDj = res.data.djRadio
+				return axios.all([api.getDjPrograms(id,page,100,order),api.getHotDjByCat(res.data.djRadio.categoryId)])
 			}
 		})
 		.then(res => {
-			if(res.data.code == 200) {
+			console.log(res)
+			if(res[0].data.code == 200) {
 				this.setState({
-					programs:res.data.programs
+					programs:res[0].data.programs,
+					total:res[0].data.count
 				})
 			}
+			if(res[1].data.code == 200) {
+				this.setState({
+					hotDjs:res[1].data.djRadios.filter(i => i.id != currDj.id)
+				})
+			}
+
 		})
-		api.getSimiDj(id).then(res => {
+	}
+	componentWillReceiveProps(np) {
+		const query = qs.parse(np.location.search)
+		const lastQuery = qs.parse(this.props.location.search)
+		const id = query.id;
+		const order = query.order || 0;
+		const page = query.page || 1;
+		if(!id) {
+			return false
+		}
+		if(query.id !== lastQuery.id) {
+			this.setState({
+				djRadio:null,
+				hotDjs:[]
+			})
+		}
+		this.setState({
+			order:order,
+			total:1,
+			currPage:page,
+			programs:[],
+			
+
+		})
+		let currDj = null;
+		api.getDjDetail(id).then(res => {
+			// console.log(res)
+			if(res.data.code == 200) {
+
+				this.setState({
+					djRadio:res.data.djRadio
+				})
+				currDj = res.data.djRadio
+				return axios.all([api.getDjPrograms(id,page,100,order),api.getHotDjByCat(res.data.djRadio.categoryId)])
+			}
+		})
+		.then(res => {
 			console.log(res)
+			if(res[0].data.code == 200) {
+				this.setState({
+					programs:res[0].data.programs,
+					total:res[0].data.count
+				})
+			}
+			if(res[1].data.code == 200) {
+				this.setState({
+					hotDjs:res[1].data.djRadios.filter(i => i.id != currDj.id)
+				})
+			}
+
 		})
 	}
 	render() {
-		const {djRadio,programs,order} = this.state;
+		const {djRadio,programs,order,total,currPage,hotDjs} = this.state;
 		if(!djRadio) {
 			return <div className="g-bd4 clearfix">
   						<div style={{height:(document.body.clientHeight-105)+'px'}} className="loading"><Spin tip="Loading..." /></div>
   					</div>
+		}
+		let hotlist = null;
+		if(!hotDjs.length) {
+			hotlist = <div style={{height:'200px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			hotlist = hotDjs.map((i,index) =>
+							<li key={index}>
+								<div className="cver u-cover u-cover-3">
+									<Link to={`/djradio?id=${i.id}`}>
+										<img src={i.picUrl} />
+									</Link>
+								</div>
+								<div className="info">
+									<p className="f-thide">
+										<Link className="sname f-fs1 s-fc0" to={`/djradio?id=${i.id}`} title={i.name}>{i.name}</Link>
+									</p>
+									<p>
+										<span className="by s-fc4">by</span> 
+										<Link className="nm nm f-thide s-fc3" to={`/user/home?id=${i.userId}`} title={i.dj.nickname}>{i.dj.nickname}</Link> 
+										{
+											i.dj.userType?<sup className="icn u-icn2 u-icn2-music2 "></sup>:i.dj.authStatus?<sup className="u-icn u-icn-1 "></sup>:null
+										}
+									</p>
+								</div>
+							</li>
+				)
 		}
 		return (
 		<div className="g-bd4 f-cb">
@@ -68,9 +182,11 @@ class DjRadio extends Component {
 											<img src={djRadio.dj.avatarUrl} />
 										</Link>
 										<span className="name">
-											<Link className="s-fc7" to={`/user/home?id={djRadio.dj.userId}`} title={djRadio.dj.nickname}>{djRadio.dj.nickname}</Link>
+											<Link className="s-fc7" to={`/user/home?id=${djRadio.dj.userId}`} title={djRadio.dj.nickname}>{djRadio.dj.nickname}</Link>
 										</span>
-										<sup className="icn u-icn2 u-icn2-music2 "></sup>
+										{
+											djRadio.dj.userType?<sup className="icn u-icn2 u-icn2-music2 "></sup>:djRadio.dj.authStatus?<sup className="u-icn u-icn-1 "></sup>:null
+										}
 									</div>
 									<div className="btns f-cb">
 										<a href="" className="u-btni u-btni-sub">
@@ -90,20 +206,23 @@ class DjRadio extends Component {
 								</div>
 							</div>
 						</div>
-						<div className="n-songtb">
+						<div className="n-songtb" id="songtb">
 							<div className="u-title u-title-1 f-cb">
 								<h3 id="programlist"><span className="f-ff2">节目列表</span></h3>
 								<span className="sub s-fc4">共{djRadio.programCount}期</span>
 								<div className="u-sort f-fr f-cb">
-									<a href="" className="desc" title="降序"></a>
-									<a href="" className="asc sel" title="升序"></a>
+									<Link to={`/djradio?id=${djRadio.id}&order=0`} className={order == 0?'desc sel':'desc' } title="降序"></Link>
+									<Link to={`/djradio?id=${djRadio.id}&order=1`} className={order == 1?'asc sel':'asc' } title="升序"></Link>
 								</div>
 								<div className="out f-fr">
 									<i className="u-icn u-icn-95"></i>&nbsp; 
 									<a className="s-fc7" href="javascript:;">生成外链播放器</a>
 								</div>
 							</div>
-							<ProgramList programs={programs} order={order} />
+							<ProgramList programs={programs} page={currPage} order={order} total={total} />
+							<div className="u-page" style={{display:total>100?'block':'none'}}>
+								<Pagination onChange={this.choosePage} pageSize={100} current={Number(currPage)} total={total} />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -115,25 +234,7 @@ class DjRadio extends Component {
 						<span className="f-fl">你可能也喜欢</span>
 					</h3>
 					<ul className="m-rctlist f-cb">
-						{Array(5).fill(1).map((i,index) =>
-							<li key={index}>
-								<div className="cver u-cover u-cover-3">
-									<a href="/djradio?id=347451177">
-										<img src="http://p1.music.126.net/HPuTTz1csHyCesU4Su0diw==/18673005976857436.jpg?param=50y50" />
-									</a>
-								</div>
-								<div className="info">
-									<p className="f-thide">
-										<a className="sname f-fs1 s-fc0" href="/djradio?id=347451177" title="伦桑爱唱歌">伦桑爱唱歌</a>
-									</p>
-									<p>
-										<span className="by s-fc4">by</span> 
-										<a className="nm nm f-thide s-fc3" href="/user/home?id=352548501" title="伦桑_伦桑">伦桑_伦桑</a> 
-										<sup className="icn u-icn2 u-icn2-music2 "></sup>
-									</p>
-								</div>
-							</li>
-						)}
+						{hotlist}
 					</ul>
 					<div className="m-multi">
     				<h3 className="u-hd3">
@@ -162,9 +263,10 @@ class DjRadio extends Component {
 //节目列表
 class ProgramList extends Component {
 	render() {
-		const {programs,order} = this.props;
+		const {programs,order,page,total} = this.props;
+		console.log(page)
 		if(!programs.length) {
-			return null;
+			return <div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>;
 		}
 		return (
 				<div className="track-list">
@@ -176,7 +278,7 @@ class ProgramList extends Component {
 									<td className="col1">
 										<div className="hd">
 											<span className="ply"></span>
-											<span className="num">{index+1}</span>
+											<span className="num">{order== 1?((page-1)*100+index+1):(total-(page-1)*100-index)}</span>
 										</div>
 									</td>
 									<td className="col2">

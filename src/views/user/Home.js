@@ -1,24 +1,160 @@
 import React, { Component} from 'react';
+import * as api from '../../api'
+import qs from 'query-string'
+import {Spin} from 'antd'
+import {Link} from 'react-router-dom'
+import {numberFormat} from '../../util'
 
 class Home extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			userInfo:null,
+			djRadios:[],
+			records:[],
+			pl:[]
+		}
+	}
+	componentDidMount() {
+		const query = qs.parse(this.props.location.search)
+		const id = query.id;
+		api.getUserInfo(id).then(res => {
+			// console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					userInfo:res.data
+				})
+			}
+		})
+		api.getUserDj(id).then(res =>{
+			// console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					djRadios:res.data.djRadios
+				})
+			}
+		})
+		api.getUserRecord(id).then(res => {
+			// console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					records:res.data.allData.slice(0,10)
+				})
+			}
+		})
+		api.getUserPlaylist(id).then(res => {
+			if(res.data.code == 200) {
+				this.setState({
+					pl:res.data.playlist
+				})
+			}
+		})
+	}
 	render() {
+		const {userInfo,djRadios,records,pl} = this.state
+		
+		if(!userInfo) {
+			return <div className="g-bd">
+  						<div style={{height:(document.body.clientHeight-105)+'px'}} className="loading"><Spin tip="Loading..." /></div>
+  					</div>
+		}
+		const profile = userInfo.profile
+		let djList,recordList,playlist;
+		if(!djRadios.length) {
+			djList = <div style={{height:'70px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			djList = djRadios.map((i,index) =>
+				<li className="itm" key={index}>
+					<Link to={`/djradio?id=${i.id}`} className="col cvr u-cover-3">
+						<img src={i.picUrl} className="" />
+					</Link>
+					<div className="col cnt f-pr f-thide">
+						<Link to={`/djradio?id=${i.id}`} className="s-fc1">{i.name}</Link>
+						<div className="opt hshow">
+							<span data-res-action="share" className="icn u-icn2 u-icn2-share">分享</span>
+						</div>
+					</div>
+					<div className="col col-3 s-fc3">订阅{i.subCount}次</div>
+					<div className="col col-4 s-fc4">{i.programCount}期</div>
+				</li>
+			)
+		}
+		if(!records.length){
+			recordList = <div style={{height:'70px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			recordList = records.map((i,index) =>
+							<li key={index} className={index%2 == 0?'even':null}>
+								<div className="hd ">
+									<span className="ply ">&nbsp;</span><span className="num">{index+1}.</span>
+								</div>
+								<div className="song">
+									<div className="tt">
+										<div className="ttc">
+											<span className="txt">
+												<Link to={`/song?id=${i.song.id}`}><b title="Booty Call">{i.song.name}</b></Link>
+												<span className="ar s-fc8"> <em>-</em>
+													<span title="张惠妹">
+													{
+														i.song.ar.map((ai,index1)=>
+															<span key={index1}>
+																<Link className="s-fc8" to={`/artist?id=${ai.id}`}>{ai.name}</Link>
+																{index1>=i.song.ar.length-1?null:'/'}
+															</span>
+														)
+													}	
+													</span>
+												</span>
+											</span>
+										</div>
+									</div>
+									<div className="opt">
+										<a className="u-icn u-icn-81 icn-add" href="javascript:;" title="添加到播放列表"></a>
+										<span className="icn icn-fav" title="收藏"></span>
+										<span className="icn icn-share" title="分享">分享</span>
+										<span className="icn icn-dl" title="下载">下载</span>
+									</div>
+								</div>
+								<div className="tops"><span className="bg" style={{width:`${i.score}%`}}></span></div>
+							</li>
+			)
+		}
+		if(!pl.length) {
+			playlist = <div style={{height:'190px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			playlist = pl.map((i,index) =>
+						<li key={index}>
+							<div className="u-cover u-cover-1">
+								<img src={i.coverImgUrl}/>
+								<Link to={`/playlist?id=${i.id}`} className="msk" title={i.name}></Link>
+								<div className="bottom">
+									<a className="icon-play f-fr" href="javascript:;" title="播放"></a>
+									<span className="icon-headset"></span>
+									<span className="nb">{numberFormat(i.playCount)}</span>
+								</div>
+							</div>
+							<p className="dec">
+								<Link className="tit f-thide s-fc0" to={`/playlist?id=${i.id}`} title={i.name}>{i.name}</Link>
+							</p>
+						</li>
+			)
+		}
 		return (
 		<div className="g-bd">
 			<div className="g-wrap p-prf">
 				<dl className="m-proifo f-cb">
 					<dt className="f-pr">
-						<img src="http://p1.music.126.net/p9U80ex1B1ciPFa125xV5A==/5931865232210340.jpg?param=180y180" />
+						<img src={profile.avatarUrl} />
 					</dt>
 					<dd>
 						<div className="name f-cb">
 							<div className="f-cb">
 								<div className="edit">
-									<a href="/artist?id=10559" className="u-btn2 u-btn2-1"><i>查看歌手页</i></a>
+									<Link to={`/artist?id=${profile.artistId}`} className="u-btn2 u-btn2-1"><i>查看歌手页</i></Link>
 								</div>
 								<h2 className="wrap f-fl f-cb wrap-3">
-									<span className="tit f-ff2 s-fc0 f-thide">张惠妹aMEI</span>
-									<span className="lev u-lev u-icn2 u-icn2-lev">1<i className="right u-icn2 u-icn2-levr"></i></span>
-									<i className="icn u-icn u-icn-02"></i>
+									<span className="tit f-ff2 s-fc0 f-thide">{profile.nickname}</span>
+									<span className="lev u-lev u-icn2 u-icn2-lev">{userInfo.level}<i className="right u-icn2 u-icn2-levr"></i></span>
+									{profile.gender == 2?<i className="icn u-icn u-icn-02"></i>:<i class="icn u-icn u-icn-01"></i>}
 								</h2>
 								<div>
 									<a href="#" className="btn u-btn u-btn-7 f-tdn"><i>发私信</i></a>
@@ -27,54 +163,42 @@ class Home extends Component {
 									<a href="#" className="btn u-btn u-btn-8 f-tdn" data-action="follow">关 注</a>
 								</div>
 							</div>
-							<p className="djp f-fs1 s-fc3"><i className="u-icn u-icn-14"></i> 台湾歌手张惠妹</p>
+							<p className="djp f-fs1 s-fc3">{profile.userType?<i className="u-icn u-icn-14"></i>:null} {profile.description}</p>
 						</div>
 						<ul className="data s-fc3 f-cb">
 							<li className="fst">
 								<a href="/user/event?id=29879272">
-									<strong id="event_count">1</strong><span>动态</span>
+									<strong id="event_count">{profile.eventCount}</strong><span>动态</span>
 								</a>
 							</li>
 							<li>
 								<a href="/user/follows?id=29879272">
-									<strong id="follow_count">10</strong><span>关注</span>
+									<strong id="follow_count">{profile.follows}</strong><span>关注</span>
 								</a>
 							</li>
 							<li>
 								<a href="/user/fans?id=29879272">
-									<strong id="fan_count">429207</strong>
+									<strong id="fan_count">{profile.followeds}</strong>
 									<span>粉丝</span>
 									<i className="u-icn u-icn-68 f-alpha" id="newCount" style={{display:'none'}}></i>
 								</a>
 							</li>
 						</ul>
-						<div className="inf s-fc3 f-brk">个人介绍：亞洲國寶級傳奇天后「 a MEI」我是a MEI，一個你認識很久，卻認識不完的女人。</div>
+						<div className="inf s-fc3 f-brk">个人介绍：{profile.signature}</div>
 						<div className="inf s-fc3">
-							<span>所在地区：台湾省 - 台北市</span>
+							<span>所在地区：{profile.province} - {profile.city}</span>
 						</div>
 					</dd>
 				</dl>
 				<div className="u-title u-title-1 f-cb">
-					<h3><span className="f-ff2 s-fc3">张惠妹aMEI创建的电台</span></h3>
+					<h3><span className="f-ff2 s-fc3">{profile.nickname}创建的电台</span></h3>
 				</div>
 				<ul className="m-plylist m-create f-cb">
-					<li className="itm">
-						<a href="/djradio?id=343" className="col cvr u-cover-3">
-							<img src="http://p1.music.126.net/IlWff-0NLLBcBspcDQFQPw==/5976945209011951.jpg?param=50y50" className="" />
-						</a>
-						<div className="col cnt f-pr f-thide">
-							<a href="/djradio?id=343" className="s-fc1">aMEI电台</a>
-							<div className="opt hshow">
-								<span data-res-action="share" className="icn u-icn2 u-icn2-share">分享</span>
-							</div>
-						</div>
-						<div className="col col-3 s-fc3">订阅1646次</div>
-						<div className="col col-4 s-fc4">1期</div>
-					</li>
+					{djList}
 				</ul>
 				<div className="u-title u-title-1 f-cb m-record-title">
 					<h3><span className="f-ff2 s-fc3">听歌排行</span></h3>
-					<h4>累积听歌29首</h4>
+					<h4>累积听歌{userInfo.listenSongs}首</h4>
 					<span className="n-iconpoint">
 						<a href="javascript:void(0)" className="icon u-icn2 u-icn2-5 j-flag"></a>
 						<div className="tip">
@@ -90,55 +214,15 @@ class Home extends Component {
 				</div>
 				<div className="m-record">
 					<ul>
-						{Array(10).fill(1).map((i,index) =>
-							<li key={index} className={index%2 == 0?'even':null}>
-								<div className="hd ">
-									<span className="ply ">&nbsp;</span><span className="num">{index+1}.</span>
-								</div>
-								<div className="song">
-									<div className="tt">
-										<div className="ttc">
-											<span className="txt">
-												<a href="/song?id=28754103"><b title="Booty Call">Booty Call</b></a>
-												<span className="ar s-fc8"> <em>-</em>
-													<span title="张惠妹"><a className="s-fc8" href="/artist?id=10559">张惠妹</a></span>
-												</span>
-											</span>
-										</div>
-									</div>
-									<div className="opt">
-										<a className="u-icn u-icn-81 icn-add" href="javascript:;" title="添加到播放列表"></a>
-										<span className="icn icn-fav" title="收藏"></span>
-										<span className="icn icn-share" title="分享">分享</span>
-										<span className="icn icn-dl" title="下载">下载</span>
-									</div>
-								</div>
-								<div className="tops"><span className="bg" style={{width:'100%'}}></span></div>
-							</li>
-						)}
+						{recordList}
 					</ul>
 					<div className="more"><a href="/user/songs/rank?id=29879272">查看更多&gt;</a></div>
 				</div>
 				<div className="u-title u-title-1 f-cb" >
-					<h3><span className="f-ff2">张惠妹aMEI创建的歌单（3）</span></h3>
+					<h3><span className="f-ff2">{profile.nickname}创建的歌单（{pl.length}）</span></h3>
 				</div>
 				<ul className="m-cvrlst f-cb">
-					{Array(5).fill(1).map((i,index) =>
-						<li key={index}>
-							<div className="u-cover u-cover-1">
-								<img src="http://p1.music.126.net/3gY4PcSVv4veogE6FOmr7Q==/3382097768218496.jpg?param=140y140" />
-								<a href="/playlist?id=20574603" className="msk" title="张惠妹aMEI喜欢的音乐"></a>
-								<div className="bottom">
-									<a className="icon-play f-fr" href="javascript:;" title="播放"></a>
-									<span className="icon-headset"></span>
-									<span className="nb">11万</span>
-								</div>
-							</div>
-							<p className="dec">
-								<a className="tit f-thide s-fc0" href="/playlist?id=20574603" title="张惠妹aMEI喜欢的音乐">张惠妹aMEI喜欢的音乐</a>
-							</p>
-						</li>
-					)}
+					{playlist}
 				</ul>
 			</div>
 		</div>

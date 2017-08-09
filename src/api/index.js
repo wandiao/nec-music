@@ -161,7 +161,7 @@ export const getDjRecommendByCate = (type,offset=0,limit=4) => axios.get('dj/rec
 export const getDjPrograms = (rid,offset=0,limit=5,asc=0) => axios.get('dj/program',{
 	params:{
 		rid,
-		offset:offset*limit,
+		offset:(offset-1)*limit,
 		limit,
 		asc
 	}
@@ -170,8 +170,25 @@ export const getDjPrograms = (rid,offset=0,limit=5,asc=0) => axios.get('dj/progr
 //获取电台详情
 export const getDjDetail = id => axios.get(`dj/detail?rid=${id}`)
 
-//获取相似电台
-export const getSimiDj = id => axios.get(`simi/user?id=${id}`)
+//获取分类热门电台
+export const getHotDjByCat = (cat,offset=0,limit=5) => axios.get('dj/hot',{
+	params:{
+		cat,
+		offset:offset*limit,
+		limit
+	}
+})
 
+//获取用户信息
+export const getUserInfo = uid => axios.get(`user/detail?uid=${uid}`)
+
+//获取用户电台
+export const getUserDj = uid => axios.get(`user/audio?uid=${uid}`)
+
+//获取用户听歌记录
+export const getUserRecord = uid => axios.get(`user/record?uid=${uid}`)
+
+//获取用户歌单
+export const getUserPlaylist = uid => axios.get(`user/playlist?uid=${uid}`)
 
 

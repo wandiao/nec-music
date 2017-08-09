@@ -158,13 +158,20 @@ export const getDjRecommendByCate = (type,offset=0,limit=4) => axios.get('dj/rec
 })
 
 //获取电台节目列表
-export const getDjPrograms = (rid,offset=0,limit=5) => axios.get('dj/program',{
+export const getDjPrograms = (rid,offset=0,limit=5,asc=0) => axios.get('dj/program',{
 	params:{
 		rid,
 		offset:offset*limit,
 		limit,
+		asc
 	}
 })
+
+//获取电台详情
+export const getDjDetail = id => axios.get(`dj/detail?rid=${id}`)
+
+//获取相似电台
+export const getSimiDj = id => axios.get(`simi/user?id=${id}`)
 
 
 

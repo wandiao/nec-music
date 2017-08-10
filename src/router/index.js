@@ -17,12 +17,16 @@ import PlayList from '../views/Playlist'
 import Song from '../views/Song'
 import Program from '../views/Program'
 import DjRadio from '../views/DjRadio'
+import User from '../views/user/Index'
 import UserHome from '../views/user/Home'
 import Artist from '../views/artist/Index'
 import ATop50 from '../views/artist/Top50'
 import AAlbum from '../views/artist/Album'
 import AMV from '../views/artist/MV'
 import ADesc from '../views/artist/Desc'
+
+import MToLogin from '../views/my/ToLogin'
+import FToLogin from '../views/friend/ToLogin'
 
 const history = createBrowserHistory();
 
@@ -98,10 +102,18 @@ const routes = [
 		path:'/djradio',
 		component:DjRadio
 	},
-	//用户主页
+	//用户页
 	{
-		path:'/user/home',
-		component:UserHome
+		path:'/user',
+		component:User,
+		routes:[
+			//用户主页
+			{
+				path:'/user/home',
+				component:UserHome
+			}
+		]
+
 	},
 	//歌手详情页
 	{
@@ -130,6 +142,16 @@ const routes = [
 				component:ADesc
 			}
 		]
+	},
+	//我的音乐
+	{
+		path:'/my',
+		component:MToLogin
+	},
+	//朋友
+	{
+		path:'/friend',
+		component:FToLogin
 	}
 ]
 
@@ -143,6 +165,8 @@ const router = (
 				  <ExtendRoute key={i} {...route}/>
 		    	))}
 		    	<Redirect from="/discover" to="/" />
+		    	<Redirect from="/my/tologin" to="/my" />
+		    	<Redirect from="/friend/tologin" to="/friend" />
 			</Switch>
 		</App>
 	</Router>

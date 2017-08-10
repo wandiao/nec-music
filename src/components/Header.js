@@ -1,5 +1,5 @@
 import React, { Component} from 'react'
-import { NavLink as Link } from 'react-router-dom'
+import { NavLink as Link }from 'react-router-dom'
 import {search,searchSuggest} from '../api'
 import { connect } from 'react-redux'
 import {chooseBox} from '../store/actions'
@@ -108,9 +108,13 @@ class Header extends Component {
 			}		
 		}
 	}
+	componentDidMount() {
+		const history = this.props.history
+	}	
 	render() {
 		const {searchSuggests} = this.state
 		const {dispatch} = this.props
+		const pathname = window.location.pathname
 		return (
 			<div className="g-topbar">
 				<div className="m-top">
@@ -201,7 +205,7 @@ class Header extends Component {
 						</div>
 					</div>
 				</div>
-				<div className="m-subnav">
+				<div className={(pathname.indexOf('/discover') != -1||pathname == '/')? "m-subnav":'m-subnav m-subnav-up'}>
 					<div className="wrapper pr">
 						<ul className="nav">
 							{
@@ -226,31 +230,31 @@ class Nav extends Component {
 			<ul className="m-nav">
 				<li className="active">
 					<span>
-						<a href="javascipt:;" className="active">
+						<Link to='/' exact activeClassName="active">
 							<em>发现音乐</em>
 							<sub className="cor"></sub>
-						</a>
+						</Link>
 					</span>
 				</li>
 				<li>
 					<span>
-						<a href="javascipt:;">
+						<Link to='/my' activeClassName="active">
 							<em>我的音乐</em>
 							<sub className="cor"></sub>
-						</a>
+						</Link>
 					</span>
 				</li>
 				<li>
 					<span>
-						<a href="javascipt:;">
+						<Link to='/friend' activeClassName="active">
 							<em>朋友</em>
 							<sub className="cor"></sub>
-						</a>
+						</Link>
 					</span>
 				</li>
 				<li>
 					<span>
-						<a href="javascipt:;">
+						<a href="http://music.163.com/store/product" target="_blank">
 							<em>商城</em>
 							<sub className="cor"></sub>
 						</a>
@@ -258,7 +262,7 @@ class Nav extends Component {
 				</li>
 				<li>
 					<span>
-						<a href="javascipt:;">
+						<a href="http://music.163.com/nmusician/web/recruit" target="_blank">
 							<em>音乐人</em>
 							<sub className="cor"></sub>
 						</a>

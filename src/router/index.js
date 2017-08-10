@@ -17,7 +17,6 @@ import PlayList from '../views/Playlist'
 import Song from '../views/Song'
 import Program from '../views/Program'
 import DjRadio from '../views/DjRadio'
-import User from '../views/user/Index'
 import UserHome from '../views/user/Home'
 import Artist from '../views/artist/Index'
 import ATop50 from '../views/artist/Top50'
@@ -102,18 +101,10 @@ const routes = [
 		path:'/djradio',
 		component:DjRadio
 	},
-	//用户页
+	//用户首页
 	{
-		path:'/user',
-		component:User,
-		routes:[
-			//用户主页
-			{
-				path:'/user/home',
-				component:UserHome
-			}
-		]
-
+		path:'/user/home',
+		component:UserHome
 	},
 	//歌手详情页
 	{

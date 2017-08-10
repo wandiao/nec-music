@@ -6,6 +6,7 @@
     "jsx-a11y/anchor-has-content":0,
     "no-script-url":0,
     "eqeqeq":0,
-    "no-useless-constructor":0
+    "no-useless-constructor":0,
+    "react/jsx-no-target-blank":0
   }
 }

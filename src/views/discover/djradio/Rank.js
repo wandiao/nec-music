@@ -1,16 +1,41 @@
 import React, { Component} from 'react';
 import * as api from '../../../api'
+import {dateFormat} from '../../../util/date'
 import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
 
 class Rank extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			topPrograms:[],
+			updateTime:null
+		}
+	}
+	componentDidMount() {
+		api.getTopProgram(0,100).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					topPrograms:res.data.toplist,
+					updateTime:res.data.updateTime
+				})
+			}
+		})
+	}
 	render() {
+		const {topPrograms,updateTime} = this.state
+		if(!topPrograms.length) {
+			return <div className="g-bd">
+  						<div style={{height:(document.body.clientHeight-105)+'px'}} className="loading"><Spin tip="Loading..." /></div>
+  					</div>
+		}
 		return (
 			<div className="g-bd">
 				<div className="g-wrap m-radio">
 					<div className="u-title f-pr f-cb">
 						<h3><span className="f-ff2">节目排行榜</span></h3>
-						<span className="sub s-fc4">最近更新：08月11日</span>
+						<span className="sub s-fc4">最近更新：{dateFormat(updateTime,'MM月dd日')}</span>
 						<div className="info f-pa">
 							<a href="javascript:void(0)" className="icon u-icn2 u-icn2-5 j-flag"></a>
 							<div className="tip s-fc3 f-brk f-pa j-flag">
@@ -19,22 +44,33 @@ class Rank extends Component {
 						</div>
 					</div>
 					<ul className="m-plylist toplist toplist-rank f-cb">
-						{Array(20).fill(1).map((i,index) =>
+						{topPrograms.map((i,index) =>
 							<li key={index} className="itm">
 								<div className="col rank s-fc4">
-									<em className="red f-fs1">01</em>
-									<span className="u-rnk f-ff0"><i className="u-icn u-icn-72"></i>0</span>
+									<em className={index<3?'red f-fs1':'f-fs1'}>{index+1<10?`0${index+1}`:index+1}</em>
+									{
+										i.lastRank<=0?<i className="u-icn u-icn-75"></i>
+										:i.rank-i.lastRank == 0?<span className="u-rnk f-ff0"><i className="u-icn u-icn-72"></i>0</span>
+										:i.rank-i.lastRank<0?<span className="u-rnk u-rnk-up f-ff0"><i className="u-icn u-icn-73"></i>{Math.abs(i.rank-i.lastRank)}</span>
+										:<span className="u-rnk u-rnk-dn f-ff0"><i className="u-icn u-icn-74"></i>{Math.abs(i.rank-i.lastRank)}</span>
+									}
 								</div>
 								<a className="col cvr u-cover u-cover-tiny" title="播放">
-									<img src="http://p1.music.126.net/p1vefFCieMtKTSocRuz-MQ==/18929192184073392.jpg?param=40x40" alt="" />
+									<img src={i.program.coverUrl} alt="" />
 									<i className="ply f-pa f-dn f-alpha"></i>
 								</a>
 								<div className="col cnt f-thide">
-									<a href="/program?id=908528214" className="s-fc1" title="我的一个道姑朋友 - 冯提莫">我的一个道姑朋友 - 冯提莫</a>
+									<Link to={`/program?id=${i.program.id}`} className="s-fc1" title={i.program.name}>{i.program.name}</Link>
 								</div>
-								<div className="col artist f-thide"><a href="/djradio?id=5811013" className="s-fc3" title="冯提莫">冯提莫</a></div>
-								<div className="col tag"><a href="/discover/djradio/category?id=2001" className="u-type">创作|翻唱</a></div>
-								<span className="col hot u-hot f-fl"><i style={{width:'92%'}}><i></i></i></span>
+								<div className="col artist f-thide">
+									<Link  to={`/djradio?id=${i.program.radio.id}`} className="s-fc3" title={i.program.radio.name}>{i.program.radio.name}</Link>
+								</div>
+								<div className="col tag">
+									<Link to={`/discover/djradio/category?id=${i.program.radio.categoryId}`} className="u-type">{i.program.radio.category}</Link>
+								</div>
+								<span className="col hot u-hot f-fl">
+									<i style={{width:(92*i.score)/(topPrograms[0].score)+'%'}}><i></i></i>
+								</span>
 							</li>
 						)}
 					</ul>

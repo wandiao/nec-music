@@ -19,9 +19,17 @@ class RdiType extends Component {
 			})
 		}
 	}
+	componentWillReceiveProps(np) {
+		const {cates,currId} = np;
+		cates.forEach((i,index) => {
+			if(i.map(i => i.id).indexOf(Number(currId)) != -1) {
+				this.chooseIndex(index)
+			}
+		})
+	}
 	render() {
 		const {currIndex} = this.state
-		const {cates} = this.props
+		const {cates,currId} = this.props
 		if(!cates.length) {
 			return <div style={{height:'194px'}} className="loading"><Spin tip="Loading..." /></div>
 		}
@@ -33,7 +41,7 @@ class RdiType extends Component {
 							<ul key={index} className={index == currIndex?'box f-cb show':'box f-cb'}>
     					{group.map((cate,index1) =>
       					<li key={index1}>
-									<Link  to={`/discover/djradio/category?id=${cate.id}`}>
+									<Link className={currId==cate.id?'z-sel':null}  to={`/discover/djradio/category?id=${cate.id}`}>
 										<div className="icon" style={{backgroundImage:`url(${cate.picWebUrl})`}}></div>
 										<em>{cate.name}</em>
 									</Link>

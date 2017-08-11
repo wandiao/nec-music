@@ -4,7 +4,29 @@ import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
 
 class Recommend extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			recPrograms:[]
+		}
+	}
+	componentDidMount() {
+		api.getRecProgram(0,50).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					recPrograms:res.data.programs
+				})
+			}
+		})
+	}
 	render() {
+		const {recPrograms} = this.state
+		if(!recPrograms.length) {
+			return <div className="g-bd">
+  						<div style={{height:(document.body.clientHeight-105)+'px'}} className="loading"><Spin tip="Loading..." /></div>
+  					</div>
+		}
 		return (
 			<div className="g-bd">
 				<div className="g-wrap m-radio">
@@ -13,21 +35,21 @@ class Recommend extends Component {
 						<span className="sub s-fc4">（每日更新）</span>
 					</div>
 					<ul className="m-plylist toplist toplist-recmd f-cb">
-						{Array(20).fill(1).map((i,index) =>
+						{recPrograms.map((i,index) =>
 							<li key={index} className="itm">
 								<a className="col cvr u-cover u-cover-tiny" title="播放">
-									<img src="http://p1.music.126.net/MS97p2nwS3d6Wjd6lVXvnA==/1396379778174456.jpg?param=40x40" alt="" />
+									<img src={i.coverUrl} alt="" />
 									<i className="ply f-pa f-dn f-alpha"></i>
 								</a>
 								<div className="col cnt f-thide">
-									<a href="/program?id=906955412" className="s-fc1" title="第二季 - 你知道松鼠桂鱼名字的来由吗？">第二季 - 你知道松鼠桂鱼名字的来由吗？</a>
+									<Link to={`/program?id=${i.id}`} className="s-fc1" title={i.name}>{i.name}</Link>
 								</div>
 								<div className="col artist f-thide">
-									<a href="/djradio?id=335425050" className="s-fc3" title="围炉夜话">围炉夜话</a>
+									<Link to={`/djradio?id=${i.radio.id}`} className="s-fc3" title={i.radio.name}>{i.radio.name}</Link>
 								</div>
-								<div className="col col-4 s-fc4">播放774508</div>
-								<div className="col col-5 s-fc4">赞728 </div>
-								<a href="/discover/djradio/category?id=11" className="tag u-type">人文历史</a>
+								<div className="col col-4 s-fc4">播放{i.listenerCount}</div>
+								<div className="col col-5 s-fc4">赞{i.likedCount} </div>
+								<Link to={`/discover/djradio/category?id=${i.radio.categoryId}`}  className="tag u-type">{i.radio.category}</Link>
 							</li>
 						)}
 					</ul>

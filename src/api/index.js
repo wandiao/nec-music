@@ -171,11 +171,12 @@ export const getDjPrograms = (rid,offset=0,limit=5,asc=0) => axios.get('dj/progr
 export const getDjDetail = id => axios.get(`dj/detail?rid=${id}`)
 
 //获取分类热门电台
-export const getHotDjByCat = (cat,offset=0,limit=5) => axios.get('dj/hot',{
+export const getHotDjByCat = (cat,offset=0,limit=5,order=0) => axios.get('dj/hot',{
 	params:{
 		cat,
 		offset:offset*limit,
-		limit
+		limit,
+		order
 	}
 })
 

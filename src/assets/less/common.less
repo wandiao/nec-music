@@ -249,6 +249,18 @@
   border-width: 0 1px;
   background: #fff;
 }
+.g-bd-fix{
+  width: 982px;
+  min-height: 100%;
+  margin-top: -75px;
+  padding-top: 75px;
+  padding-bottom: 126px;
+  box-sizing: border-box;
+}
+.g-bd1-1{
+  width: 100%;
+  border: none;
+}
 .g-bd3-1 {
   min-height: 700px;
 }
@@ -590,6 +602,9 @@ a.s-fc12:hover {
 .u-icn3, .u-hot, .u-hot i {
     background: url(../img/table.png) no-repeat 0 9999px;
 }
+.u-dicn,.u-dtag,.u-dtag .rt {
+    background: url(../img/frd_dyn_sprite.png) 0 9999px no-repeat;
+}
 .u-btn{
   display: inline-block;
 }
@@ -679,9 +694,14 @@ a.s-fc12:hover {
     left: -4px;
   }
 }
+
 .u-cover-rdi {
   width: 120px;
   height: 120px;
+}
+.u-cover-rdi2 {
+  width: 150px;
+  height: 150px;
 }
 .u-cover-rank {
   width: 158px;
@@ -1898,6 +1918,29 @@ a:hover .u-icn-86 {
 .u-icn3-1:hover {
     background-position: 0 -128px;
 }
+.u-icn-01 {
+    width: 20px;
+    height: 20px;
+    background-position: -41px -57px;
+}
+
+.u-icn-02 {
+    width: 20px;
+    height: 20px;
+    background-position: -41px -27px;
+}
+
+.u-icn-s-02 {
+    width: 14px;
+    height: 15px;
+    background-position: -70px 0;
+}
+
+.u-icn-s-01 {
+    width: 14px;
+    height: 15px;
+    background-position: -70px -20px;
+}
 //////
 .u-btn-hot {
   width: 93px;
@@ -2997,6 +3040,28 @@ a.u-type-red:hover {
     .out{
       margin-right: 20px;
     }
+    .info{
+      bottom: 9px;
+      right: 0;
+      width: 18px;
+      height: 18px;
+      &:hover{
+        .tip{
+          display: block;
+        }
+      }
+      .tip{
+        display: none;
+        top: 13px;
+        right: -41px;
+        width: 333px;
+        height: 86px;
+        padding: 24px 19px 19px 19px;
+        line-height: 20px;
+        z-index: 9999;
+        background: url(../img/radio/tip.png);
+      }
+    }
 }
 
 .u-title h3 {
@@ -3172,4 +3237,315 @@ a.u-type-red:hover {
     margin: 9px 0 5px;
     line-height: 22px;
     color: #aaa;
+}
+
+.u-dicn {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.u-dicn-1 {
+    width: 10px;
+    height: 10px;
+    background-position: 0 0;
+}
+
+.u-dicn-2 {
+    width: 19px;
+    height: 19px;
+    background-position: -15px 0;
+}
+
+.u-dicn-2:hover {
+    background-position: -85px 0;
+}
+
+.u-dicn-3,
+.u-dicn-4,
+.u-dicn-5,
+.u-dicn-6 {
+    width: 14px;
+    height: 14px;
+    background-position: 0 -20px;
+}
+
+.u-dicn-4 {
+    background-position: -20px -20px;
+}
+
+.u-dicn-5 {
+    background-position: -40px -20px;
+}
+
+.u-dicn-6 {
+    background-position: -60px -20px;
+}
+
+.u-dicn-7 {
+    width: 7px;
+    height: 13px;
+    background-position: -50px 0
+}
+
+.u-dicn-8 {
+    width: 40px;
+    height: 40px;
+    background-position: -100px -70px;
+}
+
+.u-dicn-9 {
+    width: 40px;
+    height: 40px;
+    background-position: 0 -40px;
+}
+
+.u-dicn-10 {
+    width: 14px;
+    height: 12px;
+    background-position: -45px -40px;
+}
+
+.u-dicn-11,
+.u-dicn-24 {
+    width: 12px;
+    height: 12px;
+    background-position: -65px 0;
+}
+
+.u-dicn-24 {
+    background-position: -85px -25px;
+}
+
+.u-dicn-12 {
+    width: 21px;
+    height: 20px;
+    background-position: -70px -40px;
+}
+
+.u-dicn-12:hover {
+    background-position: -70px -55px;
+}
+
+.u-dicn-13,
+.u-dicn-14 {
+    width: 16px;
+    height: 16px;
+    background-position: -160px -40px;
+}
+
+.u-dicn-14 {
+    background-position: -180px -40px;
+}
+
+.u-dicn-15,
+.u-dicn-16 {
+    width: 18px;
+    height: 18px;
+    background-position: -130px -18px;
+}
+
+.u-dicn-16 {
+    background-position: -154px -18px;
+}
+
+.u-dicn-15:hover {
+    background-position: -100px -40px;
+}
+
+.u-dicn-16:hover {
+    background-position: -130px -40px;
+}
+
+.u-dicn-17 {
+    background-position: 0 -210px;
+    background-repeat: repeat-x;
+    _background: none !important;
+}
+
+.u-dicn-18 {
+    width: 13px;
+    height: 13px;
+    background-position: -108px -19px;
+}
+
+.u-dicn-19 {
+    background-position: 0 -80px;
+}
+
+.u-dicn-20 {
+    background-position: -50px -80px;
+}
+
+.u-dicn-21 {
+    background-position: -150px -80px;
+}
+
+.u-dicn-22 {
+    background: url(../img/frd_cover_mask.png) no-repeat;
+}
+
+.u-dicn-23 {
+    background-position: right -70px;
+}
+
+.u-dicn-25 {
+    background-position: 0 -360px;
+}
+
+.u-dicn-26 {
+    background-position: -20px -360px;
+}
+
+.u-dicn-27 {
+    background-position: -40px -360px;
+}
+
+.u-dicn-28,
+.u-dicn-29 {
+    width: 15px;
+    height: 15px;
+    background-position: -60px -360px;
+}
+
+.u-dicn-29 {
+    background-position: -80px -360px;
+}
+
+.u-dicn-30 {
+    width: 13px;
+    height: 13px;
+    background-position: -180px -20px;
+}
+
+.u-dicn-31 {
+    width: 14px;
+    height: 13px;
+    background-position: -45px -58px;
+}
+
+.u-dicn-32 {
+    background-position: 0 -130px;
+}
+
+.u-dicn-33 {
+    background-position: -40px -130px;
+}
+
+.u-dicn-34 {
+    background-position: -80px -130px;
+}
+
+.u-dicn-35 {
+    width: 12px;
+    height: 12px;
+    background-position: 0 -429px;
+}
+
+.u-dicn-36 {
+    width: 12px;
+    height: 12px;
+    background-position: -20px -429px;
+}
+
+.u-dicn-37 {
+    width: 16px;
+    height: 16px;
+    background-position: -106px -361px;
+}
+
+.u-dicn-38 {
+    width: 71px;
+    height: 24px;
+    background-position: 0 -452px;
+}
+
+.u-dicn-38:hover {
+    background-position: 0px -480px;
+}
+
+.u-dicn-39 {
+    width: 22px;
+    height: 21px;
+    background-position: 0 -390px;
+}
+
+.u-dicn-40 {
+    width: 84px;
+    height: 24px;
+    background-position: -100px -452px;
+}
+
+.u-dicn-40:hover {
+    background-position: -100px -480px;
+}
+
+.u-dicn-41 {
+    width: 31px;
+    height: 17px;
+    background-position: -160px -400px;
+}
+
+.u-dicn-42 {
+    width: 40px;
+    height: 40px;
+    background-position: 0 -510px;
+}
+
+.u-dicn-43 {
+    width: 8px;
+    height: 10px;
+    background-position: -50px -510px;
+}
+
+.u-dicn-44 {
+    width: 9px;
+    height: 10px;
+    background-position: -50px -530px;
+}
+
+.u-dicn-45 {
+    width: 36px;
+    height: 36px;
+    background-position: -70px -510px;
+}
+
+.u-dicn-46 {
+    width: 22px;
+    height: 22px;
+    background-position: -120px -510px;
+}
+
+.u-dicn-47 {
+    width: 22px;
+    height: 22px;
+    background-position: -150px -510px;
+}
+
+.u-dtag,
+.u-dtag .rt {
+    position: relative;
+    display: inline-block;
+    height: 16px;
+    font-size: 12px;
+}
+
+.u-dtag .rt {
+    position: absolute;
+    top: 0;
+    right: 0px;
+    display: block;
+    width: 3px;
+    background-position: right 0;
+}
+
+.u-dtag {
+    color: #e03f40;
+    &:hover{
+      color: #e03f40;
+    }
+}
+.u-dtag {
+    padding: 0 2px 0 3px;
+    background-position: -110px 0;
+    line-height: 16px;
 }

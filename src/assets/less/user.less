@@ -1,4 +1,4 @@
-//用户
+//用户主页
 .m-proifo{
 	margin-bottom: 43px;
   dt{
@@ -369,6 +369,210 @@
     text-align: right;
     a{
       color: #666;
+    }
+  }
+}
+
+//用户动态
+.m-timeline {
+  position: relative;
+  zoom: 1;
+  text-shadow: none;
+  h3,h4{
+    font-weight: normal;
+  }
+  h3{
+    margin-top: -2px;
+  }
+}
+.m-dlist {
+  position: relative;
+  zoom: 1;
+  .itm{
+    position: relative;
+    padding: 20px 0;
+    border-bottom: 1px solid #e8e8e9;
+    &:first-child{
+      border-top: none;
+    }
+  }
+  .gface{
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 54px;
+  }
+  .ficon{
+    float: left;
+    position: relative;
+    zoom: 1;
+    width: 45px;
+    height: 45px;
+    img{
+      display: block;
+      width: 100%;
+    }
+  }
+  .gcnt{
+    position: relative;
+    zoom: 1;
+    margin-left: 55px;
+    padding-top: 4px;
+  }
+  .type{
+    .u-icn-1{
+      margin: -3px 0 0 1px;
+    }
+    .sep{
+      margin-left: 5px;
+    }
+  }
+  .time{
+    margin-top: 7px;
+  }
+  .text{
+    margin-top: 10px;
+    line-height: 24px;
+    font-size: 14px;
+    word-break: break-word;
+  }
+  .card,.src,.hotrecmt .bar,.showpic{
+    background: #f5f5f5;
+  }
+  .src{
+    display: block;
+    position: relative;
+    padding: 10px;
+    margin: 4px 0 5px;
+    .cover{
+      position: relative;
+      zoom: 1;
+      width: 40px;
+      height: 40px;
+      float: left;
+      .ply{
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 40px;
+        height: 40px;
+        margin: 0;
+        background-position: -100px -70px;
+        opacity: 0.8;
+        cursor: pointer;
+      }
+    }
+    .cover-ply{
+      .ply{
+        display: block;
+        z-index: 200;
+      }
+    }
+    .scnt{
+      display: block;
+      position: absolute;
+      top: 10px;
+      left: 60px;
+      right: 30px;
+      height: 40px;
+      line-height: 22px;
+    }
+    .tag{
+      margin-right: 6px;
+    }
+  }
+  .doper{
+    margin: 18px 0 -2px;
+    text-align: right;
+    line-height: normal;
+    .line{
+      margin: 0 10px 0 12px;
+      color: #c7c7c7;
+    }
+  }
+  .arrow{
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    cursor: pointer;
+  }
+}
+.m-gz {
+  margin: 15px 0 0 -16px;
+  li{
+    float: left;
+    width: 80px;
+    height: 105px;
+    padding-left: 16px;
+    img{
+      display: block;
+      width: 64px;
+      height: 64px;
+    }
+    p{
+      margin-top: 5px;
+    }
+    .nm{
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .nm-icn{
+      max-width: 70%;
+    }
+  }
+}
+
+//用户关注
+.m-fans {
+  border-left: 1px solid #d5d5d5;
+  li{
+    float: left;
+    width: 50%;
+    height: 100px;
+    padding: 20px 20px 0 20px;
+    border-right: 1px solid #d5d5d5;
+    &:nth-child(4n),&:nth-child(4n-1){
+      background: #fafafa;
+    }
+    &:nth-last-child(2),&:last-child{
+      border-bottom: 1px solid #d5d5d5;
+    }
+  }
+  .ava,.ava img{
+    float: left;
+    width: 60px;
+    height: 60px;
+  }
+  .info{
+    float: left;
+    width: 255px;
+    margin-left: 10px;
+    p{
+      margin-bottom: 4px;
+    }
+    .nm{
+      display: inline-block;
+      zoom: 1;
+      max-width: 235px;
+      vertical-align: middle;
+    }
+    .u-icn-s-01,.u-icn-s-02{
+      margin: 1px 0 0 2px;
+      margin-top: -2px;
+    }
+    .line{
+      margin: 0 8px;
+      color: #999;
+    }
+  }
+  .oper{
+    float: right;
+    width: 75px;
+    padding-top: 5px;
+    p{
+      margin-top: 5px;
+      text-align: center;
     }
   }
 }

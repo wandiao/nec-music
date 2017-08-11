@@ -79,7 +79,7 @@ class SongList extends Component {
 											
 										</div>
 									</td>
-									<td className="w5"><span className="hot u-hot"><i style="width:92%"><i></i></i></span></td>
+									<td className="w5"><span className="hot u-hot"><i style={{width:'92%'}}><i></i></i></span></td>
 								</tr>
 							))
 							}

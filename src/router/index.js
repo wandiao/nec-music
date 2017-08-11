@@ -1,23 +1,37 @@
 import React from 'react';
-import { BrowserRouter, HashRouter, Switch, Redirect} from 'react-router-dom';
+import { BrowserRouter, HashRouter,Route, Switch, Redirect} from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory'
 import ExtendRoute from '../components/ExtendRoute'
 
 import App from '../App'
+import NoMatch from '../components/NoMatch'
+
 import DRecommend from '../views/discover/Recommend'
 import DTopList from '../views/discover/TopList'
 import DPlayList from '../views/discover/PlayList'
-import DDjRadio from '../views/discover/DjRadio'
+import DDjRadio from '../views/discover/djradio/Index'
+import DDjRadioRecommend from '../views/discover/djradio/Recommend'
+import DDjRadioRank from '../views/discover/djradio/Rank'
+import DDjRadioCategory from '../views/discover/djradio/Category'
 import DArtist from '../views/discover/artist/Index'
 import DArtistCat from '../views/discover/artist/Cat'
 import DArtistRcmd from '../views/discover/artist/Recommend'
 import DArtistSigned from '../views/discover/artist/Signed'
 import DAlbum from '../views/discover/Album'
+
 import PlayList from '../views/Playlist'
+
 import Song from '../views/Song'
+
 import Program from '../views/Program'
+
 import DjRadio from '../views/DjRadio'
+
 import UserHome from '../views/user/Home'
+import UserEvent from '../views/user/Event'
+import UserFollows from '../views/user/Follows'
+import UserFans from '../views/user/Fans'
+
 import Artist from '../views/artist/Index'
 import ATop50 from '../views/artist/Top50'
 import AAlbum from '../views/artist/Album'
@@ -25,7 +39,11 @@ import AMV from '../views/artist/MV'
 import ADesc from '../views/artist/Desc'
 
 import MToLogin from '../views/my/ToLogin'
+
 import FToLogin from '../views/friend/ToLogin'
+
+import Search from '../views/search/Index'
+import SSong from '../views/search/Song'
 
 const history = createBrowserHistory();
 
@@ -50,7 +68,23 @@ const routes = [
 	//发现音乐/主播电台
 	{
 		path:'/discover/djradio',
+		exact:true,
 		component:DDjRadio
+	},
+	//发现音乐/主播电台/推荐
+	{
+		path:'/discover/djradio/recommend',
+		component:DDjRadioRecommend
+	},
+	//发现音乐/主播电台/排行榜
+	{
+		path:'/discover/djradio/rank',
+		component:DDjRadioRank
+	},
+	//发现音乐/主播电台/分类
+	{
+		path:'/discover/djradio/category',
+		component:DDjRadioCategory
 	},
 	//发现音乐/歌手
 	{
@@ -106,6 +140,21 @@ const routes = [
 		path:'/user/home',
 		component:UserHome
 	},
+	//用户动态页
+	{
+		path:'/user/event',
+		component:UserEvent
+	},
+	//用户关注页
+	{
+		path:'/user/follows',
+		component:UserFollows
+	},
+	//用户粉丝页
+	{
+		path:'/user/fans',
+		component:UserFans
+	},
 	//歌手详情页
 	{
 		path:'/artist',
@@ -143,6 +192,17 @@ const routes = [
 	{
 		path:'/friend',
 		component:FToLogin
+	},
+	//搜索
+	{
+		path:'/search',
+		component:Search,
+		routes:[
+			{
+				path:'/search/song',
+				component:SSong
+			}
+		]
 	}
 ]
 
@@ -155,9 +215,9 @@ const router = (
 				{routes.map((route, i) => (
 				  <ExtendRoute key={i} {...route}/>
 		    	))}
-		    	<Redirect from="/discover" to="/" />
 		    	<Redirect from="/my/tologin" to="/my" />
 		    	<Redirect from="/friend/tologin" to="/friend" />
+		    	<Route component={NoMatch}/>
 			</Switch>
 		</App>
 	</Router>

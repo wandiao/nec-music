@@ -1,0 +1,134 @@
+//搜索
+.n-srchrst .srchsongst .hd .ply, .n-srchrst .srchsongst .mv, .n-srchrst .srchsongst .icn, .m-plylist-rdi .icn, .n-srchrst .srchsongst .mv-dis {
+  background: url(../img/table.png) no-repeat 0 9999px;
+}
+.n-srch{
+	.pgsrch,.pgsrch .btn{
+		background: url(../img/sprite.png) 0px 9999px no-repeat;
+	}
+	.pgsrch{
+		width: 420px;
+    height: 40px;
+    z-index: 10;
+    margin: 0px auto;
+    background-position: 0px 0px;
+    .srch{
+			float: left;
+	    width: 320px;
+	    height: 17px;
+	    margin: 12px 0 0 20px;
+	    padding: 0;
+	    background: #fff;
+	    border: none;
+		}
+    .btn{
+      float: right;
+      width: 50px;
+      height: 40px;
+      text-indent: -9999px;
+    }
+    .u-lstlay{
+      top: 43px;
+      width: 418px;
+    }
+	}
+  .snote{
+    margin: 28px 0 17px;
+  }
+}
+.n-srchrst {
+  margin-top: 20px;
+  .srchsongst{
+    .item{
+      padding: 10px 10px 8px 18px;
+      border: 1px solid #fff;
+      &:hover{
+        .hshow{
+          visibility: visible;
+        }
+      }
+      &:nth-child(even){
+        background: #f7f7f7;
+        border-color: #f7f7f7;
+      }
+    }
+    .td{
+      float: left;
+      margin-right: 5px;
+    }
+    .hd{
+      height: 17px;
+      width: 17px;
+      .ply{
+        display: inline-block;
+        width: 17px;
+        height: 17px;
+        margin-right: 15px;
+        cursor: pointer;
+        background-position: 0 -103px;
+      }
+    }
+    .text{
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .w0{
+      width: 370px;
+      .text{
+        position: relative;
+        display: inline-block;
+        padding-right: 25px;
+        width: auto;
+        max-width: 100%;
+        height: 20px;
+      }
+    }
+    b{
+      font-weight: normal;
+    }
+    .hshow{
+      visibility: hidden;
+    }
+    .u-icn-81{
+      margin-right: 8px;
+      margin-bottom: 3px;
+    }
+    .icn{
+      display: inline-block;
+      vertical-align: middle;
+      width: 18px;
+      height: 16px;
+      cursor: pointer;
+      margin: 0 7px 0 0;
+    }
+    .icn-fav{
+      margin-left: 0;
+      background-position: 0 -174px;
+      &:hover{
+        background-position: -20px -174px
+      }
+    }
+    .icn-share{
+      background-position: 0 -195px;
+      &:hover{
+        background-position: -20px -195px;
+      }
+    }
+    .icn-dl{
+      background-position: -81px -174px;
+      &:hover{
+        background-position: -104px -174px;
+      }
+    }
+    .w1{
+      width: 15%;
+      margin-right: 12px;
+    }
+    .w2{
+      width: 18%;
+      margin-right: 12px;
+    }
+  }
+}

@@ -53,14 +53,6 @@ class Header extends Component {
 				}
 			]
 		}
-		// this.checkActive = (location,pathname) => {
-		// 	console.log(pathname)
-		// 	if(location.pathname == pathname) {
-		// 		console.log(pathname)
-		// 		return true;
-		// 	}
-		// 	return false;
-		// }
 		this.toggleShowPlace = (bool) => {
 			if(this.searchInput.value) {
 				bool = false;
@@ -109,7 +101,7 @@ class Header extends Component {
 		}
 	}
 	componentDidMount() {
-		const history = this.props.history
+	
 	}	
 	render() {
 		const {searchSuggests} = this.state

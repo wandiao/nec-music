@@ -91,7 +91,7 @@ class TopList extends Component {
 		})
 	}
   render() {
-  	const {currId,listDetail,commentData,featureList,globalList} = this.state
+  	const {listDetail,commentData,featureList,globalList} = this.state
   	let main,topList;
   	if(!featureList.length || !globalList.length){
   		topList = null;

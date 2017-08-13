@@ -192,4 +192,31 @@ export const getUserRecord = uid => axios.get(`user/record?uid=${uid}`)
 //获取用户歌单
 export const getUserPlaylist = uid => axios.get(`user/playlist?uid=${uid}`)
 
+//获取用户动态
+export const getUserEvent = (uid,offset=0,limit=20) => axios.get(`user/event`,{
+	params:{
+		uid,
+		offset:offset*limit,
+		limit
+	}
+})
+
+//获取用户关注
+export const getUserFollows = (uid,offset=0,limit=20) => axios.get(`user/follows`,{
+	params:{
+		uid,
+		offset:offset*limit,
+		limit
+	}
+})
+
+//获取用户粉丝列表
+export const getUserFans = (uid,offset=0,limit=20) => axios.get(`user/followeds`,{
+	params:{
+		uid,
+		offset:offset*limit,
+		limit
+	}
+})
+
 

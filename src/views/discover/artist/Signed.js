@@ -84,7 +84,7 @@ class SingerItem extends Component {
 		super(props)
 	}
 	render() {
-		const {singer,index} = this.props
+		const {singer} = this.props
 		return (
 			<li>
 				<div className="u-cover u-cover-5">

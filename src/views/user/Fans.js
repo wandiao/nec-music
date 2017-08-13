@@ -3,7 +3,8 @@ import * as api from '../../api'
 import qs from 'query-string'
 import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
-import {numberFormat} from '../../util'
+import {pos} from '../../util/dom'
+// import {numberFormat} from '../../util'
 import InfoComp from './InfoComp'
 import { Pagination } from 'antd';
 
@@ -12,6 +13,25 @@ class Fans extends Component {
 		super(props);
 		this.state = {
 			userInfo:null,
+			fans:[],
+			currPage:1
+		}
+		this.choosePage = (page,pageSize) => {
+			this.setState({
+				currPage:page,
+				fans:[]
+			})
+			const query = qs.parse(this.props.location.search)
+			const id = query.id
+			const fp = pos(document.getElementById('fanstitle'))
+			api.getUserFans(id,page-1).then(res => {
+				if(res.data.code == 200) {
+					this.setState({
+						fans:res.data.followeds
+					})
+					window.scrollTo.apply(null,fp)
+				}
+			})
 		}
 	}
 	componentDidMount() {
@@ -25,9 +45,17 @@ class Fans extends Component {
 				})
 			}
 		})
+		api.getUserFans(id).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					fans:res.data.followeds,
+				})
+			}
+		})
 	}
 	render() {
-		const {userInfo} = this.state
+		const {userInfo,fans,currPage} = this.state
 		
 		if(!userInfo) {
 			return <div className="g-bd">
@@ -39,25 +67,33 @@ class Fans extends Component {
 		<div className="g-bd">
 			<div className="g-wrap p-prf">
 				<InfoComp userInfo={userInfo} profile={profile} />
-				<div className="u-title u-title-1 f-cb">
-					<h3><span className="f-ff2 s-fc3">关注（<span id="follow_count_down">44</span>）</span></h3>
+				<div className="u-title u-title-1 f-cb" id="fanstitle">
+					<h3><span className="f-ff2 s-fc3">粉丝（<span id="follow_count_down">{profile.followeds}</span>）</span></h3>
 				</div>
 				<ul className="m-fans f-cb">
-					{Array(30).fill(1).map((i,index) =>
+					{fans.length?fans.map((i,index) =>
 						<li key={index}>
-							<a href="/user/home?id=95313677" className="ava f-pr" title="鹊神怪鸟">
-								<img src="http://p1.music.126.net/cDXYmITI6OZh_86FKLD5TA==/3327122186618530.jpg?param=60y60" />
-							</a>
+							<Link to={`/user/home?id=${i.userId}`} className="ava f-pr" title={i.nickname}>
+								<img src={i.avatarUrl} />
+							</Link>
 							<div className="info">
-								<p><a href="/user/home?id=95313677" className="s-fc7 f-fs1 nm f-thide" title="鹊神怪鸟">鹊神怪鸟</a>&nbsp;<i className="icn u-icn u-icn-s-01"></i></p>
 								<p>
-									<a href="/user/event?id=95313677">动态<em className="s-fc7">0</em></a>
-									<span className="line">|</span>
-									<a href="/user/follows?id=95313677">关注<em className="s-fc7">11</em></a>
-									<span className="line">|</span>
-									<a href="/user/fans?id=95313677">粉丝<em className="s-fc7">5</em></a>
+									<Link to={`/user/home?id=${i.userId}`} className="s-fc7 f-fs1 nm f-thide" title={i.nickname}>{i.nickname}</Link>
+									&nbsp;
+									{i.userType?<sup className="icn u-icn2 u-icn2-music2"></sup>
+									:i.authStatus?<sup className="u-icn u-icn-1"></sup>:null}
+									&nbsp;
+									{i.gender === 1?<i className="icn u-icn u-icn-s-01"></i>:<i className="icn u-icn u-icn-s-02"></i>}
+									
 								</p>
-								<p className="s-fc3 f-thide">非常李白的苏东坡</p>
+								<p>
+									<Link to={`/user/event?id=${i.userId}`}>动态<em className="s-fc7">{i.eventCount}</em></Link>
+									<span className="line">|</span>
+									<Link to={`/user/follows?id=${i.userId}`}>关注<em className="s-fc7">{i.follows}</em></Link>
+									<span className="line">|</span>
+									<Link to={`/user/fans?id=${i.userId}`}>粉丝<em className="s-fc7">{i.followeds}</em></Link>
+								</p>
+								<p className="s-fc3 f-thide">{i.signature}</p>
 							</div>
 							<div className="oper">
 								<a className="u-btn u-btn-7 f-tdn" href="#" style={{display:'none'}}><i>发私信</i></a>
@@ -66,10 +102,10 @@ class Fans extends Component {
 								<a className="u-btn u-btn-8 f-tdn" href="#" data-action="follow" data-userid="95313677">关 注</a>
 							</div>
 						</li>
-					)}
+					):<div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>}
 				</ul>
-				<div className="u-page">
-					<Pagination  defaultCurrent={1} pageSize={20} total={50} />
+				<div className="u-page" style={{display:profile.followeds<=20?'none':'block'}}>
+					<Pagination onChange={this.choosePage} current={currPage} pageSize={20} total={profile.followeds<1000?profile.followeds:1000} />
 				</div>
 			</div>
 		</div>

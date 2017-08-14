@@ -78,12 +78,55 @@
     max-width: 76%;
   }
 }
+.m-cvrlst-alb3 {
+    margin-left: -33px;
+    li{
+      width: 186px;
+      height: 208px;
+      padding-left: 33px;
+    }
+}
 .m-cvrlst-alb4 {
   margin: 20px 0 0 -18px;
   li{
     width: 163px;
     height: 205px;
     padding-left: 18px;
+  }
+}
+.m-sgerlist{
+  .m-cvrlst {
+    margin: 20px 0 0 -17px;
+    li{
+      width: 147px;
+      padding-left: 17px;
+      p{
+        margin-top: 8px;
+      }
+    }
+  } 
+}
+.m-sgerlist-1{
+  .m-cvrlst{
+    margin: 0 0 0 -24px;
+    li{
+      width: 154px;
+      padding-left: 24px;
+    }
+  }
+}
+.m-cvrlst-5{
+  li{
+    width: 130px;
+    height: 184px;
+    .nm-icn{
+      float: left;
+      max-width: 80%;
+    }
+    .u-icn-5{
+      position: relative;
+      float: right;
+    }
   }
 }
 .m-cvrlst-7 {
@@ -246,6 +289,9 @@
       background-position: 0 -56px;
     }
   }
+  .w0{
+    width: 46px;
+  }
   .w1{
     width: 74px;
   }
@@ -260,6 +306,20 @@
   }
   .w4{
     width: 20%;
+  }
+  .w6{
+    width: 98px;
+  }
+  .w7{
+    width: 70px;
+  }
+  .w9{
+    width: 116px;
+  }
+  .w11{
+    width: 60px;
+    padding-right: 0;
+    padding-left: 25px;
   }
   .even td{
     background-color: #f7f7f7;
@@ -295,6 +355,10 @@
   .ttc{
     height: 18px;
     margin-right: 20px;
+  }
+  .dec{
+    width: 100%;
+    margin-top: 5px;
   }
   .txt{
     position: relative;
@@ -386,6 +450,36 @@
 .m-table-4{
   border: none;
 }
+.m-table-2{
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 0;
+  tr{
+    td{
+      padding-top: 8px;
+      padding-bottom: 8px;
+      border: 1px solid #fff;
+      border-width: 1px 0;
+    }
+  }
+  .hd{
+    padding-left: 5px;
+  }
+  .tt{
+    margin-right: -100px;
+  }
+  .opt{
+    float: right;
+  }
+}
+.m-table-2-cover{
+  tr{
+    td{
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+  }
+}
 .m-table-program {
   border-top: none;
   tr{
@@ -465,6 +559,86 @@
     vertical-align: middle;
   }
 }
+.m-mvlist {
+  margin-left: -26px;
+  li{
+    float: left;
+    width: 185px;
+    padding: 0 0 40px 26px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
+  .cover{
+    width: 159px;
+    height: 90px;
+    .link{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9;
+    }
+  }
+  img{
+    width: 100%;
+    height: 90px;
+  }
+  .tr{
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding-right: 5px;
+    height: 20px;
+    line-height: 20px;
+    color: #fff;
+    box-sizing: border-box;
+    text-align: right;
+    text-shadow: -2px 1px rgba(0,0,0,.4);
+  }
+  .u-icn2-mv{
+    margin: -2px 2px 0 0;
+  }
+  .bl{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding-left: 5px;
+    height: 20px;
+    line-height: 20px;
+    color: #fff;
+    text-shadow: -2px 1px rgba(0,0,0,.4);
+  }
+  .title{
+    width: 100%;
+    height: auto;
+    margin: 7px 0 1px;
+    border: none;
+    font-size: 14px;
+    font-weight: normal;
+  }
+  .name{
+    width: 100%;
+    font-weight: normal;
+  }
+}
+.m-rdilist {
+  margin: 16px 0 0 -37px;
+  li{
+    float: left;
+    width: 150px;
+    margin-left: 37px;
+  }
+  h3{
+    margin: 13px 0 6px;
+    line-height: 16px;
+    font-size: 14px;
+    font-weight: normal;
+  }
+  p{
+    line-height: 18px;
+  }
+}
 ///////////////////////////////////////////
 .m-tabs, .m-tabs a, .m-tabs em, .m-tabs1 a, .m-tabs1 em {
   background: url(../img/tab.png) no-repeat 0 9999px;
@@ -537,6 +711,10 @@
   }
   a{
     padding-left: 2px;
+    &:hover{
+      background-position: -5px -45px;
+      text-decoration: none;
+    }
     &.sel{
       background-position: left -90px;
       em{

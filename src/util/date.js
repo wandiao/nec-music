@@ -55,3 +55,22 @@ export function dateBeautify(str) {
     }
   }
 }
+
+/**
+ * 转化歌曲时间
+ *
+ * @param {Number} time 需要转化的时间.
+ * @returns {String} 返回格式化之后的时间字符串.
+ */
+export function formatSongTime(time) {
+  var minute = Math.floor(time / 60);
+  var second = Math.floor(time - (minute * 60))
+  if(minute < 10) {
+    minute = "0" + minute
+  }
+  if(second < 10) {
+    second = "0" + second
+  }
+  time = minute + ":" + second
+  return time
+}

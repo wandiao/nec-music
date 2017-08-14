@@ -126,20 +126,20 @@ export const getPlayListComment = (id,offset=0,limit=20) => axios.get('comment/p
 })
 
 //搜索
-export const search = (keywords,type=1,limit=30,offset=0) => axios.get('search',{
+export const search = (keywords,type=1,offset=0,limit=30) => axios.get('search',{
 	params:{
 		keywords,
-		offset,
+		offset:offset*limit,
 		limit,
 		type
 	}
 })
 
 //搜索建议
-export const searchSuggest = (keywords,type=1,limit=30,offset=0) => axios.get('search',{
+export const searchSuggest = (keywords,type=1,offset=0,limit=30) => axios.get('search',{
 	params:{
 		keywords,
-		offset,
+		offset:offset*limit,
 		limit,
 		type
 	}

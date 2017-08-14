@@ -32,8 +32,21 @@
       width: 418px;
     }
 	}
+  .space{
+    height: 61px;
+  }
   .snote{
+    position: absolute;
+    left:0;
+    top:-122px;
     margin: 28px 0 17px;
+  }
+  .head2{
+    margin-top: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #dadada;
+    line-height: 17px;
+    font-weight: bold;
   }
 }
 .n-srchrst {
@@ -42,14 +55,16 @@
     .item{
       padding: 10px 10px 8px 18px;
       border: 1px solid #fff;
+      &:nth-child(even),&.even{
+        background: #f7f7f7;
+        border-color: #f7f7f7;
+      }
       &:hover{
+        border: 1px solid #e1e1e1;
+        background: #f2f2f2;
         .hshow{
           visibility: visible;
         }
-      }
-      &:nth-child(even){
-        background: #f7f7f7;
-        border-color: #f7f7f7;
       }
     }
     .td{
@@ -73,6 +88,19 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+    }
+    .lyric{
+      margin: 10px 0 18px 52px;
+      color: #666;
+      line-height: 23px;
+      word-wrap: break-word;
+      word-break: break-all;
+      .crl{
+        margin-top: 5px;
+        .u-icn{
+          margin-left: 5px;
+        }
+      }
     }
     .w0{
       width: 370px;
@@ -130,5 +158,10 @@
       width: 18%;
       margin-right: 12px;
     }
+  }
+}
+.m-rdilist{
+  li {
+    margin: 0 0 40px 37px;
   }
 }

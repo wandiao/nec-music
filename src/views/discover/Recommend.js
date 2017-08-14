@@ -280,7 +280,7 @@ class HotRcmd extends Component {
             
           </div>
           <span className="more">
-            <a href="" className="s-fc3">更多</a>
+            <Link to="/discover/playlist" className="s-fc3">更多</Link>
             <i className="cor s-bg s-bg-6">&nbsp;</i>
           </span>
         </div>

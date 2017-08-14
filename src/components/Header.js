@@ -1,9 +1,11 @@
 import React, { Component} from 'react'
 import { NavLink as Link }from 'react-router-dom'
-import {search,searchSuggest} from '../api'
+import * as api from '../api'
 import { connect } from 'react-redux'
 import {chooseBox} from '../store/actions'
 import axios from 'axios'
+import createBrowserHistory from 'history/createBrowserHistory'
+import { withRouter } from 'react-router'
 
 const navConfig = [
 	{path:'/',name:'推荐',exact:true},
@@ -54,6 +56,13 @@ class Header extends Component {
 			]
 		}
 		this.toggleShowPlace = (bool) => {
+			if(bool) {
+				setTimeout(() => {
+					this.setState({
+						showSrchSuggest:false
+					})
+				},2000)	
+			}
 			if(this.searchInput.value) {
 				bool = false;
 			}
@@ -77,16 +86,16 @@ class Header extends Component {
 				this.setState({
 					showSrchSuggest:true
 				})
-				axios.all([searchSuggest(keywords,1,4),searchSuggest(keywords,100,3),searchSuggest(keywords,10,2),searchSuggest(keywords,1004,2),searchSuggest(keywords,1000,3)])
+				axios.all([api.searchSuggest(keywords,1,0,4),api.searchSuggest(keywords,100,0,3),api.searchSuggest(keywords,10,0,2),api.searchSuggest(keywords,1004,0,2),api.searchSuggest(keywords,1000,0,3)])
 				.then(res => {
 					console.log(res)
 					const ss = Object.assign([],this.state.searchSuggests)
 					console.log(ss)
-					ss[0].list = res[0].data.result.songs;
-					ss[1].list = res[1].data.result.artists;
-					ss[2].list = res[2].data.result.albums;
-					ss[3].list = res[3].data.result.mvs;
-					ss[4].list = res[4].data.result.playlists;
+					ss[0].list = res[0].data.result.songs || [];
+					ss[1].list = res[1].data.result.artists || [];
+					ss[2].list = res[2].data.result.albums || [];
+					ss[3].list = res[3].data.result.mvs || [];
+					ss[4].list = res[4].data.result.playlists || [];
 					this.setState({
 						searchSuggest:ss
 					})
@@ -94,8 +103,12 @@ class Header extends Component {
 				})
 				
 			}else{
-				search(keywords).then(res => {
-					console.log(res.data)
+				this.props.history.push({
+					pathname:'/search/song',
+					search:`?keywords=${keywords}`
+				})
+				this.setState({
+					showSrchSuggest:false
 				})
 			}		
 		}
@@ -168,7 +181,7 @@ class Header extends Component {
 							<div className="u-lstlay" style={{display:this.state.showSrchSuggest?'block':'none'}}>
 								<div className="m-schlist">
 									<p className="note s-fc3">
-										<a className="s-fc3 xtag">搜“{this.searchInput?this.searchInput.value:null}” 相关用户</a> >
+										<Link to={`/search/user?keywords=1`} className="s-fc3 xtag">搜“{this.searchInput?this.searchInput.value:null}” 相关用户</Link> >
 									</p>
 									<div className="rap">
 									{
@@ -179,12 +192,12 @@ class Header extends Component {
 													<em className="f-fl">{i.name}</em>
 												</h3>
 												<ul className={index%2 == 0?'clearfix':'odd clearfix'}>
-												{
+												{i.list.length?
 													i.list.map((item,index1) =>
 														<li key={index1}>
 															<a href={`${i.href}?id=${item.id}`} className="s-fc0 f-thide xtag">{index ==0 ?`${item.name}-${item.artists.map(a =>a.name).join('/')}`:item.name}</a>
 														</li>
-													)
+													):null
 												}	
 												</ul>
 											</div>
@@ -280,4 +293,4 @@ function select(state) {
   }
 }
 
-export default connect(select,undefined,undefined,{pure:false})(Header)
+export default connect(select,undefined,undefined,{pure:false})(withRouter(Header))

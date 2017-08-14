@@ -44,6 +44,13 @@ import FToLogin from '../views/friend/ToLogin'
 
 import Search from '../views/search/Index'
 import SSong from '../views/search/Song'
+import SArtist from '../views/search/Artist'
+import SAlbum from '../views/search/Album'
+import SMV from '../views/search/MV'
+import SLrc from '../views/search/Lrc'
+import SPlaylist from '../views/search/Playlist'
+import SRadio from '../views/search/Radio'
+import SUser from '../views/search/User'
 
 const history = createBrowserHistory();
 
@@ -198,9 +205,45 @@ const routes = [
 		path:'/search',
 		component:Search,
 		routes:[
+			//搜索歌曲
 			{
 				path:'/search/song',
 				component:SSong
+			},
+			//搜索歌手
+			{
+				path:'/search/artist',
+				component:SArtist
+			},
+			//搜索专辑
+			{
+				path:'/search/album',
+				component:SAlbum
+			},
+			//搜索MV
+			{
+				path:'/search/mv',
+				component:SMV
+			},
+			//搜索lrc
+			{
+				path:'/search/lrc',
+				component:SLrc
+			},
+			//搜索歌单
+			{
+				path:'/search/playlist',
+				component:SPlaylist
+			},
+			//搜索电台
+			{
+				path:'/search/radio',
+				component:SRadio
+			},
+			//搜索用户
+			{
+				path:'/search/user',
+				component:SUser
 			}
 		]
 	}
@@ -210,7 +253,7 @@ const routes = [
 let Router = process.env.NODE_ENV !== 'production' ? BrowserRouter : HashRouter;
 const router = (
 	<Router history={history}>
-		<App>
+		<App history={history}>
 			<Switch>
 				{routes.map((route, i) => (
 				  <ExtendRoute key={i} {...route}/>

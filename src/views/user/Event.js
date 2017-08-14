@@ -3,8 +3,8 @@ import * as api from '../../api'
 import qs from 'query-string'
 import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
-import {formatSongTime,numberFormat,debounce} from '../../util'
-import {dateFormat} from '../../util/date'
+import {numberFormat,debounce} from '../../util'
+import {dateFormat,formatSongTime} from '../../util/date'
 import InfoComp from './InfoComp'
 
 const shareType = {

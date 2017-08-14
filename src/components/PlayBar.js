@@ -1,7 +1,7 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
 import {changeCurrMusic,changePlayList,asyncChangeCurrMusic as ac } from '../store/actions'
-import {formatSongTime} from '../util'
+import {formatSongTime} from '../util/date'
 import {initScroll} from '../util/dom'
 import { Slider } from 'antd';
 

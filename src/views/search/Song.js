@@ -1,12 +1,93 @@
 import React, { Component} from 'react';
+import * as api from '../../api'
+import qs from 'query-string'
+import {Spin} from 'antd'
+import {Link} from 'react-router-dom'
+import {pos} from '../../util/dom'
+import { Pagination } from 'antd';
+import {formatSongTime} from '../../util/date'
 
 class Song extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			songs:[],
+			total:0,
+			keywords:'',
+			currPage:1,
+			queryCorrected:null
+		}
+		this.choosePage = (page,pageSize) => {
+			this.setState({
+				currPage:page,
+				songs:[]
+			})
+			const query = qs.parse(this.props.location.search)
+			const keywords = query.keywords	
+			api.search(keywords,1,page-1).then(res => {
+				if(res.data.code == 200) {
+					this.setState({
+						songs:res.data.result.songs
+					})
+					const sp = pos(document.getElementById('search_result'))
+					window.scrollTo.apply(null,sp)
+				}
+			})
+		}
+	}
+	componentDidMount() {
+		const keywords = qs.parse(this.props.location.search).keywords
+		if(keywords === undefined) {
+			return false
+		}
+		this.setState({
+			keywords:keywords
+		})
+		api.search(keywords,1).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					songs:res.data.result.songs,
+					total:res.data.result.songCount,
+					queryCorrected:res.data.result.queryCorrected
+				})
+			}
+		})
+	}
+	componentWillReceiveProps(nextProps) {
+		const keywords = qs.parse(nextProps.location.search).keywords
+		if(keywords === undefined) {
+			return false
+		}
+		this.setState({
+			keywords:keywords,
+			songs:[],
+			total:0,
+			currPage:1,
+			queryCorrected:null
+		})
+		api.search(keywords,1).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					songs:res.data.result.songs,
+					total:res.data.result.songCount,
+					queryCorrected:res.data.result.queryCorrected
+				})
+			}
+		})
+	}
 	render() {
+		const {songs,total,keywords,currPage,queryCorrected} = this.state
 		return (
-			<div className="ztag">
+			<div className="ztag f-pr" id="search_result">
+				<div className="snote s-fc4 ztag">
+					搜索“{keywords}”，找到 <em className="s-fc6">{total}</em> 首单曲
+					{queryCorrected?<span>，您是不是要搜：<Link className="s-fc7" to={`/search/song?keywords=${queryCorrected}`}>{queryCorrected}</Link></span>:null}
+				</div>
 				<div className="n-srchrst">
 					<div className="srchsongst">
-						{Array(10).fill(1).map((i,index) =>
+						{songs.length?songs.map((i,index) =>
 							<div key={index} className="item f-cb">
 								<div className="td">
 									<div className="hd">
@@ -16,7 +97,7 @@ class Song extends Component {
 								<div className="td w0">
 									<div className="sn">
 										<div className="text">
-											<a href="/song?id=437246040"><b title="穿过成都去看你">穿过成都去看你</b></a>
+											<Link to={`/song?id=${i.id}`}><b title={i.name} dangerouslySetInnerHTML={{__html:i.name.replace(new RegExp(keywords,'g'),rs =>`<span class="s-fc7">${rs}</span>`)}}></b></Link>
 										</div>
 									</div>
 								</div>
@@ -28,11 +109,28 @@ class Song extends Component {
 										<span className="icn icn-dl"></span>
 									</div>
 								</div>
-								<div className="td w1"><div className="text"><a href="/artist?id=1006036">2468</a></div></div>
-								<div className="td w2"><div className="text"><a className="s-fc3" href="/album?id=34940034" title="《穿过成都去看你》">《穿过成都去看你》</a></div></div>
-								<div className="td">04:03</div>
+								<div className="td w1">
+									<div className="text">
+										{i.artists.map((ar,index) =>
+											<span key={index}>
+												<Link to={`/artist?id=${ar.id}`}>{ar.name}</Link>
+												{index >= i.artists.length-1?null:'/'}
+											</span>
+										)
+										}
+									</div>
+								</div>
+								<div className="td w2">
+									<div className="text">
+										<Link className="s-fc3" to={`/album?id=${i.album.id}`} title={`《${i.album.name}》`}>《{i.album.name}》</Link>
+									</div>
+								</div>
+								<div className="td">{formatSongTime(i.duration/1000)}</div>
 							</div>
-						)}
+						):<div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>}
+					</div>
+					<div className="u-page" style={{display:total<=30?'none':'block'}}>
+						<Pagination onChange={this.choosePage} current={currPage}   pageSize={30} total={total} />
 					</div>
 				</div>
 			</div>

@@ -2,8 +2,7 @@ import React, { Component} from 'react';
 import Comments from '../components/Comments'
 import qs from 'query-string'
 import  * as api from '../api';
-import {dateFormat} from '../util/date'
-import {formatSongTime} from '../util'
+import {dateFormat,formatSongTime} from '../util/date'
 import {Link} from 'react-router-dom'
 import {Spin} from 'antd'
 

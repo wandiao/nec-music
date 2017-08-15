@@ -131,6 +131,7 @@ class Search extends Component {
 				<div className="pgsrch f-pr j-suggest">
 					<input id="m-search-input" type="text"  className="srch j-flag" 
 					ref={(input) => { this.searchInput = input; }}
+					onBlur={e=>setTimeout(()=>this.setState({showSrchSuggest:false}),50)}
 					onKeyUp={this.search} />
 					<a onClick={e =>this.toResultPage()} className="btn j-flag">搜索</a>
 					<div className="u-lstlay" style={{display:this.state.showSrchSuggest?'block':'none'}}>

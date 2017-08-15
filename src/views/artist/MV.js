@@ -1,26 +1,66 @@
 import React, { Component} from 'react';
 import { Pagination } from 'antd';
+import {Link} from 'react-router-dom'
+import * as api from '../../api'
+import qs from 'query-string'
+import {Spin} from 'antd'
 
 class MV extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			mvs:[],
+			currPage:1,
+			total:0
+		}
+		this.choosePage = (page,pageSize) => {
+			const id = qs.parse(this.props.location.search).id
+			this.setState({
+				currPage:page,
+				mvs:[]
+			})
+			api.getArtistMV(id,page-1).then(res => {
+				if(res.data.code == 200) {
+					this.setState({
+						mvs:res.data.mvs
+					})
+					window.scrollTo(0,0)
+				}
+			})
+		}
+	}
+	componentDidMount() {
+		const id = qs.parse(this.props.location.search).id
+		api.getArtistMV(id).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					mvs:res.data.mvs,
+					total:res.data.size
+				})
+			}
+		})
+	}
 	render() {
+		const {mvs,total,currPage} = this.state
 		return (
 			<div>
 				<ul className="m-cvrlst m-cvrlst-7 f-cb">
 					{
-						Array(12).fill(0).map((i,index) =>
+						mvs.length?mvs.map((i,index) =>
 							<li key={index}>
 								<div className="u-cover u-cover-7">
-									<img src="http://p3.music.126.net/LjLLYmafKlCxQsWDZzNcOw==/19071029183891546.jpg?param=137y103" />
-									<a href="/mv?id=5501228" className="msk"></a>
-									<a href="/mv?id=5501228" className="icon-play f-alpha"></a>
+									<img src={`${i.imgurl}?param=137y103`} />
+									<Link to={`/mv?id=${i.id}`} className="msk"></Link>
+									<Link to={`/mv?id=${i.id}`} className="icon-play f-alpha"></Link>
 								</div>
-								<p className="dec"><a href="/mv?id=5501228" className="tit f-thide s-fc0">We Are One</a></p>
+								<p className="dec"><Link to={`/mv?id=${i.id}`} className="tit f-thide s-fc0">{i.name}</Link></p>
 							</li>
-						)					
+						):<div style={{height:'200px'}} className="loading"><Spin tip="Loading..." /></div>					
 					}
 				</ul>
-				<div className="u-page">
-					<Pagination  defaultCurrent={1} pageSize={10} total={50} />
+				<div className="u-page" style={{display:total<=12?'none':'block'}}>
+					<Pagination onChange={this.choosePage} current={currPage}   pageSize={12} total={total} />
 				</div>
 			</div>
 		);

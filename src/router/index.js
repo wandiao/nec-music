@@ -25,6 +25,8 @@ import Song from '../views/Song'
 
 import Program from '../views/Program'
 
+import MV from '../views/MV'
+
 import DjRadio from '../views/DjRadio'
 
 import UserHome from '../views/user/Home'
@@ -141,6 +143,10 @@ const routes = [
 	{
 		path:'/djradio',
 		component:DjRadio
+	},//mv详情
+	{
+		path:'/mv',
+		component:MV
 	},
 	//用户首页
 	{

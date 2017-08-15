@@ -370,6 +370,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    .u-icn2-music2{
+      margin-top: -1px;
+    }
   }
   b{
     font-weight: normal;
@@ -411,17 +414,25 @@
       background-position: -104px -174px;
     }
   }
-  tr:hover{
-    td{
-      background-color: #e6e6e6 !important;
+  tr{
+    &:hover{
+      td{
+        background-color: #e6e6e6 !important;
+      }
+      .hshow{
+        display: block;
+        position: relative;
+        margin-right: -10px;
+      }
+      .u-dur{
+        display: none;
+      }
     }
-    .hshow{
-      display: block;
-      position: relative;
-      margin-right: -10px;
-    }
-    .u-dur{
-      display: none;
+    &:nth-child(even) {
+      td{
+        background-color: #f7f7f7;
+      }
+      
     }
   }
   .text{
@@ -446,6 +457,12 @@
     top: 0;
     right: 0;
   }
+  .icnfix{
+    top: 2px;
+    right: auto;
+    margin-left: 5px;
+    z-index: 10;
+  }
 }
 .m-table-4{
   border: none;
@@ -460,6 +477,13 @@
       padding-bottom: 8px;
       border: 1px solid #fff;
       border-width: 1px 0;
+    }
+    &:hover{
+      td{
+        border-width: 1px 0;
+        border-color: #e1e1e1;
+        background: #f2f2f2;
+      }
     }
   }
   .hd{
@@ -538,6 +562,65 @@
     margin-left: 10px;
   }
 } 
+.m-plylist-rdi{
+  .itm{
+    height: 60px;
+    padding: 10px 0;
+    line-height: 40px;
+    &:hover{
+      .opt{
+        display: block;
+      }
+      .tt{
+        width: 330px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  .icn{
+    display: inline-block;
+    vertical-align: middle;
+    width: 18px;
+    height: 16px;
+    cursor: pointer;
+    margin: 0 7px 0 0;
+  }
+  .opt{
+    float: right;
+    display: none;
+    .u-icn{
+      margin-right: 7px;
+      cursor: pointer;
+    }
+    .u-icn-81{
+      margin-top: -2px;
+    }
+    .icn-share{
+      background-position: 0 -195px;
+      &:hover{
+        background-position: -20px -195px;
+      }
+    }
+  }
+  .tt{
+    float: left;
+  }
+}
+.m-plylist-rdisrch{
+  .icon{
+    margin: 12px 20px 0 20px;
+  }
+  .col-3{
+    width: 378px;
+  }
+  .col-4{
+    width: 230px;
+  }
+  .col-5{
+    width: 80px;
+  }
+}
 .m-hdlist {
   margin-left: -25px;
   li{

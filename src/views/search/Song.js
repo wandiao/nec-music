@@ -56,7 +56,7 @@ class Song extends Component {
 	}
 	componentWillReceiveProps(nextProps) {
 		const keywords = qs.parse(nextProps.location.search).keywords
-		if(keywords === undefined) {
+		if(keywords === undefined || keywords == this.state.keywords) {
 			return false
 		}
 		this.setState({
@@ -97,7 +97,7 @@ class Song extends Component {
 								<div className="td w0">
 									<div className="sn">
 										<div className="text">
-											<Link to={`/song?id=${i.id}`}><b title={i.name} dangerouslySetInnerHTML={{__html:i.name.replace(new RegExp(keywords,'g'),rs =>`<span class="s-fc7">${rs}</span>`)}}></b></Link>
+											<Link to={`/song?id=${i.id}`}><b title={i.name} dangerouslySetInnerHTML={{__html:i.name.replace(new RegExp(keywords,'gi'),rs =>`<span class="s-fc7">${rs}</span>`)}}></b></Link>
 										</div>
 									</div>
 								</div>

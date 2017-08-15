@@ -1,34 +1,115 @@
 import React, { Component} from 'react';
+import * as api from '../../api'
+import qs from 'query-string'
+import {Spin} from 'antd'
+import {Link} from 'react-router-dom'
+import {pos} from '../../util/dom'
 import { Pagination } from 'antd';
 
 class Album extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			albums:[],
+			total:0,
+			keywords:'',
+			currPage:1,
+			queryCorrected:null
+		}
+		this.choosePage = (page,pageSize) => {
+			this.setState({
+				currPage:page,
+				albums:[]
+			})
+			const query = qs.parse(this.props.location.search)
+			const keywords = query.keywords	
+			api.search(keywords,10,page-1).then(res => {
+				if(res.data.code == 200) {
+					this.setState({
+						albums:res.data.result.albums
+					})
+					const sp = pos(document.getElementById('search_result'))
+					window.scrollTo.apply(null,sp)
+				}
+			})
+		}
+	}
+	componentDidMount() {
+		const keywords = qs.parse(this.props.location.search).keywords
+		if(keywords === undefined) {
+			return false
+		}
+		this.setState({
+			keywords:keywords
+		})
+		api.search(keywords,10).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					albums:res.data.result.albums,
+					total:res.data.result.albumCount,
+					queryCorrected:res.data.result.queryCorrected
+				})
+			}
+		})
+	}
+	componentWillReceiveProps(nextProps) {
+		const keywords = qs.parse(nextProps.location.search).keywords
+		if(keywords === undefined || keywords == this.state.keywords) {
+			return false
+		}
+		this.setState({
+			keywords:keywords,
+			albums:[],
+			total:0,
+			currPage:1,
+			queryCorrected:null
+		})
+		api.search(keywords,10).then(res => {
+			// console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					albums:res.data.result.albums,
+					total:res.data.result.albumCount,
+					queryCorrected:res.data.result.queryCorrected
+				})
+			}
+		})
+	}
 	render() {
+		const {albums,total,keywords,currPage,queryCorrected} = this.state
 		return (
-			<div className="n-srchrst ztag">
+			<div className="n-srchrst ztag f-pr" id="search_result">
+				<div className="snote s-fc4 ztag">
+					搜索“{keywords}”，找到 <em className="s-fc6">{total}</em> 张专辑
+					{queryCorrected?<span>，您是不是要搜：<Link className="s-fc7" to={`/search/song?keywords=${queryCorrected}`}>{queryCorrected}</Link></span>:null}
+				</div>
 				<ul className="m-cvrlst m-cvrlst-alb3 f-cb">
-					{Array(20).fill(1).map((i,index) =>
+					{albums.length?albums.map((i,index) =>
 						<li key={index}>
 							<div className="u-cover u-cover-alb2">
-								<a href="/album?id=34930257">
-									<img src="http://p1.music.126.net/34YW1QtKxJ_3YnX9ZzKhzw==/2946691234868155.jpg?param=180y180" />
-									<span title="成都" className="msk"></span>
-								</a>
+								<Link to={`/album?id={i.id}`}>
+									<img src={i.picUrl} />
+									<span title={i.name} className="msk"></span>
+								</Link>
 								<a title="播放"className="icon-play f-alpha f-fr " href="javascript:void(0)"></a>
 							</div>
 							<p className="dec">
-								<a href="/album?id=34930257" className="tit f-thide s-fc0" title="成都"><span className="s-fc7">成都</span></a>
+								<Link to={`/album?id={i.id}`} className="tit f-thide s-fc0" title={i.name}
+								dangerouslySetInnerHTML={{__html:i.name.replace(new RegExp(keywords,'gi'),rs =>`<span class="s-fc7">${rs}</span>`)}}
+								></Link>
 							</p>
 							<p>
-								<span className="nm f-thide" title="赵雷">
-									<a href="/artist?id=6731" className="s-fc3">赵雷</a>
+								<span className="nm f-thide" title={i.artist.name}>
+									<Link to={`/artist?id=${i.artist.id}`} className="s-fc3" dangerouslySetInnerHTML={{__html:i.artist.name.replace(new RegExp(keywords,'gi'),rs =>`<span class="s-fc7">${rs}</span>`)}}></Link>
 								</span>
 							</p>
 						</li>
-					)}
+					):<div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>}
 				</ul>
-				<div className="u-page">
-					<Pagination   pageSize={20} total={50} />
-				</div>	
+				<div className="u-page" style={{display:total<=30?'none':'block'}}>
+					<Pagination onChange={this.choosePage} current={currPage}   pageSize={30} total={total} />
+				</div>
 			</div>
 			
 		);

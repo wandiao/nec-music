@@ -1,43 +1,131 @@
 import React, { Component} from 'react';
+import * as api from '../../api'
+import qs from 'query-string'
+import {Spin} from 'antd'
+import {Link} from 'react-router-dom'
+import {pos} from '../../util/dom'
 import { Pagination } from 'antd';
+import {numberFormat} from '../../util'
 
 class User extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			userprofiles:[],
+			total:0,
+			keywords:'',
+			currPage:1,
+			queryCorrected:null
+		}
+		this.choosePage = (page,pageSize) => {
+			this.setState({
+				currPage:page,
+				userprofiles:[]
+			})
+			const query = qs.parse(this.props.location.search)
+			const keywords = query.keywords	
+			api.search(keywords,1002,page-1).then(res => {
+				if(res.data.code == 200) {
+					this.setState({
+						userprofiles:res.data.result.userprofiles
+					})
+					const sp = pos(document.getElementById('search_result'))
+					window.scrollTo.apply(null,sp)
+				}
+			})
+		}
+	}
+	componentDidMount() {
+		const keywords = qs.parse(this.props.location.search).keywords
+		if(keywords === undefined) {
+			return false
+		}
+		this.setState({
+			keywords:keywords
+		})
+		api.search(keywords,1002).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					userprofiles:res.data.result.userprofiles,
+					total:res.data.result.userprofileCount,
+					queryCorrected:res.data.result.queryCorrected
+				})
+			}
+		})
+	}
+	componentWillReceiveProps(nextProps) {
+		const keywords = qs.parse(nextProps.location.search).keywords
+		if(keywords === undefined || keywords == this.state.keywords) {
+			return false
+		}
+		this.setState({
+			keywords:keywords,
+			userprofiles:[],
+			total:0,
+			currPage:1,
+			queryCorrected:null
+		})
+		api.search(keywords,1002).then(res => {
+			// console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					userprofiles:res.data.result.userprofiles,
+					total:res.data.result.userprofileCount,
+					queryCorrected:res.data.result.queryCorrected
+				})
+			}
+		})
+	}
 	render() {
+		const {userprofiles,total,keywords,currPage,queryCorrected} = this.state
 		return (
-			<div className="ztag n-srchrst">
+			<div className="ztag n-srchrst f-pr" id="search_result">
+				<div className="snote s-fc4 ztag">
+					搜索“{keywords}”，找到 <em className="s-fc6">{total}</em> 个用户
+					{queryCorrected?<span>，您是不是要搜：<Link className="s-fc7" to={`/search/song?keywords=${queryCorrected}`}>{queryCorrected}</Link></span>:null}
+				</div>
 				<table className="m-table m-table-2 m-table-2-cover">
 					<tbody>
 						{
-							Array(10).fill(1).map((i,index) =>
+							userprofiles.length?userprofiles.map((i,index) =>
 								<tr key={index}>
 									<td className="w7">
 										<div className="u-cover u-cover-3">
-											<a href="/user/home?id=252955528">
-												<img src="http://p1.music.126.net/hC3EliLWRYbuRbcGeXprdQ==/18977570695598250.jpg?param=180y180" />
-												<span className="msk" title="成都大象先生"></span>
-											</a>
+											<Link to={`/user/home?id=${i.userId}`}>
+												<img src={i.avatarUrl}/>
+												<span className="msk" title={i.nickname}></span>
+											</Link>
 										</div>
 									</td>
 									<td>
 										<div className="ttc">
-											<a href="/user/home?id=252955528" title="成都大象先生" className="txt f-fs1">
-												<span className="s-fc7">成都</span>大象先生<sup className="u-icn2 u-icn2-music2"></sup><i className="icnfix u-icn u-icn-s-01"></i>
-											</a>
+											<Link to={`/user/home?id=${i.userId}`} title={i.nickname} className="txt f-fs1">
+												<span
+												dangerouslySetInnerHTML={{__html:i.nickname.replace(new RegExp(keywords,'gi'),rs =>`<span class="s-fc7">${rs}</span>`)}}	
+												></span>
+												{i.userType?<sup className="u-icn2 u-icn2-music2"></sup>
+												:i.authStatus?<sup className="u-icn u-icn-1"></sup>:null}
+												{i.gender === 1?<i className="icnfix u-icn u-icn-s-01 f-sep"></i>
+												:i.gender === 2?<i className="icnfix u-icn u-icn-s-02 f-sep"></i>:null}
+											</Link>
 										</div>
-										<div className="dec s-fc4 f-thide" title="工作联系：新浪微博@成都大象先生">工作联系：新浪微博@<span className="s-fc7">成都</span>大象先生</div>
+										<div className="dec s-fc4 f-thide" title={i.signature}
+										dangerouslySetInnerHTML={{__html:i.signature.replace(new RegExp(keywords,'gi'),rs =>`<span class="s-fc7">${rs}</span>`)}}	
+										></div>
 									</td>
 									<td className="w9">
 										<a className="u-btn u-btn-3 f-tdn" href="javascript:void(0)"><i>关注</i></a>
 									</td>
-									<td className="w9 s-fc4">歌单：1</td>
-									<td className="w9 s-fc4">粉丝：<span id="follow_num_252955528">34547</span></td>
+									<td className="w9 s-fc4">歌单：{i.playlistCount}</td>
+									<td className="w9 s-fc4">粉丝：<span>{numberFormat(i.followeds)}</span></td>
 								</tr>
-							)
+							):<tr style={{height:'300px'}} className="loading"><td><Spin tip="Loading..." /></td></tr>
 						}
 					</tbody>
 				</table>
-				<div className="u-page">
-					<Pagination   pageSize={20} total={50} />
+				<div className="u-page" style={{display:total<=30?'none':'block'}}>
+					<Pagination onChange={this.choosePage} current={currPage}   pageSize={30} total={total} />
 				</div>
 			</div>
 			

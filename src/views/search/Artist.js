@@ -5,7 +5,6 @@ import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
 import {pos} from '../../util/dom'
 import { Pagination } from 'antd';
-import {formatSongTime} from '../../util/date'
 
 class Artist extends Component {
 	constructor(props) {
@@ -96,7 +95,7 @@ class Artist extends Component {
 									</Link>
 								</div>
 								<p>
-									<Link className="nm f-thide s-fc0" to={`/artist?id=${i.id}`} title={i.name}>{i.name}</Link>
+									<Link className="nm f-thide s-fc0" to={`/artist?id=${i.id}`} title={i.name} dangerouslySetInnerHTML={{__html:i.name.replace(new RegExp(keywords,'gi'),rs =>`<span class="s-fc7">${rs}</span>`)}}></Link>
 									{i.accountId?<Link to={`/user/home?id=${i.accountId}`}><i className="u-icn u-icn-5"></i></Link>:null}
 								</p>
 							</li>

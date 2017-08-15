@@ -1,10 +1,61 @@
 import React, { Component} from 'react';
-import {NavLink} from 'react-router-dom'
+import {NavLink,Link} from 'react-router-dom'
 import ExtendRoute from '../../components/ExtendRoute'
+import * as api from '../../api'
+import qs from 'query-string'
+import {Spin} from 'antd'
 
 class Artist extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			artist:null,
+			hotArs:[]
+		}
+	}
+	componentDidMount() {
+		const id = qs.parse(this.props.location.search).id
+		api.getArtistSong(id).then(res => {
+			// console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					artist:res.data.artist,
+				})
+			}
+		})
+		api.getTopArtists(0,6).then(res => {
+			if(res.data.code == 200) {
+				this.setState({
+					hotArs:res.data.artists
+				})
+			}
+		})
+	}
+	componentWillReceiveProps(nextProps) {
+		const id = qs.parse(nextProps.location.search).id
+		api.getArtistSong(id).then(res => {
+			// console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					artist:res.data.artist,
+				})
+			}
+		})
+		api.getTopArtists(0,6).then(res => {
+			if(res.data.code == 200) {
+				this.setState({
+					hotArs:res.data.artists
+				})
+			}
+		})
+	}
 	render() {
-		console.log(this.props)
+		const {artist,hotArs} = this.state
+		if(!artist) {
+			return <div className="g-bd">
+  						<div style={{height:(document.body.clientHeight-105)+'px'}} className="loading"><Spin tip="Loading..." /></div>
+  					</div>
+		}
 		return (
 			<div className="g-bd4 f-cb">
 				<div className="g-mn4">
@@ -12,21 +63,21 @@ class Artist extends Component {
 						<div className="g-wrap6">
 							<div className="n-artist f-cb">
 								<div className="btm">
-									<h2 className="sname f-thide sname-max" title="张惠妹 - aMEI;阿密特">张惠妹</h2>
-									<h3 className="salias f-thide" title="张惠妹 - aMEI;阿密特">aMEI;阿密特</h3>
+									<h2 id="artist_name" className="sname f-thide sname-max" title={`${artist.name} - ${artist.alias.join(';')}`}>{artist.name}</h2>
+									<h3 className="salias f-thide" title={`${artist.name} - ${artist.alias.join(';')}`}>{artist.alias.join(';')}</h3>
 								</div>
-								<img src="http://p4.music.126.net/-JxOlVRUl3OFqNkCIu9dlw==/678398674363509.jpg?param=640y300" />
+								<img src={`${artist.picUrl}?param=640y300`} />
 								<div className="mask f-alpha"></div>
-								<a id="artist-home" href="/user/home?id=29879272" className="btn-rz f-tid">Ta的个人主页</a>
+								{artist.accountId?<Link  to={`/user/home?id=${artist.accountId}`} className="btn-rz f-tid">Ta的个人主页</Link>:null}
 								<a id="artist-sub" href="javascript:void(0)" className="btnfav f-tid">收藏</a>
 							</div>
 							<ul className="m-tabs f-cb">
 								<li className="fst">
-									<NavLink to="/artist?id=10559" isActive={e=>this.props.location.pathname == '/artist'} activeClassName="sel"><em>热门50单曲</em></NavLink>
+									<NavLink to={`/artist?id=${artist.id}`} isActive={e=>this.props.location.pathname == '/artist'} activeClassName="sel"><em>热门50单曲</em></NavLink>
 								</li>
-								<li><NavLink to="/artist/album?id=10559" isActive={e =>this.props.location.pathname == '/artist/album'} activeClassName="sel"><em>所有专辑</em></NavLink></li>
-								<li><NavLink to="/artist/mv?id=10559" isActive={e=>this.props.location.pathname == '/artist/mv'} activeClassName="sel"><em>相关MV</em></NavLink></li>
-								<li><NavLink to="/artist/desc?id=10559" isActive={e=>this.props.location.pathname == '/artist/desc'} activeClassName="sel"><em>歌手介绍</em></NavLink></li>
+								<li><NavLink to={`/artist/album?id=${artist.id}`} isActive={e =>this.props.location.pathname == '/artist/album'} activeClassName="sel"><em>所有专辑</em></NavLink></li>
+								<li><NavLink to={`/artist/mv?id=${artist.id}`} isActive={e=>this.props.location.pathname == '/artist/mv'} activeClassName="sel"><em>相关MV</em></NavLink></li>
+								<li><NavLink to={`/artist/desc?id=${artist.id}`} isActive={e=>this.props.location.pathname == '/artist/desc'} activeClassName="sel"><em>歌手介绍</em></NavLink></li>
 							</ul>
 							{this.props.routes.map((route,i)=> 
 	      				<ExtendRoute key={i} {...route}/>
@@ -41,18 +92,18 @@ class Artist extends Component {
 							<span className="f-fl">热门歌手</span>
 						</h3>
 						<ul className="m-hdlist f-cb">
-							{Array(6).fill(1).map((i,index) =>
+							{hotArs.length?hotArs.map((i,index) =>
 								<li key={index}>
 									<div className="hd">
-										<a href="/artist?id=9621" title="王菲">
-											<img src="http://p3.music.126.net/GKhjgN1ltQYK3eYf9DdJwg==/18727981557622763.jpg?param=50y50" />
-										</a>
+										<Link to={`/artist?id=${i.id}`} title={i.name}>
+											<img src={`${i.picUrl}?param=50y50`} />
+										</Link>
 									</div>
 									<p>
-										<a href="/artist?id=9621" title="王菲" className="nm nm-icn f-ib f-thide">王菲</a>
+										<Link to={`/artist?id=${i.id}`} title={i.name} className="nm nm-icn f-ib f-thide">{i.name}</Link>
 									</p>
 								</li>
-							)}
+							):<div style={{height:'200px'}} className="loading"><Spin tip="Loading..." /></div>}
 						</ul>
 						<div className="m-multi">
       				<h3 className="u-hd3">

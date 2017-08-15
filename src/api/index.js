@@ -76,8 +76,32 @@ export const getArtistsList = (cat=5001,initial=66,offset=0,limit=20) => axios.g
 	}
 })
 
-//获取歌手详情
-export const getArtistDetail = id => axios.get(`artist/desc?id=${id}`)
+// //获取相似歌手
+// export const getSimiArtist = id => axios.get(`simi/playlist?id=${id}`)
+
+//获取歌手歌曲
+export const getArtistSong = id => axios.get(`artists?id=${id}`)
+
+//获取歌手专辑
+export const getArtistAlbum = (id,offset=0,limit=12) => axios.get('artist/album',{
+	params:{
+		id,
+		offset:offset*limit,
+		limit
+	}
+})
+
+//获取歌手mv
+export const getArtistMV = (id,offset=0,limit=12) => axios.get('artist/mv',{
+	params:{
+		id,
+		offset:offset*limit,
+		limit
+	}
+})
+
+//获取歌手描述
+export const getArtistDesc = id => axios.get(`artist/desc?id=${id}`)
 
 //获取推荐电台
 export const getDjRecommend = () => axios.get('dj/recommend');
@@ -218,5 +242,8 @@ export const getUserFans = (uid,offset=0,limit=20) => axios.get(`user/followeds`
 		limit
 	}
 })
+
+//获取mv详情
+export const getMV = id => axios.get(`mv?id=${id}`)
 
 

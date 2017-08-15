@@ -1,9 +1,44 @@
 import React, { Component} from 'react'
 import {dateFormat} from '../../util/date'
 import {Link} from 'react-router-dom'
+import * as api from '../../api'
+import qs from 'query-string'
+import {Spin} from 'antd'
 
 class Top50 extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			hotSongs:[]
+		}
+	}
+	componentDidMount() {
+		const id = qs.parse(this.props.location.search).id
+		api.getArtistSong(id).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					hotSongs:res.data.hotSongs,
+				})
+			}
+		})
+	}
+	componentWillReceiveProps(nextProps) {
+		const id = qs.parse(nextProps.location.search).id
+		this.setState({
+			hotSongs:[]
+		})
+		api.getArtistSong(id).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					hotSongs:res.data.hotSongs,
+				})
+			}
+		})
+	}
 	render() {
+		const {hotSongs} = this.state
 		return (
 			<div className="n-top50">
 				<div className="m-info">
@@ -17,7 +52,7 @@ class Top50 extends Component {
 						</a>
 					</div>
 				</div>
-				<SongList />
+				<SongList tracks={hotSongs} />
 			</div>
 		)
 	}
@@ -28,7 +63,7 @@ class SongList extends Component {
 	render() {
 		const { tracks } = this.props
 		if(!tracks || !tracks.length) {
-			return null
+			return <div style={{height:'200px'}} className="loading"><Spin tip="Loading..." /></div>
 		}
 		return (
 				<div className="track-list">
@@ -36,7 +71,7 @@ class SongList extends Component {
 						<tbody>
 							{
 							tracks.map((track,index) => (
-								<tr key={index} className={index%2 == 0?'even':null}>
+								<tr key={index}>
 									<td className="w1">
 										<div className="hd">
 											<span className="ply"></span>

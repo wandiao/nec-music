@@ -246,4 +246,17 @@ export const getUserFans = (uid,offset=0,limit=20) => axios.get(`user/followeds`
 //获取mv详情
 export const getMV = id => axios.get(`mv?id=${id}`)
 
+//获取相似mv
+export const getSimiMV = id => axios.get(`simi/mv?mvid=${id}`)
+
+//获取mv评论
+export const getMVComment = (id,offset=0,limit=20) => axios.get('comment/mv',{
+	params:{
+		id,
+		offset:offset*20,
+		limit
+	}
+})
+
+
 

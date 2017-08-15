@@ -191,22 +191,22 @@ class Program extends Component {
 					{otherList}
 					</ul>
 					<div className="m-multi">
-      				<h3 className="u-hd3">
-								<span className="f-fl">网易云音乐多端下载</span>
-							</h3>
-							<ul className="bg">
-								<li>
-									<a href="" className="ios"></a>
-								</li>
-								<li>
-									<a href="" className="pc"></a>
-								</li>
-								<li>
-									<a href="" className="aos"></a>
-								</li>
-							</ul>
-							<p className="s-fc4">同步歌单，随时畅听320k好音乐</p>
-      			</div>
+    				<h3 className="u-hd3">
+							<span className="f-fl">网易云音乐多端下载</span>
+						</h3>
+						<ul className="bg">
+							<li>
+								<a href="" className="ios"></a>
+							</li>
+							<li>
+								<a href="" className="pc"></a>
+							</li>
+							<li>
+								<a href="" className="aos"></a>
+							</li>
+						</ul>
+						<p className="s-fc4">同步歌单，随时畅听320k好音乐</p>
+    			</div>
 				</div>
 			</div>
 		</div>

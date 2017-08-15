@@ -4,7 +4,6 @@ import * as api from '../api'
 import { connect } from 'react-redux'
 import {chooseBox} from '../store/actions'
 import axios from 'axios'
-import createBrowserHistory from 'history/createBrowserHistory'
 import { withRouter } from 'react-router'
 
 const navConfig = [

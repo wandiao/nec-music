@@ -5,16 +5,93 @@ import * as api from '../api'
 import qs from 'query-string'
 import {Spin} from 'antd'
 import {dateFormat} from '../util/date'
+import {numberFormat} from '../util'
 
 class MV extends Component {
-	
+	constructor(props) {
+		super(props);
+		this.state = {
+			mv:null,
+			simiMvs:[],
+			commentData:null
+		}
+		this.choosePage = (page,pageSize,pos) => {
+			console.log(page-1)
+			const id = qs.parse(this.props.location.search).id;
+			api.getMVComment(id,page-1).then(res => {
+				if(res.data.code == 200) {
+					window.scrollTo.apply(null,pos)
+					this.setState({
+						commentData:res.data
+					})
+				}
+			})	
+		}
+	}
 	componentDidMount() {
 		const id = qs.parse(this.props.location.search).id
 		api.getMV(id).then(res => {
+			// console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					mv:res.data.data
+				})
+			}
+		})
+		api.getSimiMV(id).then(res => {
+			if(res.data.code == 200) {
+				this.setState({
+					simiMvs:res.data.mvs
+				})
+			}
+		})
+		api.getMVComment(id).then(res => {
 			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					commentData:res.data
+				})
+			}
+		})
+	}
+	componentWillReceiveProps(np){
+		const id = qs.parse(np.location.search).id
+		this.setState({
+			mv:null,
+			simiMvs:[],
+			commentData:null
+		})
+		api.getMV(id).then(res => {
+			// console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					mv:res.data.data
+				})
+			}
+		})
+		api.getSimiMV(id).then(res => {
+			if(res.data.code == 200) {
+				this.setState({
+					simiMvs:res.data.mvs
+				})
+			}
+		})
+		api.getMVComment(id).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					commentData:res.data
+				})
+			}
 		})
 	}
 	render() {
+		const {mv,simiMvs,commentData} = this.state
+		if(!mv) {
+			return <div className="g-bd4 clearfix">
+  						<div style={{height:(document.body.clientHeight-105)+'px'}} className="loading"><Spin tip="Loading..." /></div>
+  					</div>
+		}
 		return (
 		<div className="g-bd4 f-cb">
 			<div className="g-mn4">
@@ -22,9 +99,9 @@ class MV extends Component {
 					<div className="g-wrap6">
 						<div className="n-mv">
 							<div className="title f-cb">
-								<h2 className="f-ff2 f-thide" id="flag_title1">美人鱼</h2>
+								<h2 className="f-ff2 f-thide" id="flag_title1">{mv.name}</h2>
 								<span className="name">
-									<a href="/artist?id=6452" className="s-fc7" title="周杰伦">周杰伦</a> 
+									<Link to={`/artist?id=${mv.artistId}`} className="s-fc7" title={mv.artistName}>{mv.artistName}</Link> 
 								</span>
 							</div>
 							<div className="mv">
@@ -35,7 +112,7 @@ class MV extends Component {
 								<a className="u-btni u-btni-share" href="javascript:;"><i>分享</i></a>
 							</div>
 						</div>
-						<Comments />
+						<Comments onChange={this.choosePage} type="mv"  id={mv.id} data={commentData} />
 					</div>
 				</div>
 			</div>
@@ -46,31 +123,48 @@ class MV extends Component {
 						<span className="f-fl">MV简介</span>
 					</h3>
 					<div className="m-mvintr">
-						<p className="s-fc4">发布时间：2017-03-18</p>
-						<p className="s-fc4">播放次数：324万次</p>
+						<p className="s-fc4">发布时间：{mv.publishTime}</p>
+						<p className="s-fc4">播放次数：{numberFormat(mv.playCount)}次</p>
 						<p className="intr">
-							轻快曲风中暗藏美人鱼的眼泪
+							{mv.briefDesc}
 							<br/>
-							充满浪漫童话风格的《美人鱼》MV公开！周杰伦以一种略带潇洒而随性的口气演唱着，象是个叙事者一般，缓缓说着关于爱，关于眼泪的种种；也许爱情，很多时候就像美人鱼的眼泪，无声的眼泪，说不出口的却是最深刻的。
+							{mv.desc}
 						</p>
 					</div>
 					<h3 className="u-hd3">
 						<span className="f-fl">相关MV</span>
 					</h3>
 					<ul className="n-mvlist f-cb">
-						{Array(5).fill(1).map((i,index) =>
+						{simiMvs.length?simiMvs.map((i,index) =>
 							<li key={index}>
 								<div className="mvpic u-cover u-cover-8">
-									<img src="http://p3.music.126.net/rilAgdsNqDumLUHEXdZNkw==/18564154325210193.jpg?param=80y60" />
-									<a href="/mv?id=5461064" className="msk"></a>
-									<a href="/mv?id=5461064" className="icon-play f-alpha"></a>
+									<img src={`${i.cover}?param=80y60`} />
+									<Link to={`/mv?id=${i.id}`} className="msk"></Link>
+									<Link to={`/mv?id=${i.id}`} className="icon-play f-alpha"></Link>
 								</div>
 								<div className="cnt">
-									<p className="p1 f-thide" style={{marginTop:'20px'}}><a href="/mv?id=5461064">一点点</a></p>
+									<p className="p1 f-thide" style={{marginTop:'20px'}}><Link to={`/mv?id=${i.id}`}>{i.name}</Link></p>
 								</div>
 							</li>
-						)}
+						):<div style={{height:'200px'}} className="loading"><Spin tip="Loading..." /></div>}
 					</ul>
+					<div className="m-multi">
+    				<h3 className="u-hd3">
+							<span className="f-fl">网易云音乐多端下载</span>
+						</h3>
+						<ul className="bg">
+							<li>
+								<a href="" className="ios"></a>
+							</li>
+							<li>
+								<a href="" className="pc"></a>
+							</li>
+							<li>
+								<a href="" className="aos"></a>
+							</li>
+						</ul>
+						<p className="s-fc4">同步歌单，随时畅听320k好音乐</p>
+    			</div>
 				</div>
 			</div>
 		</div>

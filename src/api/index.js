@@ -258,5 +258,8 @@ export const getMVComment = (id,offset=0,limit=20) => axios.get('comment/mv',{
 	}
 })
 
+//获取专辑详情
+export const getAlbum = id => axios.get(`album?id=${id}`) 
+
 
 

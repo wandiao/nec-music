@@ -2,7 +2,7 @@ import React, { Component} from 'react';
 import  * as api from '../../api';
 import {numberFormat} from '../../util';
 import { connect } from 'react-redux';
-import { changePlayList,asyncChangeCurrMusic as ac } from '../../store/actions'
+import { changePlayList,addPlayItem,asyncChangeCurrMusic as ac } from '../../store/actions'
 import {chunk} from '../../util/array';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -32,7 +32,7 @@ class Recommend extends Component {
     //获取推荐歌单和电台数据
     axios.all([api.getPersonalized(),api.getRecDjprogram()])
     .then(axios.spread((p,d) => {
-      // console.log(p)
+      console.log(d)
       if(p.data.code == 200 && d.data.code == 200){
         let hotRecommends = p.data.result;
         hotRecommends.splice(3,0,d.data.result[0]);
@@ -45,10 +45,11 @@ class Recommend extends Component {
       }
     }))
     //获取新碟上架数据
-    api.getTopAlbum(undefined,0,10).then(res => {
+    api.getHotAlbum().then(res => {
       // console.log(res)
       if(res.data.code == 200) {
-        let topAlbums = chunk(res.data.albums,5);
+        let topAlbums = res.data.albums.slice(0,10)
+        topAlbums = chunk(topAlbums,5);
         topAlbums.unshift(topAlbums[topAlbums.length-1])
         topAlbums.push(topAlbums[1])
         this.setState({
@@ -59,14 +60,20 @@ class Recommend extends Component {
     //获取排行榜数据
     axios.all([api.getTopList(19723756),api.getTopList(3779629),api.getTopList(2884035)])
     .then(axios.spread((b,x,y) => {
-      const topLists = [b.data.result,x.data.result,y.data.result];
+      let topLists = [b.data.result,x.data.result,y.data.result].map(i => {
+        i.tracks.forEach(tr => {
+          tr.source = `/toplist?id=${i.id}`
+        })
+        return i;
+      })
       this.setState({
         topLists:topLists
       })
     }))
 
     //获取入驻歌手
-    api.getTopArtists(0,5).then(res => {
+    api.getArtistsList(5001,undefined,0,5).then(res => {
+      console.log(res)
       if(res.data.code == 200) {
         this.setState({
           artists:res.data.artists
@@ -200,8 +207,8 @@ class MainCon extends Component {
               <a href="" className="dm_ad_hover"></a>
               <img src="/static/img/ad-ex.jpg" />
             </div>
-            <Disk topAlbums={topAlbums} />
-            <Bill topLists={topLists} />
+            <Disk topAlbums={topAlbums}  {...this.props} />
+            <Bill topLists={topLists} {...this.props}  />
           </div>
         </div>
       </div>
@@ -215,28 +222,32 @@ class HotRcmd extends Component {
   constructor(props) {
     super(props)
     const {dispatch} = this.props
-    this.changePlaylist = (index) => {
+    //切换播放列表
+    this.changePlaylist = (item) => {
       let playList = null;
-      api.getPlayListDetail(index).then(res => {
-        if(res.data.code == 200) {
-
-          playList = res.data.playlist
-          if(!playList.tracks.length) {
-            return false;
+      if(!item.program) {
+        api.getPlayListDetail(item.id).then(res => {
+          if(res.data.code == 200) {
+            playList = res.data.playlist
+            if(!playList.tracks.length) {
+              return false;
+            }
+            let tracks = playList.tracks.map(i => {
+              i.source = `/playlist?id=${playList.id}`
+              return i;
+            })
+            console.log(playList)
+            dispatch(changePlayList(tracks))
+            dispatch(ac(0,playList.tracks[0].id,true))
           }
-          var tracks = playList.tracks.map(i => {
-            i.source = `/playlist?id=${playList.id}`
-            return i;
-          })
-          console.log(playList)
-          dispatch(changePlayList(tracks))
-          dispatch(ac(0,playList.tracks[0].id,true))
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
-      
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }else{
+        item.program.source = `/program?id=${item.id}`
+        dispatch(addPlayItem(item.program))
+      }
     }
   }
 
@@ -253,7 +264,7 @@ class HotRcmd extends Component {
             {item.highQuality?<i className="u-jp u-icn2 u-icn2-jp3"></i>:''}
             <Link title={item.name} to={item.program?`/program?id=${item.id}`:`/playlist?id=${item.id}`} className="msk"></Link>
             <div className="bottom">
-              <a href="javascript:;" onClick={e => this.changePlaylist(item.id)} className="icon-play fr"></a>
+              <a href="javascript:;" onClick={e => this.changePlaylist(item)} className="icon-play fr"></a>
               <span className="icon-headset"></span>
               <span className="nb">{item.playCount?numberFormat(item.playCount):numberFormat(item.program.listenerCount)}</span>
             </div>
@@ -329,6 +340,25 @@ class Disk extends Component {
         })
       },550)
     }
+    //切换播放列表
+    this.changePlaylist = (id) => {
+      const {dispatch} = this.props
+      api.getAlbum(id).then(res => {
+        console.log(res)
+        if(res.data.code == 200) {
+          const songs = res.data.songs.map(i =>{
+            i.source = `/album?id=${id}`;
+            return i;
+          })
+          if(res.data.album.status < 0) {
+            alert("需要付费，无法播放")
+            return false;
+          }
+          dispatch(changePlayList(songs))
+          dispatch(ac(0,songs[0].id,true))
+        }
+      })
+    }
   }
   componentDidMount() {
 
@@ -348,7 +378,7 @@ class Disk extends Component {
                 <div className="u-cover u-cover-alb1">
                 <img className="j-img"  src={item.picUrl} />
                 <Link title={item.name}  to={`/album?id=${item.id}`} className="msk"></Link>
-                <a href="javascript:;" className="icon-play fr" title="播放"></a>
+                <a onClick={e => this.changePlaylist(item.id)} href="javascript:;" className="icon-play fr" title="播放"></a>
                 </div>
                 <p className="f-thide"><a href="/album?id=35792020" className="s-fc0 tit">{item.name}</a></p>
                 <p className="tit f-thide">
@@ -364,9 +394,9 @@ class Disk extends Component {
     return (
       <div className="n-news">
         <div className="v-hd2">
-          <a href="/discover/album/" className="tit f-ff2 f-tdn">新碟上架</a>
+          <Link to="/discover/album" className="tit f-ff2 f-tdn">新碟上架</Link>
           <span className="more">
-            <a href="" className="s-fc3">更多</a>
+            <Link to="/discover/album" className="s-fc3">更多</Link>
             <i className="cor s-bg s-bg-6">&nbsp;</i>
           </span>
         </div>
@@ -388,7 +418,18 @@ class Disk extends Component {
 class Bill extends Component {
   constructor(props) {
     super(props)
+    const {dispatch} = this.props
+    this.changePlaylist = (index) => {   
+      const currBill = this.props.topLists[index]
+      dispatch(changePlayList(currBill.tracks))
+      dispatch(ac(0,currBill.tracks[0].id,true))
+    }
+    this.playSong = (index,subIndex) => {
+      const item = this.props.topLists[index].tracks[subIndex]
+      dispatch(addPlayItem(item))
+    }
   }
+  
   render() {
     const {topLists} = this.props
     let billList = null;
@@ -407,7 +448,7 @@ class Bill extends Component {
                 <h3 className="f-fs1 f-thide">{topList.name}</h3>
               </Link>
               <div className="btn">
-                <a href="javascript:;" className="s-bg s-bg-9 f-tdn">播放</a>
+                <a onClick={e => this.changePlaylist(index)} href="javascript:;" className="s-bg s-bg-9 f-tdn">播放</a>
                 <a href="javascript:;" className="s-bg s-bg-10 f-tdn">收藏</a>
               </div>
             </div>
@@ -420,7 +461,7 @@ class Bill extends Component {
                     <span className={index1<3?'no no-top':'no'}>{index1+1}</span>
                     <Link to={`/song?id=${item.id}`} className="nm s-fc0 f-thide" title={item.name}>{item.name}</Link>
                     <div className="oper">
-                      <a href="javascript:;" className="s-bg s-bg-11"></a>
+                      <a onClick={e =>  this.playSong(index,index1)} href="javascript:;" className="s-bg s-bg-11"></a>
                       <a href="javascript:;" className="u-icn u-icn-81"></a>
                       <a href="javascript:;" className="s-bg s-bg-12"></a>
                     </div>
@@ -438,9 +479,9 @@ class Bill extends Component {
     return (
       <div className="n-bill">
         <div className="v-hd2">
-          <a href="/discover/album/" className="tit f-ff2 f-tdn">榜单</a>
+          <Link to="/discover/toplist" className="tit f-ff2 f-tdn">榜单</Link>
           <span className="more">
-            <a href="" className="s-fc3">更多</a>
+            <Link to="/discover/toplist" className="s-fc3">更多</Link>
             <i className="cor s-bg s-bg-6">&nbsp;</i>
           </span>
         </div>
@@ -466,7 +507,7 @@ class Sidebar extends Component {
         <li key={index}>
           <Link to={`/user/home?id=${artist.id}`} className="itm f-tdn">
             <div className="head">
-              <img className="j-img" src={artist.picUrl} />
+              <img className="j-img" src={artist.img1v1Url} />
             </div>
             <div className="ifo">
               <h4>
@@ -486,8 +527,10 @@ class Sidebar extends Component {
           </Link>
           <div className="info">
             <p>
-              <a href="/user/home?id=278438485" className="nm-icn f-thide s-fc0">{dj.nickname}</a>
-              <sup className="u-icn u-icn-1 "></sup>
+              <Link to={`/user/home?id=${dj.id}`} className="nm-icn f-thide s-fc0">{dj.nickname}</Link>
+              {
+                dj.userType?<sup className="icn u-icn2 u-icn2-music2 "></sup>:dj.authStatus?<sup className="u-icn u-icn-1 "></sup>:null
+              }
             </p>
             <p className="f-thide s-fc3">{dj.description}</p>
           </div>
@@ -503,13 +546,13 @@ class Sidebar extends Component {
         <div className="n-singer">
           <h3 className="v-hd3">
             <span className="fl">入驻歌手</span>
-            <a href="/discover/artist/signed/" className="more s-fc3">查看全部 &gt;</a>
+            <Link to="/discover/artist/signed/" className="more s-fc3">查看全部 &gt;</Link>
           </h3>
           <ul className="n-enter clearfix">
             {artistsList}
           </ul>
           <div>
-            <a className="u-btn2 u-btn2-1"><i>申请成为网易音乐人</i></a>
+            <a href="javascript:;" className="u-btn2 u-btn2-1"><i>申请成为网易音乐人</i></a>
           </div>
         </div>
         <div className="n-dj n-dj-1">

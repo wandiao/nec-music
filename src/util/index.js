@@ -30,7 +30,6 @@ export function parseLrc(data) {
     if(lines[i] == "" || typeof(lines[i]) == "undefined") {
       delete lines[i];
     }
-
   }
   lines.forEach(function(item, index, data) {
     var time = item.match(pattern);

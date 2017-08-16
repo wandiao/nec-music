@@ -8,6 +8,9 @@
  * @returns
  */
 export function initScroll(out,con,box,drag) {
+  if(!out||!con||!box||!drag) {
+    return false
+  }
 	var heightPercen = (out.clientHeight/con.clientHeight).toFixed(2)
 	if(heightPercen >= 1) {
 		drag.style.display = 'none';

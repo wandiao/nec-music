@@ -1,9 +1,11 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
-import {changeCurrMusic,changePlayList,asyncChangeCurrMusic as ac } from '../store/actions'
+import {changeCurrMusic,changePlayList,asyncChangeCurrMusic as ac,clearCurrMusic } from '../store/actions'
 import {formatSongTime} from '../util/date'
 import {initScroll} from '../util/dom'
 import { Slider } from 'antd';
+import {Link} from 'react-router-dom'
+import { withRouter } from 'react-router'
 
 //播放组件
 class PlayBar extends Component {
@@ -47,6 +49,9 @@ class PlayBar extends Component {
       if(!this.player) {
         return false;
       }
+      if(this.props.currMusic.info && this.props.currMusic.info.fee > 0) {
+        return false;
+      }
       if(this.player.readyState == 4 && !this.player.ended) {
         this.player.play();  
       }  
@@ -62,6 +67,7 @@ class PlayBar extends Component {
     this.chooseSong = (type) => {
       const {playList,currMusic,dispatch} = this.props
       let index = currMusic.index
+      let isPlay = currMusic.isPlay
       switch(type){
         case 'prev':
           if(index <= 0) {
@@ -82,9 +88,10 @@ class PlayBar extends Component {
           break;
         default:
           index = type;
+          isPlay = true
       }
-      const id = playList[index].id;
-      dispatch(ac(index,id,currMusic.isPlay))
+      const id = playList[index].mainTrackId || playList[index].id;
+      dispatch(ac(index,id,isPlay))
     }
     //修改播放时间
     this.changePlayTime = (value) => {
@@ -129,8 +136,12 @@ class PlayBar extends Component {
     }
     if(localStorage.currMusic) {
       currMusic = JSON.parse(localStorage.currMusic)
-      const id = currMusic.info.id;
-      this.props.dispatch(ac(currMusic.index,id,false))
+      if(currMusic.info) {
+        const id = currMusic.info.mainTrackId || currMusic.info.id;
+        this.props.dispatch(ac(currMusic.index,id,false))
+        
+      }
+      
     }
     this.player.oncanplay = () => {
       const {currMusic} = this.props
@@ -154,8 +165,38 @@ class PlayBar extends Component {
       }
     } 
   }
+  componentWillReceiveProps(np) {
+    if(np.location!== this.props.location) {
+      this.setState({
+        showList:false
+      })
+    }
+  }
   render() {
     const {playList,currMusic,dispatch} = this.props
+
+    let ar = [];
+    let picUrl;
+    if(currMusic.info) {
+      if(currMusic.info.ar) {
+        ar = currMusic.info.ar
+      }
+      if(currMusic.info.artists) {
+        ar = currMusic.info.artists
+      }
+    }
+    // console.log(currMusic)
+    if(currMusic.info) {
+      if(currMusic.info.coverUrl) {
+        picUrl = currMusic.info.coverUrl
+      }
+      if(currMusic.info.al) {
+        picUrl = currMusic.info.al.picUrl
+      }
+      if(currMusic.info.album) {
+        picUrl = currMusic.info.album.picUrl
+      }
+    }
     const {currPlayTime,timePro,currModeIndex,modes,showVloumeTab} = this.state
     if(currMusic.isPlay) {
       this.play()
@@ -180,29 +221,38 @@ class PlayBar extends Component {
               <a onClick={e => this.chooseSong('next')} href="javascript:;" className="b-next">下一首</a>
             </div>
             <div className="head">
-              <img src="/static/img/default_album.jpg"/>
+              <img src={picUrl?picUrl:"/static/img/default_album.jpg"}/>
               <a href="javascript:;" className="mask"></a>
             </div>
             <div className="play">
               <div className="words">
                 {
                 currMusic.info?<div>
-                            <a href="javascript:;" className="f-thide name fc1 f-fl">{currMusic.info.name}</a>
+                            <Link to={currMusic.info.source} className="f-thide name fc1 f-fl">{currMusic.info.name}</Link>
                             <span className="by f-thide f-fl">
-                              <span title={currMusic.info.ar.map(i => i.name).join('/')}>
-                                <a className="" href="/artist?id=5346">{currMusic.info.ar.map(i => i.name).join('/')}</a>
+                              <span title={ar.length?ar.map(i => i.name).join('/'):currMusic.info.radio.name}>
+                                {
+                                 ar.length?ar.map((i,index) =>
+                                    <span key={index}>
+                                      <Link className="" to={`/artist?id=${i.id}`}>{i.name}</Link>
+                                      {index >=ar.length-1?null:'/'}
+                                    </span>
+                                  ):
+                                  currMusic.info.radio? <Link className="" to={`/djradio?id=${currMusic.info.radio.id}`}>{currMusic.info.radio.name}</Link>:null
+                                }
+                                
                               </span>
                             </span>
-                            <a href={currMusic.info.source} className="src"></a>
+                            <Link to={currMusic.info.source} className="src"></Link>
                           </div>:null
                 
                 }
               </div>
               <div className="m-pbar pr">
                 
-                <Slider tipFormatter={null} onChange={this.changePlayTime} value={timePro} defaultValue={0} />
+                <Slider tipFormatter={null} onChange={this.changePlayTime} value={timePro?Number(timePro):0} defaultValue={0} />
                 <div className="time">
-                  <em>{formatSongTime(currPlayTime)}</em> / {currMusic.info?formatSongTime(currMusic.info.dt/1000):'00:00'}
+                  <em>{formatSongTime(currPlayTime)}</em> / {currMusic.info?formatSongTime((currMusic.info.dt||currMusic.info.duration)/1000):'00:00'}
                 </div>
               </div>
             </div>
@@ -245,6 +295,10 @@ class ListTab extends Component {
         this.props.onClick(index)
       }
     }
+    this.clearList = (e) => {
+      this.props.dispatch(changePlayList([])),
+      this.props.dispatch(clearCurrMusic())
+    }
   }
   componentDidMount() {
     
@@ -278,9 +332,8 @@ class ListTab extends Component {
     }
   }
   render() {
-    const {show,playList,currIndex,currMusic} = this.props
+    const {show,playList,currIndex,currMusic,dispatch} = this.props
     const lrclist = currMusic.lrc
-
     let playListCon = null;
     if(!playList.length) {
       playListCon = <div className="nocnt">
@@ -309,21 +362,26 @@ class ListTab extends Component {
                           </div>
                         </div>
                         <div className="col col-4">
-                          <span title={item.ar.map(i => i.name).join('/')}>
+                          <span title={item.ar?item.ar.map(i => i.name).join('/'):item.artists?item.artists.map(i => i.name).join('/'):item.radio?item.radio.name:null}>
                           {
-                            item.ar.map((ari,index) =>(
+                            item.ar?item.ar.map((ari,index) =>
                             <span key={index}>
-                              <a className="" href={`/artist?id=${ari.id}`} >{ari.name}</a>
+                              <Link className="" to={`/artist?id=${ari.id}`} >{ari.name}</Link>
                               {index == item.ar.length-1?'':'/'}
                             </span>
-                          ))
+                            )
+                            :item.artists?item.artists.map((ari,index) =>
+                            <span key={index}>
+                              <Link className="" to={`/artist?id=${ari.id}`} >{ari.name}</Link>
+                              {index == item.artists.length-1?'':'/'}
+                            </span>):item.radio?<Link className="" to={`/djradio?id=${item.radio.id}`} >{item.radio.name}</Link>:null
                             
                           }
                           </span>
                         </div>
-                        <div className="col col-5">{formatSongTime(item.dt/1000)}</div>
+                        <div className="col col-5">{formatSongTime((item.dt || item.duration)/1000)}</div>
                         <div className="col col-6">
-                          <a href={item.source} className="ico ico-src" title="来自歌单">来源</a>
+                          <Link to={item.source} className="ico ico-src">来源</Link>
                         </div>
                       </li>
                       ))
@@ -339,7 +397,7 @@ class ListTab extends Component {
               <span className="ico ico-add"></span> 收藏全部 
             </a>
             <span className="line"></span>
-            <a href="javascript:;" className="clear">
+            <a onClick={this.clearList} href="javascript:;" className="clear">
               <span className="ico ico-del"></span> 清除
             </a>
             <p className="lytit f-ff0 f-thide">{currMusic.info?currMusic.info.name:null}</p>
@@ -365,9 +423,9 @@ class ListTab extends Component {
           <div className="msk2"></div>
           <div className="listlyric" id="lrcWrapper">
             <ul id="lrcList" className="pa lrcs" style={{top:`${-(this.state.currWordIndex*32)+96}px`}}>
-              {lrclist.map((lrc,index) => (
+              {lrclist.length?lrclist.map((lrc,index) => 
                 <p key={index} className={this.state.currWordIndex == index?'curr':null}>{lrc[1]}</p>
-              ))   
+              ):<li className="s-fc4 f-tc">暂无歌词</li> 
               }
             </ul>
           </div>
@@ -386,4 +444,4 @@ function select(state) {
   }
 }
 
-export default connect(select)(PlayBar)
+export default connect(select,undefined,undefined,{pure:false})(withRouter(PlayBar))

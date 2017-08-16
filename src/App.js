@@ -8,6 +8,7 @@ import { BackTop } from 'antd';
 class App extends Component {
   
   render() {
+    // window.localStorage.clear();
     window.scrollTo(0,0);
     return (
       <div>

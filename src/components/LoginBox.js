@@ -1,10 +1,61 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
-import {chooseBox} from '../store/actions'
+import {chooseBox,changeUserInfo} from '../store/actions'
+import * as api from '../api'
 
 class LoginBox extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			phone:'',
+			password:'',
+			wrongMessage:'',
+			wrongPos:0
+		}
+		this.login = (e) => {
+			const {phone,password} = this.state;
+			if(!phone) {
+				this.setState({
+					wrongMessage:'请输入手机号',
+					wrongPos:1
+				})
+				return false;
+			}
+			if(phone.length != 11) {
+				this.setState({
+					wrongMessage:'请输入11位手机号',
+					wrongPos:1
+				})
+				return false;
+			}
+			if(!password) {
+				this.setState({
+					wrongMessage:'请输入密码',
+					wrongPos:2
+				})
+				return false;
+			}
+			this.setState({
+				wrongMessage:'',
+				wrongPos:0
+			})
+			api.telLogin(phone,password).then(res => {
+				console.log(res)
+				if(res.data.code !== 200) {
+					this.setState({
+						wrongMessage:res.data.msg
+					})
+				}else{
+					this.props.dispatch(changeUserInfo(res.data.profile))
+				}
+			})
+		}
+	}
+	componentDidMount() {
+	}
 	render() {
 		const {logBox,dispatch} = this.props
+		const {wrongMessage,wrongPos} = this.state
 		let box = null;
 		switch(logBox.name) {
 			case '登录':
@@ -44,22 +95,22 @@ class LoginBox extends Component {
 				box = <div className="lyct lyct-1">
 								<div className="n-log2 n-log2-2">
 									<div>
-										<input type="text" className="u-txt" placeholder="请输入手机号"/>
+										<input onChange={e => this.setState({phone:e.target.value})} type="text" className={wrongPos === 1?'u-txt u-txt-err':'u-txt'} placeholder="请输入手机号"/>
 									</div>
 									<div className="f-mgt10">
-										<input type="password" className="u-txt" placeholder="请输入密码"/>
+										<input onChange={e => this.setState({password:e.target.value})} type="password" className={wrongPos === 2?'u-txt u-txt-err':'u-txt'} placeholder="请输入密码"/>
 									</div>
-									<div className="u-err" style={{display:'none'}}>
-										<i className="u-icn u-icn-25"></i><span></span>
+									<div className="u-err" style={{display:wrongMessage?'block':'none'}}>
+										<i className="u-icn u-icn-25"></i><span>{wrongMessage}</span>
 									</div>
 									<div className="f-mgt10">
 										<label className="s-fc3">
-											<input type="checkbox" checked="checked" className="u-auto"/>自动登录
+											<input type="checkbox"  className="u-auto"/>自动登录
 										</label>
 										<a href="#" className="f-fr s-fc3">忘记密码？</a>
 									</div>
 									<div className="f-mgt20">
-										<a href="" className="u-btn2 u-btn2-2"><i>登　录</i></a>
+										<a onClick={this.login} href="javascript:;" className="u-btn2 u-btn2-2"><i>登　录</i></a>
 									</div>	
 								</div>
 								<div className="n-loglink2 f-cb">
@@ -140,6 +191,7 @@ class LoginBox extends Component {
 function select(state) {
   return {
     logBox:state.logBox,
+    userInfo:state.userInfo
   }
 }
 

@@ -329,3 +329,139 @@
   height: 5px;
   overflow: hidden;
 }
+.m-tophead:extend(.h-bg) {
+  float: right;
+  height: 45px;
+  margin: 21px 0 0 19px;
+  padding: 0 22px 0 0;
+  background-position: right -366px;
+  .head,.head img{
+    width: 30px;
+    height: 30px;
+  }
+  .head{
+    .mask:extend(.h-bg){
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 30px;
+      height: 31px;
+      background-position: 0 -390px;
+    }
+    .icn{
+      position: absolute;
+      top: -3px;
+      right: -5px;
+    }
+  }
+  .name{
+    display: inline-block;
+    max-width: 60px;
+    width: 60px;
+    margin: 8px 0 0 8px;
+    line-height: 17px;
+    color: #adadad;
+  }
+   &:hover{
+    background-position: right -405px;
+    .link{
+      color: #999;
+    }
+    .m-tlist{
+      display: block;
+    }
+  }
+  
+}
+.m-tlist{
+  display: none;
+  position: absolute;
+  top: 38px;
+  right: -43px;
+  width: 158px;
+  border: 1px solid #000;
+  border-radius: 4px;
+  .inner{
+    border-radius: 3px;
+    border: 1px solid #404040;
+    background: #2a2a2a;
+  }
+  .icn, .arr{
+    background: url('../img/toplist.png');
+  }
+  .icn{
+    float: left;
+    width: 18px;
+    height: 18px;
+    margin: 10px 10px 0 -7px;
+  }
+  .arr{
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    width: 16px;
+    height: 9px;
+    margin-left: -8px;
+    background-position: -20px 0;
+  }
+  ul.mg{
+    padding: 6px 0;
+  }
+  li,li a{
+    float: left;
+  }
+  a{
+    width: 156px;
+    height: 38px;
+    overflow: hidden;
+    padding-left: 24px;
+    color: #ccc;
+    line-height: 39px;
+    &:hover{
+      background: #353535;
+      text-decoration: none;
+      color: #fff;
+    }
+  }
+  .icn-hm{
+    background-position: 0 -80px;
+  }
+  .icn-lv{
+    background-position: 0 -100px;
+  }
+  .icn-mbr{
+    background-position: 0 -221px;
+  }
+  .icn-st{
+    background-position: 0 -140px;
+  }
+  .icn-imt{
+    background-position: 0 -180px;
+  }
+  .icn-ex{
+    background-position: 0 -200px;
+  }
+  em{
+    float: left;
+    width: 100px;
+  }
+  .ltb{
+    border-bottom: 1px solid #151515;
+    border-top: 1px solid #404040;
+  }
+  .lt{
+    border-top: 1px solid #404040;
+  }
+}
+.m-tlist-lged{
+  .arr{
+    margin-left: -8px;
+  }
+  a{
+    height: 32px;
+    line-height: 32px;
+  }
+  .icn{
+    margin: 7px 10px 0 0;
+  }
+}

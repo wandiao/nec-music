@@ -3,7 +3,8 @@ import {
   CHANGE_CURR_MUSIC,
   CHOOSE_BOX, 
   ADD_PLAY_ITEM,
-  CLEAR_CURR_MUSIC
+  CLEAR_CURR_MUSIC,
+  CHANGE_USER_INFO
    } from './actions'
 
 const initState = {
@@ -18,7 +19,8 @@ const initState = {
   logBox:{
     name:'登录',
     show:false
-  }
+  },
+  userInfo:{}
 }
 
 function playList(state=initState.playList,action) {
@@ -72,5 +74,20 @@ function logBox(state=initState.logBox,action) {
   }
 }
 
+function userInfo(state=initState.userInfo,action) {
+  switch(action.type) {
+    case CHANGE_USER_INFO:
+      if(!action.info) {
+        localStorage.userInfo = ''
+      }else{
+        localStorage.userInfo = JSON.stringify(action.info)
+      }
+      console.log(action.info)
+      return action.info;
+    default:
+      return state
+  }
+}
 
-export default {playList,currMusic,logBox}
+
+export default {playList,currMusic,logBox,userInfo}

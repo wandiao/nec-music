@@ -3,6 +3,9 @@ import {reqUrl} from '../config'
 
 axios.defaults.baseURL = reqUrl;
 
+//手机登录
+export const telLogin = (phone,password) => axios.get(`login/cellphone?phone=${phone}&password=${password}`)
+
 //banner
 export const getBanner = () => axios.get('banner');
 

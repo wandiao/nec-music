@@ -117,54 +117,114 @@ class Header extends Component {
 	}	
 	render() {
 		const {searchSuggests} = this.state
-		const {dispatch} = this.props
+		const {dispatch,userInfo} = this.props
 		const pathname = window.location.pathname
+		let userBox = null;
+		if(!userInfo) {
+			userBox = <div className="m-dt pr">
+									<a onClick={e => dispatch(chooseBox('登录'))} href="javascipt:;" className="link">登录</a>
+									<div className="dropdown-layer">
+										<div className="inner">
+											<ul className="dl-list clearfix">
+												<li>
+													<a onClick={e => dispatch(chooseBox('手机号登录'))} className="item-1" href="javascipt:;">
+														<i className="icn icn-mb"></i>
+														<em>手机号登录</em>
+													</a>
+												</li>
+												<li>
+													<a className="item-2" href="">
+														<i className="icn icn-wx"></i>
+														<em>微信登录</em>
+													</a>
+												</li>
+												<li>
+													<a className="item-2" href="">
+														<i className="icn icn-qq"></i>
+														<em>QQ登录</em>
+													</a>
+												</li>
+												<li>
+													<a className="item-2" href="">
+														<i className="icn icn-sn"></i>
+														<em>新浪微博登录</em>
+													</a>
+												</li>
+												<li>
+													<a onClick={e => dispatch(chooseBox('邮箱登录'))} className="item-2" href="javascipt:;">
+														<i className="icn icn-wy"></i>
+														<em>网易邮箱帐号登录</em>
+													</a>
+												</li>
+											</ul>
+										</div>
+										<i className="arr"></i>
+									</div>
+								</div>
+
+		}else {
+		userBox = <div className="m-tophead f-pr">
+								<div className="head f-fl f-pr">
+									<img src="http://p3.music.126.net/UwKXxqwQEC48Izw3HrvhBw==/18715886929772352.jpg?param=30y30" />
+									<a href="/user/home?id=413278451" className="mask"></a>
+									<i className="icn u-icn u-icn-68 f-alpha" style={{display:'none'}}></i>
+								</div>
+								<a href="/user/home?id=413278451" className="name f-thide f-fl f-tdn f-hide">天下大雨丶</a>
+								<div className="m-tlist m-tlist-lged">
+									<div className="inner">
+										<ul className="f-cb lb mg">
+											<li>
+												<a className="itm-1" href="/user/home?id=413278451">
+													<i className="icn icn-hm"></i>
+													<em>我的主页</em>
+													<i className="icon u-icn u-icn-68 f-alpha j-uflag" style={{display:'none'}}></i>
+												</a>
+											</li>
+											<li>
+												<a href="/user/level" className="itm-2">
+													<i className="icn icn-lv"></i>
+													<em>我的等级</em>
+													<i className="new u-icn u-icn-78 j-uflag"></i>
+												</a>
+											</li>
+											<li>
+												<a href="/member" className="itm-2">
+												<i className="icn icn-mbr"></i>
+												<em>会员中心</em></a>
+											</li>
+										</ul>
+										<ul className="f-cb ltb mg">
+											<li>
+												<a  className="itm-2" href="/user/update">
+													<i className="icn icn-st"></i><em>个人设置</em>
+												</a>
+											</li>
+											<li>
+												<a  className="itm-2" href="/import/kugou">
+													<i className="icn icn-imt"></i><em>导入歌单</em>
+												</a>
+											</li>
+										</ul>
+										<ul className="f-cb lt">
+											<li>
+												<a  className="itm-3" href="#" data-action="logout">
+													<i className="icn icn-ex"></i><em>退出</em>
+												</a>
+											</li>
+										</ul>
+									</div>
+									<i className="arr"></i>
+								</div>
+							</div>
+		}
 		return (
 			<div className="g-topbar">
 				<div className="m-top">
 					<div className="wrapper">
 						<h1 className="logo"><a href="/">网易云音乐</a></h1>
 						<Nav />
-						<div className="m-dt pr">
-							<a onClick={e => dispatch(chooseBox('登录'))} href="javascipt:;" className="link">登录</a>
-							<div className="dropdown-layer">
-								<div className="inner">
-									<ul className="dl-list clearfix">
-										<li>
-											<a onClick={e => dispatch(chooseBox('手机号登录'))} className="item-1" href="javascipt:;">
-												<i className="icn icn-mb"></i>
-												<em>手机号登录</em>
-											</a>
-										</li>
-										<li>
-											<a className="item-2" href="">
-												<i className="icn icn-wx"></i>
-												<em>微信登录</em>
-											</a>
-										</li>
-										<li>
-											<a className="item-2" href="">
-												<i className="icn icn-qq"></i>
-												<em>QQ登录</em>
-											</a>
-										</li>
-										<li>
-											<a className="item-2" href="">
-												<i className="icn icn-sn"></i>
-												<em>新浪微博登录</em>
-											</a>
-										</li>
-										<li>
-											<a onClick={e => dispatch(chooseBox('邮箱登录'))} className="item-2" href="javascipt:;">
-												<i className="icn icn-wy"></i>
-												<em>网易邮箱帐号登录</em>
-											</a>
-										</li>
-									</ul>
-								</div>
-								<i className="arr"></i>
-							</div>
-						</div>
+						
+						{userBox}
 						<a href="" className="m-msg pr" style={{display: 'none'}}></a>
 						<div className="m-srch pr">
 							<div className="s-bg" onClick={e => this.toggleShowPlace(false)}>
@@ -288,7 +348,8 @@ class Nav extends Component {
 
 function select(state) {
   return {
-    logBox:state.logBox
+    logBox:state.logBox,
+    userInfo:state.userInfo
   }
 }
 

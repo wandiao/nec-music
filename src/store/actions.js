@@ -10,6 +10,7 @@ export const CHANGE_CURR_MUSIC = 'CHANGE_CURR_MUSIC'
 export const CLEAR_CURR_MUSIC = 'CLEAR_CURR_MUSIC'
 export const CHOOSE_BOX = 'CHOOSE_BOX'
 export const ADD_PLAY_ITEM = 'ADD_PLAY_ITEM'
+export const CHANGE_USER_INFO = 'CHANGE_USER_INFO'
 
 
 /*
@@ -55,6 +56,7 @@ export function chooseBox(name,show=true) {
 	return {type:CHOOSE_BOX,name,show}
 }
 
+//切换当前歌曲
 export function asyncChangeCurrMusic(index,id,isPlay) {
 	return function(dispatch,getState) {
 		const state = getState();
@@ -82,4 +84,9 @@ export function asyncChangeCurrMusic(index,id,isPlay) {
 			console.log(err)
 		})
 	}
+}
+
+//切换用户信息
+export function changeUserInfo(info) {
+	return {type:CHANGE_USER_INFO,info}
 }

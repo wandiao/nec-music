@@ -20,8 +20,12 @@ export function numberFormat(num) {
  *
  */
 export function parseLrc(data) {
-  var lines = data.split('\n');
   var pattern = /\[\d{2}:\d{2}.\d{2,}\]/g;
+  if(!pattern.test(data)) {
+    return [];
+  }
+  var lines = data.split('\n');
+  
   var result = [];
   while(!pattern.test(lines[0])) {
     lines = lines.slice(1)

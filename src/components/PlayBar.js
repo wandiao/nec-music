@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {changeCurrMusic,changePlayList,asyncChangeCurrMusic as ac,clearCurrMusic } from '../store/actions'
 import {formatSongTime} from '../util/date'
 import {initScroll} from '../util/dom'
-import { Slider } from 'antd';
+import { Slider,message } from 'antd';
 import {Link} from 'react-router-dom'
 import { withRouter } from 'react-router'
 
@@ -49,7 +49,9 @@ class PlayBar extends Component {
       if(!this.player) {
         return false;
       }
-      if(this.props.currMusic.info && this.props.currMusic.info.fee > 0) {
+      if(this.props.currMusic.info && this.props.currMusic.info.st < 0) {
+        message.error('需要付费，无法播放');
+        this.player.pause();
         return false;
       }
       if(this.player.readyState == 4 && !this.player.ended) {
@@ -89,6 +91,10 @@ class PlayBar extends Component {
         default:
           index = type;
           isPlay = true
+      }
+      if(playList[index].st <0) {
+        alert("需要付费，无法播放")
+        return false;
       }
       const id = playList[index].mainTrackId || playList[index].id;
       dispatch(ac(index,id,isPlay))

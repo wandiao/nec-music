@@ -2,10 +2,13 @@ import React, { Component} from 'react';
 import Comments from '../components/Comments'
 import * as api from '../api'
 import qs from 'query-string'
-import {Spin} from 'antd'
+import {Spin,message} from 'antd'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import {parseLrc} from '../util'
+import { connect } from 'react-redux';
+import {addPlayItem } from '../store/actions'
+
 
 class Song extends Component {
 	constructor(props) {
@@ -35,6 +38,16 @@ class Song extends Component {
 				}
 			})
 		}
+		//播放歌曲
+		this.playSong = () => {
+      const item = this.songDetail
+      if(item.st <0) {
+      	message.error('需要付费，无法播放');
+      }else{
+      	// console.log(item)
+      	this.props.dispatch(addPlayItem(item))
+      } 
+    }
 	}
 	componentDidMount() {
 		const query = qs.parse(this.props.location.search)
@@ -108,7 +121,7 @@ class Song extends Component {
 	      							</p>
 	      							<div className="m-info">
 		      							<div className="btns clearfix">
-		      								<a href="javascript:;" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
+		      								<a onClick={this.playSong} href="javascript:;" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
 		      									<i>
 		      										<em className="ply"></em>播放
 		      									</i>
@@ -187,4 +200,11 @@ class Song extends Component {
 }
 
 
-export default Song
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Song)

@@ -6,6 +6,9 @@ import {Link} from 'react-router-dom'
 import {pos} from '../../util/dom'
 import {numberFormat} from '../../util'
 import { Pagination } from 'antd';
+import { connect } from 'react-redux';
+import { changePlayList,asyncChangeCurrMusic as ac } from '../../store/actions'
+
 class Playlist extends Component {
 	constructor(props) {
 		super(props);
@@ -32,6 +35,24 @@ class Playlist extends Component {
 					window.scrollTo.apply(null,sp)
 				}
 			})
+		}
+		//播放歌单
+		this.changePlaylist = (id) => {
+			api.getPlayListDetail(id).then(res => {
+        if(res.data.code == 200) {
+          const playList = res.data.playlist
+          if(!playList.tracks.length) {
+            return false;
+          }
+          let tracks = playList.tracks.map(i => {
+            i.source = `/playlist?id=${playList.id}`
+            return i;
+          })
+          console.log(playList)
+          this.props.dispatch(changePlayList(tracks))
+         	this.props.dispatch(ac(0,playList.tracks[0].id,true))
+        }
+      })
 		}
 	}
 	componentDidMount() {
@@ -90,7 +111,7 @@ class Playlist extends Component {
 							playlists.length?playlists.map((i,index) =>
 								<tr key={index}>
 									<td className="first w0">
-										<div className="hd"><span className="ply " title="播放"></span></div>
+										<div className="hd"><span onClick={e => this.changePlaylist(i.id)} className="ply " title="播放"></span></div>
 									</td>
 									<td className="w7">
 										<div className="u-cover u-cover-3">
@@ -143,4 +164,11 @@ class Playlist extends Component {
 	}
 }
 
-export default Playlist
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Playlist)

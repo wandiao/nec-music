@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 import {dateFormat,formatSongTime} from '../util/date'
 import * as api from '../api'
 import qs from 'query-string'
-import {Spin} from 'antd'
+import {Spin,message} from 'antd'
 import { connect } from 'react-redux';
-import { addPlayItem } from '../store/actions'
+import { changePlayList,addPlayItem,asyncChangeCurrMusic as ac } from '../store/actions'
 
 class Album extends Component {
 	constructor(props) {
@@ -38,6 +38,16 @@ class Album extends Component {
 				}
 			})
 		}
+		//播放专辑歌曲
+		this.changePlaylist = () => {
+			if(this.state.album.status <0) {
+				message.error('需要付费，无法播放');
+				return false;
+			}
+			const tracks = this.state.songs;
+      this.props.dispatch(changePlayList(tracks))
+      this.props.dispatch(ac(0,tracks[0].id,true))
+    }
 	}
 	componentDidMount() {
 		const id = qs.parse(this.props.location.search).id
@@ -45,11 +55,15 @@ class Album extends Component {
 			return false;
 		}
 		api.getAlbum(id).then(res => {
-			console.log(res)
+			// console.log(res)
 			if(res.data.code == 200) {
+				var songs = res.data.songs.map(i => {
+					i.source = `/album?id=${i.id}`
+					return i
+				})
 				this.setState({
 					album:res.data.album,
-					songs:res.data.songs
+					songs:songs
 				})
 				return api.getArtistAlbum(res.data.album.artist.id,0,5)
 			}
@@ -70,6 +84,9 @@ class Album extends Component {
 		})
 	}
 	componentWillReceiveProps(nextProps) {
+		if(this.props.location == nextProps.location) {
+			return false;
+		}
 		const id = qs.parse(nextProps.location.search).id
 		if(!id) {
 			return false;
@@ -83,9 +100,10 @@ class Album extends Component {
 					i.source = `/album?id=${i.id}`
 					return i
 				})
+				console.log(songs)
 				this.setState({
 					album:res.data.album,
-					songs:res.data.songs
+					songs:songs
 				})
 				return api.getArtistAlbum(res.data.album.artist.id,0,5)
 			}
@@ -139,7 +157,7 @@ class Album extends Component {
 										<p className="intr"><b>发行公司：</b>{album.company}</p>
 									</div>
 									<div className="btns clearfix">
-      								<a href="" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
+      								<a onClick={this.changePlaylist} href="javascript:;" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
       									<i>
       										<em className="ply"></em>播放
       									</i>
@@ -255,10 +273,11 @@ class SongList extends Component {
 		super(props);
 		//播放歌曲
 		this.playSong = (index) => {
-      const item = this.songs[index]
+      const item = this.props.tracks[index]
       if(item.st <0) {
       	alert("付费音乐，无法播放")
       }else{
+      	// console.log(item)
       	this.props.dispatch(addPlayItem(item))
       } 
     }

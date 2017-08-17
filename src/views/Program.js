@@ -5,6 +5,8 @@ import {Spin} from 'antd'
 import {dateFormat} from '../util/date'
 import * as api from '../api'
 import qs from 'query-string'
+import { connect } from 'react-redux';
+import { addPlayItem } from '../store/actions'
 
 function formatSongTime(time) {
   var minute = Math.floor(time / 60);
@@ -40,12 +42,59 @@ class Program extends Component {
 				}
 			})	
 		}
+     
 	}
 	componentDidMount() {
 		const id = qs.parse(this.props.location.search).id
 		api.getDjProgramDetail(id).then(res =>{
 			console.log(res.data)
 			if(res.data.code == 200) {
+				res.data.program.source = `/program?id=${id}`
+				res.data.program.songs.forEach(i => {
+					i.source = `/program?id=${id}`
+				})
+				this.setState({
+					program:res.data.program
+				})
+				const rid = res.data.program.radio.id
+				return api.getDjPrograms(rid,0,6)
+			}
+		})
+		.then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					otherPrograms:res.data.programs.slice(1)
+				})
+			}
+		})
+		api.getDjComment(id).then(res => {
+			console.log(res)
+			if(res.data.code == 200) {
+				this.setState({
+					commentData:res.data
+				})
+			} 
+		})
+	}
+	componentWillReceiveProps(np) {
+		if(this.props.location == np.location) {
+			return false;
+		}
+		const id = qs.parse(np.location.search).id
+		this.setState({
+			program:null,
+			showList:true,
+			commentData:null,
+			otherPrograms:[]
+		})
+		api.getDjProgramDetail(id).then(res =>{
+			console.log(res.data)
+			if(res.data.code == 200) {
+				res.data.program.source = `/program?id=${id}`
+				res.data.program.songs.forEach(i => {
+					i.source = `/program?id=${id}`
+				})
 				this.setState({
 					program:res.data.program
 				})
@@ -72,6 +121,7 @@ class Program extends Component {
 	}
 	render() {
 		const {program,showList,commentData,otherPrograms} = this.state;
+		const {dispatch} = this.props
 		let otherList = null
 		if(!program) {
 			return <div className="g-bd4 clearfix">
@@ -129,7 +179,7 @@ class Program extends Component {
 						</div>
 						<div className="m-prointr">
 							<div className="btns f-cb">
-								<a href="javascript:;" className="u-btni u-btni-play">
+								<a onClick={e=>dispatch(addPlayItem(program))} href="javascript:;" className="u-btni u-btni-play">
 									<i>播放 {formatSongTime(program.duration/1000)}</i>
 								</a>
 								<a href="javascript:;"  className="u-btn2 u-btn2-1 u-btn2-icn">
@@ -174,7 +224,7 @@ class Program extends Component {
 									<span className="s-fc3">（{program.songs.length}首歌）</span>
 								</div>
 							</div>
-							<SongList show={showList} tracks={program.songs}/>
+							<SongList {...this.props} show={showList} tracks={program.songs}/>
 						</div>
 						<Comments onChange={this.choosePage} data={commentData} />
 					</div>
@@ -216,6 +266,18 @@ class Program extends Component {
 
 //音乐列表
 class SongList extends Component {
+	constructor(props) {
+		super(props)
+		this.playSong = (index) => {
+      const item = this.props.tracks[index]
+      if(item.st <0) {
+      	alert("付费音乐，无法播放")
+      }else{
+      	// console.log(item)
+      	this.props.dispatch(addPlayItem(item))
+      } 
+    }
+	}
 	render() {
 		const { tracks,show } = this.props
 		if(!tracks.length) {
@@ -230,7 +292,7 @@ class SongList extends Component {
 								<tr key={index} className={index%2 == 0?'even':null}>
 									<td className="left">
 										<div className="hd">
-											<span className="ply"></span>
+											<span onClick={e =>this.playSong(index)} className="ply"></span>
 											<span className="num">{index+1}</span>
 										</div>
 									</td>
@@ -286,4 +348,11 @@ class SongList extends Component {
 }
 
 
-export default Program
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Program)

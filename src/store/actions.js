@@ -74,6 +74,7 @@ export function asyncChangeCurrMusic(index,id,isPlay) {
 		.then(res => {
 			let lrc = null;
 			if(res.data.code == 200) {
+				console.log(res)
 				lrc = res.data.lrc?parseLrc(res.data.lrc.lyric):[]
         dispatch(changeCurrMusic({
           lrc:lrc

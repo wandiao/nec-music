@@ -3,8 +3,10 @@ import Comments from '../../components/Comments'
 import * as api from '../../api'
 import {Link} from 'react-router-dom'
 import qs from 'query-string'
-import {Spin} from 'antd'
+import {Spin,message} from 'antd'
 import {dateFormat} from '../../util/date'
+import { connect } from 'react-redux';
+import { changePlayList,addPlayItem,asyncChangeCurrMusic as ac } from '../../store/actions'
 
 //排行榜
 class TopList extends Component {
@@ -17,8 +19,8 @@ class TopList extends Component {
 			listDetail:null,
 			commentData:null
 		}
+		//评论分页
 		this.choosePage = (page,pageSize,pos) => {
-			console.log(page-1)
 			const id = qs.parse(this.props.location.search).id;
 			api.getPlayListComment(id,page-1).then(res => {
 				if(res.data.code == 200) {
@@ -29,6 +31,15 @@ class TopList extends Component {
 				}
 			})
 		}
+		//播放排放榜
+		this.changePlaylist = () => {
+			const tracks = this.state.listDetail.tracks.map((i) => {
+				i.source = `/discover/toplist?id=${i.id}`
+				return i
+			})  
+      this.props.dispatch(changePlayList(tracks))
+      this.props.dispatch(ac(0,tracks[0].id,true))
+    }
 	}
 	componentDidMount() {
 		let id = qs.parse(this.props.location.search).id;
@@ -66,6 +77,9 @@ class TopList extends Component {
 		})
 	}
 	componentWillReceiveProps(np) {
+		if(this.props.location == np.location) {
+			return false;
+		}
 		let id = qs.parse(np.location.search).id;
 		if(id === undefined) {
 			id = 19723756
@@ -91,7 +105,7 @@ class TopList extends Component {
 		})
 	}
   render() {
-  	const {listDetail,commentData,featureList,globalList} = this.state
+  	const {listDetail,commentData,featureList,globalList,currId} = this.state
   	let main,topList;
   	if(!featureList.length || !globalList.length){
   		topList = null;
@@ -101,7 +115,7 @@ class TopList extends Component {
 			      			<ul className="clearfix">
 			      				{
 											featureList.map((i,index) => 
-												<li key={i.id} className={index==0?'mine selected':'mine'}>
+												<li onClick={e => this.props.history.push(`/discover/toplist?id=${i.id}`)} key={i.id} className={i.id == currId?'mine selected':'mine'}>
 													<div className="item clearfix">
 														<div className="left">
 															<Link className="avatar" to={`/discover/toplist?id=${i.id}`}>
@@ -122,7 +136,7 @@ class TopList extends Component {
 			      			<ul className="clearfix">
 			      				{
 											globalList.map((i,index) => 
-												<li key={i.id} className={index==0?'mine selected':'mine'}>
+												<li onClick={e => this.props.history.push(`/discover/toplist?id=${i.id}`)} key={i.id} className={i.id == currId?'mine selected':'mine'}>
 													<div className="item clearfix">
 														<div className="left">
 															<Link className="avatar" to={`/discover/toplist?id=${i.id}`}>
@@ -165,7 +179,7 @@ class TopList extends Component {
 	      								<span className="s-fc4">（每天更新）</span>
 	      							</div>
 	      							<div className="btns clearfix">
-	      								<a href="javascript:;" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
+	      								<a onClick={e => this.changePlaylist()} href="javascript:;" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
 	      									<i>
 	      										<em className="ply"></em>播放
 	      									</i>
@@ -200,7 +214,7 @@ class TopList extends Component {
 										播放：<strong className="s-fc6">{listDetail.playCount}</strong>次
 									</div>
 								</div>
-								<SongList tracks={listDetail.tracks} id={listDetail.id}/>
+								<SongList {...this.props}  tracks={listDetail.tracks}/>
 								<Comments onChange={this.choosePage} data={commentData} />
 							</div>
 	      			
@@ -221,6 +235,16 @@ class TopList extends Component {
 class SongList extends Component {
 	constructor(props) {
 		super(props)
+		//播放歌曲
+		this.playSong = (index) => {
+      const item = this.props.tracks[index]
+      if(item.st <0) {
+      	message.error('需要付费，无法播放');
+      }else{
+      	// console.log(item)
+      	this.props.dispatch(addPlayItem(item))
+      } 
+    }
 	} 
 	render() {
 		const {tracks} = this.props
@@ -257,7 +281,7 @@ class SongList extends Component {
 											<img className="rpic" src={i.album.picUrl}/>
 										</a>:null
 									 }
-										<div className="ply"></div>
+										<div onClick={e =>this.playSong(index)} className="ply"></div>
 										<div className="ttc">
 											<div className="txt">
 												<Link to={`/song?id=${i.id}`}>
@@ -265,7 +289,7 @@ class SongList extends Component {
 												</Link>
 												{i.alias.length?<span title={i.alias.join('/')} className="s-fc8"> - ({i.alias.join('/')})</span>:null}
 												
-												{i.mvid?<span className="mv">mv</span>:null}
+												{i.mvid?<Link to={`/mv?id=${i.mvid}`} className="mv">mv</Link>:null}
 											</div>
 										</div>
 									</div>
@@ -302,4 +326,12 @@ class SongList extends Component {
 	}
 }
 
-export default TopList
+
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(TopList)

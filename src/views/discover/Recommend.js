@@ -6,7 +6,7 @@ import { changePlayList,addPlayItem,asyncChangeCurrMusic as ac } from '../../sto
 import {chunk} from '../../util/array';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import {Spin} from 'antd'
+import {Spin,message} from 'antd'
 
 class Recommend extends Component {
   constructor(props) {
@@ -62,7 +62,7 @@ class Recommend extends Component {
     .then(axios.spread((b,x,y) => {
       let topLists = [b.data.result,x.data.result,y.data.result].map(i => {
         i.tracks.forEach(tr => {
-          tr.source = `/toplist?id=${i.id}`
+          tr.source = `/discover/toplist?id=${i.id}`
         })
         return i;
       })
@@ -241,9 +241,7 @@ class HotRcmd extends Component {
             dispatch(ac(0,playList.tracks[0].id,true))
           }
         })
-        .catch(err => {
-          console.log(err)
-        })
+        
       }else{
         item.program.source = `/program?id=${item.id}`
         dispatch(addPlayItem(item.program))
@@ -351,7 +349,7 @@ class Disk extends Component {
             return i;
           })
           if(res.data.album.status < 0) {
-            alert("需要付费，无法播放")
+            message.error('需要付费，无法播放');
             return false;
           }
           dispatch(changePlayList(songs))
@@ -426,6 +424,10 @@ class Bill extends Component {
     }
     this.playSong = (index,subIndex) => {
       const item = this.props.topLists[index].tracks[subIndex]
+      if(item.st<0) {
+        message.error('需要付费，无法播放');
+        return false;
+      }
       dispatch(addPlayItem(item))
     }
   }

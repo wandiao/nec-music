@@ -4,7 +4,9 @@ import qs from 'query-string'
 import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
 import {pos} from '../../util/dom'
-import { Pagination } from 'antd';
+import { Pagination,message } from 'antd';
+import { connect } from 'react-redux';
+import { changePlayList,asyncChangeCurrMusic as ac } from '../../store/actions'
 
 class Album extends Component {
 	constructor(props) {
@@ -33,6 +35,25 @@ class Album extends Component {
 				}
 			})
 		}
+		//切换播放列表
+    this.changePlaylist = (id) => {
+      const {dispatch} = this.props
+      api.getAlbum(id).then(res => {
+        console.log(res)
+        if(res.data.code == 200) {
+          const songs = res.data.songs.map(i =>{
+            i.source = `/album?id=${id}`;
+            return i;
+          })
+          if(res.data.album.status < 0) {
+            message.error('需要付费，无法播放');
+            return false;
+          }
+          dispatch(changePlayList(songs))
+          dispatch(ac(0,songs[0].id,true))
+        }
+      })
+    }
 	}
 	componentDidMount() {
 		const keywords = qs.parse(this.props.location.search).keywords
@@ -88,14 +109,14 @@ class Album extends Component {
 					{albums.length?albums.map((i,index) =>
 						<li key={index}>
 							<div className="u-cover u-cover-alb2">
-								<Link to={`/album?id={i.id}`}>
+								<Link to={`/album?id=${i.id}`}>
 									<img src={i.picUrl} />
 									<span title={i.name} className="msk"></span>
 								</Link>
-								<a title="播放"className="icon-play f-alpha f-fr " href="javascript:void(0)"></a>
+								<a onClick={e =>this.changePlaylist(i.id)} title="播放"className="icon-play f-alpha f-fr " href="javascript:void(0)"></a>
 							</div>
 							<p className="dec">
-								<Link to={`/album?id={i.id}`} className="tit f-thide s-fc0" title={i.name}
+								<Link to={`/album?id=${i.id}`} className="tit f-thide s-fc0" title={i.name}
 								dangerouslySetInnerHTML={{__html:i.name.replace(new RegExp(keywords,'gi'),rs =>`<span class="s-fc7">${rs}</span>`)}}
 								></Link>
 							</p>
@@ -116,4 +137,11 @@ class Album extends Component {
 	}
 }
 
-export default Album
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Album)

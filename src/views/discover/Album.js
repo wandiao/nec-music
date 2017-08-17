@@ -3,7 +3,9 @@ import { Pagination } from 'antd';
 import * as api from '../../api'
 import {Link} from 'react-router-dom'
 import qs from 'query-string'
-import {Spin} from 'antd'
+import {Spin,message} from 'antd'
+import { connect } from 'react-redux';
+import { changePlayList,asyncChangeCurrMusic as ac } from '../../store/actions'
 
 //新碟上架
 class Album extends Component {
@@ -58,6 +60,9 @@ class Album extends Component {
       })
   }
   componentWillReceiveProps(np) {
+    if(this.props.location == np.location) {
+      return false;
+    }
     const query = qs.parse(np.location.search);
     let area = query.area;
     let page = query.page
@@ -90,7 +95,7 @@ class Album extends Component {
       hotAlbums = <ul className="m-cvrlst m-cvrlst-alb2 f-cb">
               {
                 hotAlbumList.map((i,index) => 
-                  <AlbumItem key={index} album={i} />
+                  <AlbumItem {...this.props} key={index} album={i} />
                 )
               }
             </ul>
@@ -101,7 +106,7 @@ class Album extends Component {
       albums = <ul className="m-cvrlst m-cvrlst-alb2 f-cb">
               {
                 albumList.map((i,index) => 
-                  <AlbumItem key={index} album={i} />
+                  <AlbumItem {...this.props} key={index} album={i} />
                 )
               }
             </ul>
@@ -140,6 +145,30 @@ class Album extends Component {
 }
 
 class AlbumItem extends Component {
+  constructor(props) {
+    super(props);
+    //切换播放列表
+    this.changePlaylist = (id) => {
+      console.log(this.props)
+      const {dispatch} = this.props
+      api.getAlbum(id).then(res => {
+        // console.log(res)
+        if(res.data.code == 200) {
+          const songs = res.data.songs.map(i =>{
+            i.source = `/album?id=${id}`;
+            return i;
+          })
+          if(res.data.album.status < 0) {
+            message.error('需要付费，无法播放');
+            return false;
+          }
+          dispatch(changePlayList(songs))
+          dispatch(ac(0,songs[0].id,true))
+        }
+      })
+    }
+  }
+
   render() {
     const {album} = this.props
     return (
@@ -147,7 +176,7 @@ class AlbumItem extends Component {
         <div className="u-cover u-cover-alb2">
           <img src={album.picUrl} />
           <Link to={`/album?id=${album.id}`} className="msk"></Link>
-          <a href="javascript:;" className="icon-play f-fr"></a>
+          <a onClick={e =>this.changePlaylist(album.id)} href="javascript:;" className="icon-play f-fr"></a>
         </div>
         <p className="dec">
           <Link className="tit f-thide s-fc0" to={`/album?id=${album.id}`} title={album.name}>{album.name}</Link>
@@ -167,4 +196,11 @@ class AlbumItem extends Component {
 }
 
 
-export default Album
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Album)

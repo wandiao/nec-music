@@ -4,9 +4,11 @@ import qs from 'query-string'
 import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
 import {pos} from '../../util/dom'
-import { Pagination } from 'antd';
+import { Pagination,message } from 'antd';
 import {formatSongTime} from '../../util/date'
 import {drop} from '../../util/array'
+import { connect } from 'react-redux';
+import {addPlayItem } from '../../store/actions'
 
 class Lrc extends Component {
 	constructor(props) {
@@ -15,6 +17,7 @@ class Lrc extends Component {
 			songs:[],
 			total:0,
 			keywords:'',
+			moreLrc:false,
 			currPage:1,
 			queryCorrected:null
 		}
@@ -35,6 +38,17 @@ class Lrc extends Component {
 				}
 			})
 		}
+		//播放歌曲
+		this.playSong = (index) => {
+      const item = Object.assign({},this.state.songs[index])
+      item.source = `/search/lrc?keywords=${this.state.keywords}`
+      if(item.st <0) {
+      	message.error('需要付费，无法播放');
+      }else{
+      	// console.log(item)
+      	this.props.dispatch(addPlayItem(item))
+      } 
+    }
 	}
 	componentDidMount() {
 		const keywords = qs.parse(this.props.location.search).keywords
@@ -79,7 +93,7 @@ class Lrc extends Component {
 		})
 	}
 	render() {
-		const {songs,total,keywords,currPage,queryCorrected} = this.state
+		const {songs,total,keywords,currPage,queryCorrected,moreLrc} = this.state
 		return (
 			<div className="ztag n-srchrst f-pr" id="search_result">
 				<div className="snote s-fc4 ztag">
@@ -93,7 +107,7 @@ class Lrc extends Component {
 								<div className={index%2 != 0?'item f-cb even':'item f-cb'}>
 									<div className="td">
 										<div className="hd">
-											<a id="song_436514312" className="ply " title="播放"></a>
+											<a onClick={e => this.playSong(index)}  className="ply " title="播放"></a>
 										</div>
 									</div>
 									<div className="td w0">
@@ -137,7 +151,7 @@ class Lrc extends Component {
 									<div className="td">{formatSongTime(i.duration/1000)}</div>
 								</div>
 								<div className="lyric">
-									<div>
+									<div className={moreLrc?'f-hide':null}>
 										{drop(i.lyrics,li => li.indexOf(keywords) == -1).slice(0,4).map((li,index) =>
 											<p key={index} 
 											dangerouslySetInnerHTML={{__html:li}}
@@ -145,13 +159,15 @@ class Lrc extends Component {
 										)}
 										
 									</div>
-									<div className="f-hide">
+									<div className={moreLrc?null:'f-hide'}>
 										{drop(i.lyrics,li => li.indexOf(keywords) == -1).map((li,index) =>
-											<p key={index}>{li}</p>
+											<p key={index}
+											dangerouslySetInnerHTML={{__html:li}}
+											></p>
 										)}
 									</div>
 									<div className="crl">
-										<a href="javascript:void(0)" className="s-fc3">展开<i className="u-icn u-icn-69"></i></a>
+										<a onClick={e => this.setState({moreLrc:!moreLrc})} href="javascript:void(0)" className="s-fc3">{moreLrc?'收起':'展开'}<i className={moreLrc?'u-icn u-icn-70':"u-icn u-icn-69"}></i></a>
 									</div>
 								</div>
 							</div>
@@ -168,4 +184,11 @@ class Lrc extends Component {
 	}
 }
 
-export default Lrc
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Lrc)

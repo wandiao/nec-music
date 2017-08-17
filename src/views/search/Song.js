@@ -4,8 +4,10 @@ import qs from 'query-string'
 import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
 import {pos} from '../../util/dom'
-import { Pagination } from 'antd';
+import { Pagination,message } from 'antd';
 import {formatSongTime} from '../../util/date'
+import { connect } from 'react-redux';
+import {addPlayItem } from '../../store/actions'
 
 class Song extends Component {
 	constructor(props) {
@@ -34,6 +36,17 @@ class Song extends Component {
 				}
 			})
 		}
+		//播放歌曲
+		this.playSong = (index) => {
+      const item = Object.assign({},this.state.songs[index])
+      item.source = `/search/song?keywords=${this.state.keywords}`
+      if(item.st <0) {
+      	message.error('需要付费，无法播放');
+      }else{
+      	// console.log(item)
+      	this.props.dispatch(addPlayItem(item))
+      } 
+    }
 	}
 	componentDidMount() {
 		const keywords = qs.parse(this.props.location.search).keywords
@@ -91,7 +104,7 @@ class Song extends Component {
 							<div key={index} className="item f-cb">
 								<div className="td">
 									<div className="hd">
-										<a className="ply " title="播放"></a>
+										<a onClick={e => this.playSong(index)} href="javascript:;" className="ply " title="播放"></a>
 									</div>
 								</div>
 								<div className="td w0">
@@ -139,4 +152,11 @@ class Song extends Component {
 	}
 }
 
-export default Song
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Song)

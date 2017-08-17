@@ -5,6 +5,8 @@ import qs from 'query-string'
 import * as api from '../../api'
 import {numberFormat} from '../../util'
 import {Spin} from 'antd'
+import { connect } from 'react-redux';
+import { changePlayList,asyncChangeCurrMusic as ac } from '../../store/actions'
 
 const cats = [
 	{
@@ -66,6 +68,22 @@ class PlayList extends Component {
 				search:`?${query}`
 			})
 		}
+		this.changePlayList = id => {
+			api.getPlayListDetail(id).then(res => {
+          if(res.data.code == 200) {
+            var playlist = res.data.playlist
+            if(!playlist.tracks.length) {
+              return false;
+            }
+            let tracks = playlist.tracks.map(i => {
+              i.source = `/playlist?id=${playlist.id}`
+              return i;
+            })
+            this.props.dispatch(changePlayList(tracks))
+            this.props.dispatch(ac(0,tracks[0].id,true))
+          }
+        })
+		}
 	}
 	componentDidMount() {
 		const query = qs.parse(this.props.location.search);
@@ -95,6 +113,9 @@ class PlayList extends Component {
 		})
 	}
 	componentWillReceiveProps(np) {
+		if(this.props.location == np.location) {
+			return false;
+		}
 		const query = qs.parse(np.location.search);
 		let cat = query.cat;
 		let order = query.order
@@ -136,7 +157,7 @@ class PlayList extends Component {
 											<img src={i.coverImgUrl} />
 											<Link title={i.name} to={`/playlist?id=${i.id}`} className="msk"></Link>
 											<div className="bottom">
-												<a href="" className="icon-play f-fr"></a>
+												<a onClick={e => this.changePlayList(i.id)} href="javascript:;" className="icon-play f-fr"></a>
 												<span className="icon-headset"></span>
 												<span className="nb">{numberFormat(i.playCount)}</span>
 											</div>
@@ -154,7 +175,7 @@ class PlayList extends Component {
 		      			)
 		      			}
 		      		</ul>
-		      		<div className="u-page">
+		      		<div className="u-page" style={{display:total>35?'block':'none'}}>
 								<Pagination onChange={this.choosePage} pageSize={35} defaultCurrent={Number(offset)+1} total={total} />
 							</div>
 	  				</div>
@@ -212,5 +233,11 @@ class PlayList extends Component {
   }
 }
 
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
 
-export default PlayList
+export default connect(select)(PlayList)

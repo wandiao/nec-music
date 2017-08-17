@@ -2,7 +2,7 @@ import React, { Component} from 'react'
 import { NavLink as Link }from 'react-router-dom'
 import * as api from '../api'
 import { connect } from 'react-redux'
-import {chooseBox} from '../store/actions'
+import {chooseBox,changeUserInfo} from '../store/actions'
 import axios from 'axios'
 import { withRouter } from 'react-router'
 
@@ -21,6 +21,7 @@ class Header extends Component {
 		this.state = {
 			showPlaceholder:true,
 			showSrchSuggest:false,
+			keywords:'',
 			searchSuggests:[
 				{
 					name:'单曲',
@@ -60,7 +61,7 @@ class Header extends Component {
 					this.setState({
 						showSrchSuggest:false
 					})
-				},2000)	
+				},500)	
 			}
 			if(this.searchInput.value) {
 				bool = false;
@@ -113,10 +114,14 @@ class Header extends Component {
 		}
 	}
 	componentDidMount() {
-	
+		let userInfo;
+		if(localStorage.userInfo) {
+			userInfo = JSON.parse(localStorage.userInfo)
+			this.props.dispatch(changeUserInfo(userInfo))
+		}
 	}	
 	render() {
-		const {searchSuggests} = this.state
+		const {searchSuggests,keywords} = this.state
 		const {dispatch,userInfo} = this.props
 		const pathname = window.location.pathname
 		let userBox = null;
@@ -165,49 +170,49 @@ class Header extends Component {
 		}else {
 		userBox = <div className="m-tophead f-pr">
 								<div className="head f-fl f-pr">
-									<img src="http://p3.music.126.net/UwKXxqwQEC48Izw3HrvhBw==/18715886929772352.jpg?param=30y30" />
-									<a href="/user/home?id=413278451" className="mask"></a>
+									<img src={userInfo.avatarUrl} />
+									<Link to={`/user/home?id=${userInfo.userId}`} className="mask"></Link>
 									<i className="icn u-icn u-icn-68 f-alpha" style={{display:'none'}}></i>
 								</div>
-								<a href="/user/home?id=413278451" className="name f-thide f-fl f-tdn f-hide">天下大雨丶</a>
+								<Link to={`/user/home?id=${userInfo.userId}`} className="name f-thide f-fl f-tdn f-hide">{userInfo.nickname}</Link>
 								<div className="m-tlist m-tlist-lged">
 									<div className="inner">
 										<ul className="f-cb lb mg">
 											<li>
-												<a className="itm-1" href="/user/home?id=413278451">
+												<a className="itm-1" to={`/user/home?id=${userInfo.userId}`}>
 													<i className="icn icn-hm"></i>
 													<em>我的主页</em>
 													<i className="icon u-icn u-icn-68 f-alpha j-uflag" style={{display:'none'}}></i>
 												</a>
 											</li>
 											<li>
-												<a href="/user/level" className="itm-2">
+												<Link to="/user/level" className="itm-2">
 													<i className="icn icn-lv"></i>
 													<em>我的等级</em>
 													<i className="new u-icn u-icn-78 j-uflag"></i>
-												</a>
+												</Link>
 											</li>
 											<li>
-												<a href="/member" className="itm-2">
+												<Link to="/member" className="itm-2">
 												<i className="icn icn-mbr"></i>
-												<em>会员中心</em></a>
+												<em>会员中心</em></Link>
 											</li>
 										</ul>
 										<ul className="f-cb ltb mg">
 											<li>
-												<a  className="itm-2" href="/user/update">
+												<Link  className="itm-2" to="/user/update">
 													<i className="icn icn-st"></i><em>个人设置</em>
-												</a>
+												</Link>
 											</li>
 											<li>
-												<a  className="itm-2" href="/import/kugou">
+												<a  className="itm-2" to="/import/kugou">
 													<i className="icn icn-imt"></i><em>导入歌单</em>
 												</a>
 											</li>
 										</ul>
 										<ul className="f-cb lt">
 											<li>
-												<a  className="itm-3" href="#" data-action="logout">
+												<a href="javascipt:;" onClick={e =>dispatch(changeUserInfo(null))}  className="itm-3">
 													<i className="icn icn-ex"></i><em>退出</em>
 												</a>
 											</li>
@@ -231,6 +236,7 @@ class Header extends Component {
 								<span className="parent">
 									<input
 									onKeyUp={this.search} 
+									onChange={e => this.setState({keywords:e.target.value})}
 									ref={(input) => { this.searchInput = input; }}
 									onBlur={e => this.toggleShowPlace(true)}
 									  type="text" className="txt" name="" />
@@ -240,7 +246,7 @@ class Header extends Component {
 							<div className="u-lstlay" style={{display:this.state.showSrchSuggest?'block':'none'}}>
 								<div className="m-schlist">
 									<p className="note s-fc3">
-										<Link to={`/search/user?keywords=1`} className="s-fc3 xtag">搜“{this.searchInput?this.searchInput.value:null}” 相关用户</Link> >
+										<Link to={`/search/user?keywords=${keywords}`} className="s-fc3 xtag">搜“{keywords}” 相关用户</Link> >
 									</p>
 									<div className="rap">
 									{
@@ -254,7 +260,7 @@ class Header extends Component {
 												{i.list.length?
 													i.list.map((item,index1) =>
 														<li key={index1}>
-															<a href={`${i.href}?id=${item.id}`} className="s-fc0 f-thide xtag">{index ==0 ?`${item.name}-${item.artists.map(a =>a.name).join('/')}`:item.name}</a>
+															<Link to={`${i.href}?id=${item.id}`} className="s-fc0 f-thide xtag">{index ==0 ?`${item.name}-${item.artists.map(a =>a.name).join('/')}`:item.name}</Link>
 														</li>
 													):null
 												}	

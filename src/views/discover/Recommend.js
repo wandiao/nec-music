@@ -167,7 +167,7 @@ class Banner extends Component {
               ))
     }
  		return (
-			<div className="n-ban">
+			<div className="n-ban" ref="banners">
 				<div className="wrap">
 					<div className="ban pr" onMouseEnter={this.clear} onMouseLeave={e => {this.autoPlay()}}>
             <div className="ban-list">{bannerList}</div>

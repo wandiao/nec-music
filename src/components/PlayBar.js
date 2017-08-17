@@ -296,7 +296,7 @@ class ListTab extends Component {
       }
     }
     this.clearList = (e) => {
-      this.props.dispatch(changePlayList([])),
+      this.props.dispatch(changePlayList([]))
       this.props.dispatch(clearCurrMusic())
     }
   }
@@ -332,7 +332,7 @@ class ListTab extends Component {
     }
   }
   render() {
-    const {show,playList,currIndex,currMusic,dispatch} = this.props
+    const {show,playList,currIndex,currMusic} = this.props
     const lrclist = currMusic.lrc
     let playListCon = null;
     if(!playList.length) {

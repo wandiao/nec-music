@@ -1,5 +1,4 @@
 import React, { Component} from 'react';
-import {Link} from 'react-router-dom'
 import * as api from '../../api'
 import qs from 'query-string'
 import {Spin} from 'antd'

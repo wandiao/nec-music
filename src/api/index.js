@@ -79,9 +79,6 @@ export const getArtistsList = (cat=5001,initial=66,offset=0,limit=20) => axios.g
 	}
 })
 
-// //获取相似歌手
-// export const getSimiArtist = id => axios.get(`simi/playlist?id=${id}`)
-
 //获取歌手歌曲
 export const getArtistSong = id => axios.get(`artists?id=${id}`)
 
@@ -93,6 +90,7 @@ export const getArtistAlbum = (id,offset=0,limit=12) => axios.get('artist/album'
 		limit
 	}
 })
+
 
 //获取歌手mv
 export const getArtistMV = (id,offset=0,limit=12) => axios.get('artist/mv',{
@@ -263,6 +261,18 @@ export const getMVComment = (id,offset=0,limit=20) => axios.get('comment/mv',{
 
 //获取专辑详情
 export const getAlbum = id => axios.get(`album?id=${id}`) 
+
+//获取专辑评论
+export const getAlbumComment = (id,offset=0,limit=20) => axios.get('comment/album',{
+	params:{
+		id,
+		offset:offset*20,
+		limit
+	}
+})
+
+//获取最近听歌用户
+export const getListenUser = id => axios.get(`simi/user?id=${id}`)
 
 
 

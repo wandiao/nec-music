@@ -4,7 +4,6 @@ import {Link} from 'react-router-dom'
 import * as api from '../api'
 import qs from 'query-string'
 import {Spin} from 'antd'
-import {dateFormat} from '../util/date'
 import {numberFormat} from '../util'
 
 class MV extends Component {
@@ -16,7 +15,6 @@ class MV extends Component {
 			commentData:null
 		}
 		this.choosePage = (page,pageSize,pos) => {
-			console.log(page-1)
 			const id = qs.parse(this.props.location.search).id;
 			api.getMVComment(id,page-1).then(res => {
 				if(res.data.code == 200) {
@@ -31,7 +29,7 @@ class MV extends Component {
 	componentDidMount() {
 		const id = qs.parse(this.props.location.search).id
 		api.getMV(id).then(res => {
-			// console.log(res)
+			console.log(res)
 			if(res.data.code == 200) {
 				this.setState({
 					mv:res.data.data
@@ -46,7 +44,7 @@ class MV extends Component {
 			}
 		})
 		api.getMVComment(id).then(res => {
-			console.log(res)
+			// console.log(res)
 			if(res.data.code == 200) {
 				this.setState({
 					commentData:res.data
@@ -105,7 +103,7 @@ class MV extends Component {
 								</span>
 							</div>
 							<div className="mv">
-								
+								<video controls src={`http://localhost:7010/mv/url?url=${mv.brs['720']}`}></video>
 							</div>
 							<div className="btns f-cb">
 								<a className="j-flag u-btni u-btni-fav" href="javascript:;"><i>收藏</i></a>

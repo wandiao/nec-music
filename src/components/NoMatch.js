@@ -3,7 +3,7 @@ import React, { Component} from 'react';
 class NoMatch extends Component {
 	render() {
 		return (
-			<div className="g-bd g-bd-full g-bd-fix">
+			<div className="g-bd g-min">
 				<div className="g-wrap">
 					<div className="n-for404">
 						<i className="u-errlg u-errlg-404"></i>

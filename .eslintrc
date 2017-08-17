@@ -7,6 +7,7 @@
     "no-script-url":0,
     "eqeqeq":0,
     "no-useless-constructor":0,
-    "react/jsx-no-target-blank":0
+    "react/jsx-no-target-blank":0,
+    "react/no-danger-with-children":0
   }
 }

@@ -20,7 +20,7 @@ const initState = {
     name:'登录',
     show:false
   },
-  userInfo:{}
+  userInfo:null
 }
 
 function playList(state=initState.playList,action) {

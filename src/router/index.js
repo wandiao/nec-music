@@ -54,6 +54,8 @@ import SPlaylist from '../views/search/Playlist'
 import SRadio from '../views/search/Radio'
 import SUser from '../views/search/User'
 
+import Album from '../views/Album'
+
 const history = createBrowserHistory();
 
 
@@ -147,6 +149,11 @@ const routes = [
 	{
 		path:'/mv',
 		component:MV
+	},
+	//专辑详情
+	{
+		path:'/album',
+		component:Album
 	},
 	//用户首页
 	{

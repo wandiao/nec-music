@@ -5,6 +5,8 @@ import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
 import axios from 'axios'
 import RdiType from './RdiTypeComp'
+import { connect } from 'react-redux';
+import {addPlayItem } from '../../../store/actions'
 
 
 class DjRadio extends Component {
@@ -47,6 +49,19 @@ class DjRadio extends Component {
 				},
 			]
 		}
+		//播放节目
+		this.playProgram = (index,type) => {
+			let item = null;
+			if(type == 'rec') {
+				item = Object.assign({},this.state.recPrograms[index])
+				item.source = '/discover/djradio/recommend'
+			}else{
+				item = Object.assign({},this.state.topPrograms[index].program)
+				item.source = `/discover/djradio/rank`
+			}
+      
+	    this.props.dispatch(addPlayItem(item))
+    }
 	}
 	componentDidMount() {
 		api.getDjCate().then(res => {
@@ -91,7 +106,7 @@ class DjRadio extends Component {
   	}else{
   		recList = recPrograms.map((i,index) =>
   			<li key={index} className={index%2==0?'itm':'itm bg'}>
-					<a href="javascript:;" className="cvr u-cover u-cover-tiny f-fl" title="播放">
+					<a onClick={e => this.playProgram(index,'rec')} href="javascript:;" className="cvr u-cover u-cover-tiny f-fl" title="播放">
 						<img src={i.coverUrl} alt="" />
 						<i className="ply f-pa f-dn"></i>
 					</a>
@@ -121,7 +136,7 @@ class DjRadio extends Component {
 						:<span className="u-rnk u-rnk-dn f-ff0"><i className="u-icn u-icn-74"></i>{Math.abs(i.rank-i.lastRank)}</span>
 					}
 				</div>
-					<a href="javascript:;" className="cvr u-cover u-cover-tiny f-fl" title="播放">
+					<a onClick={e => this.playProgram(index,'hot')} href="javascript:;" className="cvr u-cover u-cover-tiny f-fl" title="播放">
 						<img src={i.program.coverUrl} alt="" />
 						<i className="ply f-pa f-dn"></i>
 					</a>
@@ -204,5 +219,11 @@ class DjRadio extends Component {
 }
 
 
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
 
-export default DjRadio
+export default connect(select)(DjRadio)

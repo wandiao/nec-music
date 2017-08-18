@@ -212,7 +212,7 @@ export const getUserInfo = uid => axios.get(`user/detail?uid=${uid}`)
 export const getUserDj = uid => axios.get(`user/audio?uid=${uid}`)
 
 //获取用户听歌记录
-export const getUserRecord = uid => axios.get(`user/record?uid=${uid}`)
+export const getUserRecord = (uid,type=0) => axios.get(`user/record?uid=${uid}&type=${type}`)
 
 //获取用户歌单
 export const getUserPlaylist = uid => axios.get(`user/playlist?uid=${uid}`)

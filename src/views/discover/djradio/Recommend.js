@@ -2,6 +2,8 @@ import React, { Component} from 'react';
 import * as api from '../../../api'
 import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
+import { connect } from 'react-redux';
+import {addPlayItem } from '../../../store/actions'
 
 class Recommend extends Component {
 	constructor(props) {
@@ -9,6 +11,12 @@ class Recommend extends Component {
 		this.state = {
 			recPrograms:[]
 		}
+		//播放节目
+		this.playProgram = (index) => {
+			const item = Object.assign({},this.state.recPrograms[index])
+			item.source = '/discover/djradio/recommend'
+	    this.props.dispatch(addPlayItem(item))
+    }
 	}
 	componentDidMount() {
 		api.getRecProgram(0,50).then(res => {
@@ -37,7 +45,7 @@ class Recommend extends Component {
 					<ul className="m-plylist toplist toplist-recmd f-cb">
 						{recPrograms.map((i,index) =>
 							<li key={index} className="itm">
-								<a className="col cvr u-cover u-cover-tiny" title="播放">
+								<a href="javascript:;" onClick={e => this.playProgram(index)} className="col cvr u-cover u-cover-tiny" title="播放">
 									<img src={i.coverUrl} alt="" />
 									<i className="ply f-pa f-dn f-alpha"></i>
 								</a>
@@ -59,4 +67,11 @@ class Recommend extends Component {
 	}	
 }
 
-export default Recommend
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Recommend)

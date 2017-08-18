@@ -1,10 +1,12 @@
 import React, { Component} from 'react';
 import * as api from '../../api'
 import qs from 'query-string'
-import {Spin} from 'antd'
+import {Spin,message} from 'antd'
 import {Link} from 'react-router-dom'
 import {numberFormat} from '../../util'
 import InfoComp from './InfoComp'
+import { connect } from 'react-redux';
+import { changePlayList,addPlayItem,asyncChangeCurrMusic as ac } from '../../store/actions'
 
 class Home extends Component {
 	constructor(props) {
@@ -13,13 +15,77 @@ class Home extends Component {
 			userInfo:null,
 			djRadios:[],
 			records:[],
+			recordType:0,
+			loadingRecord:false,
 			pl:[],
 			spl:[]
 		}
+		//播放歌单
+		this.changePlaylist = (id) => {
+			const userId = qs.parse(this.props.location.search).id;
+			let playList = null;
+			api.getPlayListDetail(id).then(res => {
+        if(res.data.code == 200) {
+          playList = res.data.playlist
+          if(!playList.tracks.length) {
+            return false;
+          }
+          let tracks = playList.tracks.map(i => {
+            i.source = `/user/home?id=${userId}`
+            return i;
+          })
+          // console.log(playList)
+          this.props.dispatch(changePlayList(tracks))
+          this.props.dispatch(ac(0,playList.tracks[0].id,true))
+        }
+      })
+    }
+   	//播放歌曲
+    this.playSong = (index) => {
+	    const item = Object.assign({},this.state.records[index].song)
+	    // console.log(item)
+	    const userId = qs.parse(this.props.location.search).id;
+	    item.source = `/user/home?id=${userId}`
+	    if(item.st<0) {
+	      message.error('需要付费，无法播放');
+	      return false;
+	    }
+	    this.props.dispatch(addPlayItem(item))
+	  }
+	  this.changeRecord = (type) => {
+	  	const query = qs.parse(this.props.location.search)
+			const id = query.id;
+	  	if(type === this.state.recordType){
+	  		return false
+	  	}
+	  	this.setState({
+				loadingRecord:true,
+				recordType:type
+			})
+	  	api.getUserRecord(id,type).then(res => {
+	  		if(res.data.code == 200) {
+	  			if(res.data.allData) {
+	  				this.setState({
+							records:res.data.allData.slice(0,10)|| [],
+							loadingRecord:false
+						})
+	  			}else{
+	  				this.setState({
+							records:res.data.weekData.slice(0,10)|| [],
+							loadingRecord:false
+						})
+	  			}
+					
+				}
+	  	})
+	  }
 	}
 	componentDidMount() {
 		const query = qs.parse(this.props.location.search)
 		const id = query.id;
+		this.setState({
+			loadingRecord:true
+		})
 		api.getUserInfo(id).then(res => {
 			console.log(res)
 			if(res.data.code == 200) {
@@ -40,7 +106,8 @@ class Home extends Component {
 			// console.log(res)
 			if(res.data.code == 200) {
 				this.setState({
-					records:res.data.allData.slice(0,10)
+					records:res.data.allData.slice(0,10) || [],
+					loadingRecord:false
 				})
 			}
 		})
@@ -55,7 +122,7 @@ class Home extends Component {
 		})
 	}
 	render() {
-		const {userInfo,djRadios,records,pl,spl} = this.state
+		const {userInfo,djRadios,records,pl,spl,loadingRecord,recordType} = this.state
 		
 		if(!userInfo) {
 			return <div className="g-bd">
@@ -63,114 +130,76 @@ class Home extends Component {
   					</div>
 		}
 		const profile = userInfo.profile
-		let djList,recordList,playlist,splaylist;
-		if(!djRadios.length) {
-			djList = <div style={{height:'70px'}} className="loading"><Spin tip="Loading..." /></div>
-		}else{
-			djList = djRadios.map((i,index) =>
-				<li className="itm" key={index}>
-					<Link to={`/djradio?id=${i.id}`} className="col cvr u-cover-3">
-						<img src={i.picUrl} className="" />
-					</Link>
-					<div className="col cnt f-pr f-thide">
-						<Link to={`/djradio?id=${i.id}`} className="s-fc1">{i.name}</Link>
-						<div className="opt hshow">
-							<span data-res-action="share" className="icn u-icn2 u-icn2-share">分享</span>
-						</div>
-					</div>
-					<div className="col col-3 s-fc3">订阅{i.subCount}次</div>
-					<div className="col col-4 s-fc4">{i.programCount}期</div>
-				</li>
-			)
-		}
-		if(!records.length){
+		let recordList;
+		if(loadingRecord) {
 			recordList = <div style={{height:'70px'}} className="loading"><Spin tip="Loading..." /></div>
 		}else{
-			recordList = records.map((i,index) =>
-							<li key={index} className={index%2 == 0?'even':null}>
-								<div className="hd ">
-									<span className="ply ">&nbsp;</span><span className="num">{index+1}.</span>
-								</div>
-								<div className="song">
-									<div className="tt">
-										<div className="ttc">
-											<span className="txt">
-												<Link to={`/song?id=${i.song.id}`}><b title="Booty Call">{i.song.name}</b></Link>
-												<span className="ar s-fc8"> <em>-</em>
-													<span title={i.song.ar.map(i =>i.name).join('/')}>
-													{
-														i.song.ar.map((ai,index1)=>
-															<span key={index1}>
-																<Link className="s-fc8" to={`/artist?id=${ai.id}`}>{ai.name}</Link>
-																{index1>=i.song.ar.length-1?null:'/'}
-															</span>
-														)
-													}	
+			if(!records.length){
+				recordList = <div className="n-nmusic">
+											<h3 className="f-ff2"><i className="u-icn u-icn-21"></i>暂无听歌记录</h3>
+										</div>
+			}else{
+				recordList = records.map((i,index) =>
+								<li key={index} className={index%2 == 0?'even':null}>
+									<div className="hd ">
+										<span onClick={e => this.playSong(index)} className="ply ">&nbsp;</span><span className="num">{index+1}.</span>
+									</div>
+									<div className="song">
+										<div className="tt">
+											<div className="ttc">
+												<span className="txt">
+													<Link to={`/song?id=${i.song.id}`}><b title="Booty Call">{i.song.name}</b></Link>
+													<span className="ar s-fc8"> <em>-</em>
+														<span title={i.song.ar.map(i =>i.name).join('/')}>
+														{
+															i.song.ar.map((ai,index1)=>
+																<span key={index1}>
+																	<Link className="s-fc8" to={`/artist?id=${ai.id}`}>{ai.name}</Link>
+																	{index1>=i.song.ar.length-1?null:'/'}
+																</span>
+															)
+														}	
+														</span>
 													</span>
 												</span>
-											</span>
+											</div>
+										</div>
+										<div className="opt">
+											<a className="u-icn u-icn-81 icn-add" href="javascript:;" title="添加到播放列表"></a>
+											<span className="icn icn-fav" title="收藏"></span>
+											<span className="icn icn-share" title="分享">分享</span>
+											<span className="icn icn-dl" title="下载">下载</span>
 										</div>
 									</div>
-									<div className="opt">
-										<a className="u-icn u-icn-81 icn-add" href="javascript:;" title="添加到播放列表"></a>
-										<span className="icn icn-fav" title="收藏"></span>
-										<span className="icn icn-share" title="分享">分享</span>
-										<span className="icn icn-dl" title="下载">下载</span>
-									</div>
-								</div>
-								<div className="tops"><span className="bg" style={{width:`${i.score}%`}}></span></div>
-							</li>
-			)
+									<div className="tops"><span className="bg" style={{width:`${i.score}%`}}></span></div>
+								</li>
+				)
+			}
 		}
-		if(!pl.length) {
-			playlist = <div style={{height:'190px'}} className="loading"><Spin tip="Loading..." /></div>
-		}else{
-			playlist = pl.map((i,index) =>
-						<li key={index}>
-							<div className="u-cover u-cover-1">
-								<img src={i.coverImgUrl}/>
-								<Link to={`/playlist?id=${i.id}`} className="msk" title={i.name}></Link>
-								<div className="bottom">
-									<a className="icon-play f-fr" href="javascript:;" title="播放"></a>
-									<span className="icon-headset"></span>
-									<span className="nb">{numberFormat(i.playCount)}</span>
-								</div>
-							</div>
-							<p className="dec">
-								<Link className="tit f-thide s-fc0" to={`/playlist?id=${i.id}`} title={i.name}>{i.name}</Link>
-							</p>
-						</li>
-			)
-		}
-		if(!spl.length) {
-			splaylist = <div style={{height:'190px'}} className="loading"><Spin tip="Loading..." /></div>
-		}else{
-			splaylist = spl.map((i,index) =>
-						<li key={index}>
-							<div className="u-cover u-cover-1">
-								<img src={i.coverImgUrl}/>
-								<Link to={`/playlist?id=${i.id}`} className="msk" title={i.name}></Link>
-								<div className="bottom">
-									<a className="icon-play f-fr" href="javascript:;" title="播放"></a>
-									<span className="icon-headset"></span>
-									<span className="nb">{numberFormat(i.playCount)}</span>
-								</div>
-							</div>
-							<p className="dec">
-								<Link className="tit f-thide s-fc0" to={`/playlist?id=${i.id}`} title={i.name}>{i.name}</Link>
-							</p>
-						</li>
-			)
-		}
+		
 		return (
 		<div className="g-bd">
 			<div className="g-wrap p-prf">
 				<InfoComp userInfo={userInfo} profile={profile} />
-				<div className="u-title u-title-1 f-cb">
+				<div className="u-title u-title-1 f-cb" style={{display:djRadios.length?'block':'none'}}>
 					<h3><span className="f-ff2 s-fc3">{profile.nickname}创建的电台</span></h3>
 				</div>
 				<ul className="m-plylist m-create f-cb">
-					{djList}
+						{djRadios.length?djRadios.map((i,index) =>
+						<li className="itm" key={index}>
+							<Link to={`/djradio?id=${i.id}`} className="col cvr u-cover-3">
+								<img src={i.picUrl} className="" />
+							</Link>
+							<div className="col cnt f-pr f-thide">
+								<Link to={`/djradio?id=${i.id}`} className="s-fc1">{i.name}</Link>
+								<div className="opt hshow">
+									<span data-res-action="share" className="icn u-icn2 u-icn2-share">分享</span>
+								</div>
+							</div>
+							<div className="col col-3 s-fc3">订阅{i.subCount}次</div>
+							<div className="col col-4 s-fc4">{i.programCount}期</div>
+						</li>
+						):null}
 				</ul>
 				<div className="u-title u-title-1 f-cb m-record-title">
 					<h3><span className="f-ff2 s-fc3">听歌排行</span></h3>
@@ -183,29 +212,57 @@ class Home extends Component {
 						</div>
 					</span>
 					<div className="nav f-cb">
-						<span className="sel">所有时间</span>
+						<span onClick={e=>this.changeRecord(0)} className={recordType === 0?'sel':null}>所有时间</span>
 						<i></i>
-						<span>最近一周</span>
+						<span onClick={e=>this.changeRecord(1)} className={recordType === 1?'sel':null}>最近一周</span>
 					</div>
 				</div>
 				<div className="m-record">
 					<ul>
 						{recordList}
 					</ul>
-					<div className="more"><a href="/user/songs/rank?id=29879272">查看更多&gt;</a></div>
+					<div className="more" style={{display:userInfo.listenSongs>10?'block':'none'}}><Link to={`/user/songs/rank?id=${profile.userId}`}>查看更多&gt;</Link></div>
 				</div>
-				<div className="u-title u-title-1 f-cb" >
+				<div className="u-title u-title-1 f-cb" style={{display:pl.length?'block':'none'}}>
 					<h3><span className="f-ff2">{profile.nickname}创建的歌单（{pl.length}）</span></h3>
 				</div>
 				<ul className="m-cvrlst f-cb">
-					{playlist}
+					{pl.length?pl.map((i,index) =>
+						<li key={index}>
+							<div className="u-cover u-cover-1">
+								<img src={i.coverImgUrl}/>
+								<Link to={`/playlist?id=${i.id}`} className="msk" title={i.name}></Link>
+								<div className="bottom">
+									<a onClick={e => this.changePlaylist(i.id)} className="icon-play f-fr" href="javascript:;" title="播放"></a>
+									<span className="icon-headset"></span>
+									<span className="nb">{numberFormat(i.playCount)}</span>
+								</div>
+							</div>
+							<p className="dec">
+								<Link className="tit f-thide s-fc0" to={`/playlist?id=${i.id}`} title={i.name}>{i.name}</Link>
+							</p>
+						</li>):null}
 				</ul>
 				<div id="collectlsit" style={{display:spl.length?'block':'none'}}>
 					<div className="u-title u-title-1 f-cb" >
 						<h3><span className="f-ff2">{profile.nickname}收藏的歌单（{spl.length}）</span></h3>
 					</div>
 					<ul className="m-cvrlst f-cb">
-						{splaylist}
+						{spl.length?spl.map((i,index) =>
+						<li key={index}>
+							<div className="u-cover u-cover-1">
+								<img src={i.coverImgUrl}/>
+								<Link to={`/playlist?id=${i.id}`} className="msk" title={i.name}></Link>
+								<div className="bottom">
+									<a className="icon-play f-fr" href="javascript:;" title="播放"></a>
+									<span className="icon-headset"></span>
+									<span className="nb">{numberFormat(i.playCount)}</span>
+								</div>
+							</div>
+							<p className="dec">
+								<Link className="tit f-thide s-fc0" to={`/playlist?id=${i.id}`} title={i.name}>{i.name}</Link>
+							</p>
+						</li>):null}
 					</ul>
 				</div>
 			</div>
@@ -214,6 +271,11 @@ class Home extends Component {
 	}
 }
 
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
 
-
-export default Home
+export default connect(select)(Home)

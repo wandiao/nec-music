@@ -3,47 +3,73 @@ import {dateFormat} from '../../util/date'
 import {Link} from 'react-router-dom'
 import * as api from '../../api'
 import qs from 'query-string'
-import {Spin} from 'antd'
+import {Spin,message} from 'antd'
+import { connect } from 'react-redux';
+import { changePlayList,addPlayItem,asyncChangeCurrMusic as ac } from '../../store/actions'
+import {download} from '../../util/query'
 
 class Top50 extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			hotSongs:[]
+			hotSongs:[],
+			loading:false
 		}
+		//切换播放列表
+		this.changePlaylist = () => {
+			const id = qs.parse(this.props.location.search).id   
+      let songs = Object.assign([],this.state.hotSongs)
+      if(!songs.length) {
+      	return false;
+      }
+      songs.forEach(i => {
+      	i.source = `/artist?id=${id}`
+      })
+      this.props.dispatch(changePlayList(songs))
+      this.props.dispatch(ac(0,songs[0].id,true))
+    }
 	}
 	componentDidMount() {
 		const id = qs.parse(this.props.location.search).id
+		this.setState({
+			loading:true
+		})
 		api.getArtistSong(id).then(res => {
-			console.log(res)
+			// console.log(res)
 			if(res.data.code == 200) {
 				this.setState({
 					hotSongs:res.data.hotSongs,
+					loading:false
 				})
 			}
 		})
 	}
 	componentWillReceiveProps(nextProps) {
+		if(this.props.location == nextProps.location) {
+			return false;
+		}
 		const id = qs.parse(nextProps.location.search).id
 		this.setState({
-			hotSongs:[]
+			hotSongs:[],
+			loading:true
 		})
 		api.getArtistSong(id).then(res => {
-			console.log(res)
+			// console.log(res)
 			if(res.data.code == 200) {
 				this.setState({
 					hotSongs:res.data.hotSongs,
+					loading:false
 				})
 			}
 		})
 	}
 	render() {
-		const {hotSongs} = this.state
+		const {hotSongs,loading} = this.state
 		return (
 			<div className="n-top50">
 				<div className="m-info">
 					<div className="btns f-cb">
-						<a href="" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
+						<a onClick={this.changePlaylist} href="javascript:;" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
 							<i><em className="ply"></em>播放</i>
 						</a>
 						<a href="" className="u-btni u-btni-add"></a>
@@ -52,7 +78,7 @@ class Top50 extends Component {
 						</a>
 					</div>
 				</div>
-				<SongList tracks={hotSongs} />
+				{loading?<div style={{height:'200px'}} className="loading"><Spin tip="Loading..." /></div>:<SongList {...this.props} tracks={hotSongs} />}
 			</div>
 		)
 	}
@@ -60,10 +86,23 @@ class Top50 extends Component {
 
 //音乐列表
 class SongList extends Component {
+	//播放音乐
+	playSong = (index) => {
+    const item = Object.assign({},this.props.tracks[index])
+    const id = qs.parse(this.props.location.search).id;
+    item.source = `/playlist?id=${id}`
+    if(item.st<0) {
+      message.error('需要付费，无法播放');
+      return false;
+    }
+    this.props.dispatch(addPlayItem(item))
+  }
 	render() {
-		const { tracks } = this.props
+		const { tracks,currMusic } = this.props
 		if(!tracks || !tracks.length) {
-			return <div style={{height:'200px'}} className="loading"><Spin tip="Loading..." /></div>
+			return <div className="n-nmusic">
+								<h3 className="f-ff2"><i className="u-icn u-icn-21"></i>暂无歌曲</h3>
+							</div>
 		}
 		return (
 				<div className="track-list">
@@ -74,7 +113,7 @@ class SongList extends Component {
 								<tr key={index}>
 									<td className="w1">
 										<div className="hd">
-											<span className="ply"></span>
+											<span onClick={e => this.playSong(index)} className={currMusic.info&&currMusic.info.id === track.id?'ply curr':'ply'}></span>
 											<span className="num">{index+1}</span>
 										</div>
 									</td>
@@ -99,7 +138,7 @@ class SongList extends Component {
 											<a href="javascript:;" className="u-icn u-icn-81 icn-add"></a>
 											<span className="icn icn-fav"></span>
 											<span className="icn icn-share"></span>
-											<span className="icn icn-dl"></span>
+											<span onClick={e => download(track.id)} className="icn icn-dl"></span>
 										</div>
 									</td>
 									<td className="w4">
@@ -114,7 +153,7 @@ class SongList extends Component {
 											
 										</div>
 									</td>
-									<td className="w5"><span className="hot u-hot"><i style={{width:'92%'}}><i></i></i></span></td>
+									<td className="w5"><span className="hot u-hot"><i style={{width:92*(track.pop/100)+'%'}}><i></i></i></span></td>
 								</tr>
 							))
 							}
@@ -125,4 +164,11 @@ class SongList extends Component {
 		}
 }
 
-export default Top50
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Top50)

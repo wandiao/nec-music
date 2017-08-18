@@ -1,7 +1,7 @@
 import axios from 'axios'
-import {reqUrl} from '../config'
+import config from '../config'
 
-axios.defaults.baseURL = reqUrl;
+axios.defaults.baseURL = config.reqUrl;
 
 //手机登录
 export const telLogin = (phone,password) => axios.get(`login/cellphone?phone=${phone}&password=${password}`)

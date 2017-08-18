@@ -1,3 +1,6 @@
+import provinces from './config/provinces'
+import cities from './config/cities'
+
 /**
  * 格式化数字
  *
@@ -11,6 +14,26 @@ export function numberFormat(num) {
 	}
 	num = Math.round(parseInt(num/10000,10));
 	return `${num}万`
+}
+
+/**
+ * 编译地区
+ *
+ * @param {Number} value 行政区号.
+ * @param {Number} type 地区类型，1省，2市.
+ * @returns {Number|String} 返回地区字符串.
+ */
+export function areaParse(value,type) {
+  let currArea;
+  if(type === 1) {
+    currArea = provinces.filter(i => i.code == value)
+  }else if(type === 2) {
+    currArea = cities.filter(i => i.code == value)
+  }
+  if(!currArea.length) {
+    return null
+  }
+  return currArea[0].name;
 }
 
 /**

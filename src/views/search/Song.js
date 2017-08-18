@@ -8,6 +8,7 @@ import { Pagination,message } from 'antd';
 import {formatSongTime} from '../../util/date'
 import { connect } from 'react-redux';
 import {addPlayItem } from '../../store/actions'
+import {download} from '../../util/query'
 
 class Song extends Component {
 	constructor(props) {
@@ -16,20 +17,22 @@ class Song extends Component {
 			songs:[],
 			total:0,
 			keywords:'',
+			loading:false,
 			currPage:1,
 			queryCorrected:null
 		}
 		this.choosePage = (page,pageSize) => {
 			this.setState({
 				currPage:page,
-				songs:[]
+				loading:true
 			})
 			const query = qs.parse(this.props.location.search)
 			const keywords = query.keywords	
 			api.search(keywords,1,page-1).then(res => {
 				if(res.data.code == 200) {
 					this.setState({
-						songs:res.data.result.songs
+						songs:res.data.result.songs,
+						loading:false
 					})
 					const sp = pos(document.getElementById('search_result'))
 					window.scrollTo.apply(null,sp)
@@ -54,7 +57,8 @@ class Song extends Component {
 			return false
 		}
 		this.setState({
-			keywords:keywords
+			keywords:keywords,
+			loading:true
 		})
 		api.search(keywords,1).then(res => {
 			console.log(res)
@@ -62,12 +66,16 @@ class Song extends Component {
 				this.setState({
 					songs:res.data.result.songs,
 					total:res.data.result.songCount,
-					queryCorrected:res.data.result.queryCorrected
+					queryCorrected:res.data.result.queryCorrected,
+					loading:false
 				})
 			}
 		})
 	}
 	componentWillReceiveProps(nextProps) {
+		if(this.props.location == nextProps.location) {
+      return false;
+    }
 		const keywords = qs.parse(nextProps.location.search).keywords
 		if(keywords === undefined || keywords == this.state.keywords) {
 			return false
@@ -75,6 +83,7 @@ class Song extends Component {
 		this.setState({
 			keywords:keywords,
 			songs:[],
+			loading:true,
 			total:0,
 			currPage:1,
 			queryCorrected:null
@@ -85,22 +94,26 @@ class Song extends Component {
 				this.setState({
 					songs:res.data.result.songs,
 					total:res.data.result.songCount,
-					queryCorrected:res.data.result.queryCorrected
+					queryCorrected:res.data.result.queryCorrected,
+					loading:false
 				})
 			}
 		})
 	}
 	render() {
-		const {songs,total,keywords,currPage,queryCorrected} = this.state
-		return (
-			<div className="ztag f-pr" id="search_result">
-				<div className="snote s-fc4 ztag">
-					搜索“{keywords}”，找到 <em className="s-fc6">{total}</em> 首单曲
-					{queryCorrected?<span>，您是不是要搜：<Link className="s-fc7" to={`/search/song?keywords=${queryCorrected}`}>{queryCorrected}</Link></span>:null}
-				</div>
-				<div className="n-srchrst">
+		const {songs,total,keywords,currPage,queryCorrected,loading} = this.state
+		let main = null
+		if(loading) {
+			main = <div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			if(!songs || !songs.length){
+				main = <div className="n-nmusic">
+								<h3 className="f-ff2"><i className="u-icn u-icn-21"></i>很抱歉，未能找到相关搜索结果！</h3>
+							</div>
+			}else{
+				main = <div className="n-srchrst">
 					<div className="srchsongst">
-						{songs.length?songs.map((i,index) =>
+						{songs.map((i,index) =>
 							<div key={index} className="item f-cb">
 								<div className="td">
 									<div className="hd">
@@ -119,7 +132,7 @@ class Song extends Component {
 										<a href="javascript:;" className="u-icn u-icn-81 icn-add"></a>
 										<span className="icn icn-fav"></span>
 										<span className="icn icn-share"></span>
-										<span className="icn icn-dl"></span>
+										<span onClick={e =>download(i.id)} className="icn icn-dl"></span>
 									</div>
 								</div>
 								<div className="td w1">
@@ -140,12 +153,21 @@ class Song extends Component {
 								</div>
 								<div className="td">{formatSongTime(i.duration/1000)}</div>
 							</div>
-						):<div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>}
+						)}
 					</div>
 					<div className="u-page" style={{display:total<=30?'none':'block'}}>
 						<Pagination onChange={this.choosePage} current={currPage}   pageSize={30} total={total} />
 					</div>
 				</div>
+			}
+		}
+		return (
+			<div className="ztag f-pr" id="search_result">
+				<div className="snote s-fc4 ztag">
+					搜索“{keywords}”，找到 <em className="s-fc6">{total}</em> 首单曲
+					{queryCorrected?<span>，您是不是要搜：<Link className="s-fc7" to={`/search/song?keywords=${queryCorrected}`}>{queryCorrected}</Link></span>:null}
+				</div>
+				{main}
 			</div>
 			
 		);

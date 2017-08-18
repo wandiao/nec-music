@@ -7,6 +7,7 @@ import qs from 'query-string'
 import {Spin,message} from 'antd'
 import { connect } from 'react-redux';
 import { changePlayList,addPlayItem,asyncChangeCurrMusic as ac } from '../store/actions'
+import {download} from '../util/query'
 
 class Album extends Component {
 	constructor(props) {
@@ -151,7 +152,7 @@ class Album extends Component {
 										</div>
 										<p className="intr">
 											<b>歌手：</b>
-											<span title="陈奕迅"><a className="s-fc7" href="/artist?id=2116">{album.artist.name}</a></span>
+											<span title={album.artist.name}><Link className="s-fc7" to={`/artist?id={album.artist.id}`}>{album.artist.name}</Link></span>
 										</p>
 										<p className="intr"><b>发行时间：</b>{dateFormat(album.publishTime,'yyyy-MM-dd')}</p>
 										<p className="intr"><b>发行公司：</b>{album.company}</p>
@@ -163,16 +164,16 @@ class Album extends Component {
       									</i>
       								</a>
       								<a href="" className="u-btni u-btni-add"></a>
-      								<a href="" className="u-btni u-btni-fav ">
+      								<a href="javascript:;" className="u-btni u-btni-fav ">
       									<i>收藏</i>
       								</a>
-      								<a href="" className="u-btni u-btni-share">
+      								<a href="javascript:;" className="u-btni u-btni-share">
       									<i>({album.info.shareCount})</i>
       								</a>
-      								<a href="" className="u-btni u-btni-dl ">
+      								<a href="javascript:;" className="u-btni u-btni-dl ">
       									<i>下载</i>
       								</a>
-      								<a href="" className="u-btni u-btni-cmmt ">
+      								<a href="javascript:;" className="u-btni u-btni-cmmt ">
       									<i>({album.info.commentCount})</i>
       								</a>
       							</div>
@@ -192,7 +193,7 @@ class Album extends Component {
 								):<p className="f-tc">暂无介绍</p>}
 							</div>
 							<div className="f-cb" style={{display:album.description&&album.description.length>100?'block':'none'}}>
-								<a onClick={this.toggleDesc} href="javascript:;" className="s-fc7 f-fr">{showDesc?'收起':'展开'}<i className={showDesc?"u-icn u-icn-69":"u-icn u-icn-70"}></i></a>
+								<a onClick={this.toggleDesc} href="javascript:;" className="s-fc7 f-fr">{showDesc?'收起':'展开'}<i className={showDesc?"u-icn u-icn-70":"u-icn u-icn-69"}></i></a>
 							</div>
 						</div>
 						<div className="n-songtb">
@@ -283,7 +284,7 @@ class SongList extends Component {
     }
 	}
 	render() {
-		const { tracks } = this.props
+		const { tracks,currMusic } = this.props
 		if(!tracks.length) {
 			return null
 		}
@@ -312,7 +313,7 @@ class SongList extends Component {
 								<tr key={index}>
 									<td className="left">
 										<div className="hd">
-											<span onClick={e=>this.playSong(index)} className="ply"></span>
+											<span onClick={e=>this.playSong(index)} className={currMusic.info&&currMusic.info.id === track.id?'ply curr':'ply'}></span>
 											<span className="num">{index+1}</span>
 										</div>
 									</td>
@@ -337,7 +338,7 @@ class SongList extends Component {
 											<a href="javascript:;" className="u-icn u-icn-81 icn-add"></a>
 											<span className="icn icn-fav"></span>
 											<span className="icn icn-share"></span>
-											<span className="icn icn-dl"></span>
+											<span onClick={e => download(track.id)} className="icn icn-dl"></span>
 										</div>
 									</td>
 									<td>

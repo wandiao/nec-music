@@ -8,16 +8,21 @@ class Desc extends Component {
 		super(props);
 		this.state = {
 			arInfo:null,
-			arName:null
+			arName:null,
+			loading:false
 		}
 	}
 	componentDidMount() {
 		const id = qs.parse(this.props.location.search).id
+		this.setState({
+			loading:true
+		})
 		api.getArtistDesc(id).then(res => {
 			console.log(res)
 			if(res.data.code == 200) {
 				this.setState({
-					arInfo:res.data
+					arInfo:res.data,
+					loading:false
 				})
 			}
 		})
@@ -27,9 +32,14 @@ class Desc extends Component {
 		})
 	}
 	render() {
-		const {arInfo,arName} = this.state
-		if(!arInfo) {
+		const {arInfo,arName,loading} = this.state
+		if(loading) {
 			return <div style={{height:'400px'}} className="loading"><Spin tip="Loading..." /></div>
+		}
+		if(!arInfo) {
+			return <div className="n-nmusic">
+								<h3 className="f-ff2"><i className="u-icn u-icn-21"></i>暂无介绍</h3>
+							</div>
 		}
 		return (
 			<div className="n-artdesc">

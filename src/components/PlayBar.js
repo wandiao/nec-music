@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import {changeCurrMusic,changePlayList,asyncChangeCurrMusic as ac,clearCurrMusic } from '../store/actions'
 import {formatSongTime} from '../util/date'
 import {initScroll} from '../util/dom'
+import {download} from '../util/query'
 import { Slider,message } from 'antd';
 import {Link} from 'react-router-dom'
 import { withRouter } from 'react-router'
@@ -249,7 +250,7 @@ class PlayBar extends Component {
                                 
                               </span>
                             </span>
-                            <Link to={currMusic.info.source} className="src"></Link>
+                            <Link to={currMusic.info.source?currMusic.info.source:'javascript:;'} className="src"></Link>
                           </div>:null
                 
                 }
@@ -362,7 +363,7 @@ class ListTab extends Component {
                         <div className="col col-3">
                           <div className="icns">
                             <i className="ico ico-del" title="删除">删除</i>
-                            <i className="ico ico-dl" title="下载">下载</i>
+                            <i onClick={e => download((item.mainTrackId || item.id))} className="ico ico-dl" title="下载">下载</i>
                             <i className="ico ico-share" title="分享">分享</i>
                             <i className="ico ico-add" title="收藏">收藏</i>
                           </div>
@@ -387,7 +388,7 @@ class ListTab extends Component {
                         </div>
                         <div className="col col-5">{formatSongTime((item.dt || item.duration)/1000)}</div>
                         <div className="col col-6">
-                          <Link to={item.source} className="ico ico-src">来源</Link>
+                          <Link to={item.source?item.source:'javascript:;'} className="ico ico-src">来源</Link>
                         </div>
                       </li>
                       ))
@@ -411,7 +412,7 @@ class ListTab extends Component {
           </div>
         </div>
         <div className="listbd">
-          <img className="imgbg j-flag" id="auto-id-OTw9gllkNDKbIisn" src="http://music.163.com/api/img/blur/65970697667341" style={{top: '-360px'}} />
+          <img className="imgbg j-flag" src="http://music.163.com/api/img/blur/65970697667341" style={{top: '-360px'}} />
           <div className="msk"></div>
           <div className="listbdc" id="slistWrapper">
             {playListCon}

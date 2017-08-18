@@ -12,6 +12,7 @@ class Artist extends Component {
 		this.state = {
 			artists:[],
 			total:0,
+			loading:false,
 			keywords:'',
 			currPage:1,
 			queryCorrected:null
@@ -19,14 +20,15 @@ class Artist extends Component {
 		this.choosePage = (page,pageSize) => {
 			this.setState({
 				currPage:page,
-				artists:[]
+				loading:true
 			})
 			const query = qs.parse(this.props.location.search)
 			const keywords = query.keywords	
 			api.search(keywords,100,page-1).then(res => {
 				if(res.data.code == 200) {
 					this.setState({
-						artists:res.data.result.artists
+						artists:res.data.result.artists,
+						loading:false
 					})
 					const sp = pos(document.getElementById('search_result'))
 					window.scrollTo.apply(null,sp)
@@ -40,7 +42,8 @@ class Artist extends Component {
 			return false
 		}
 		this.setState({
-			keywords:keywords
+			keywords:keywords,
+			loading:true
 		})
 		api.search(keywords,100).then(res => {
 			console.log(res)
@@ -48,7 +51,8 @@ class Artist extends Component {
 				this.setState({
 					artists:res.data.result.artists,
 					total:res.data.result.artistCount,
-					queryCorrected:res.data.result.queryCorrected
+					queryCorrected:res.data.result.queryCorrected,
+					loading:false
 				})
 			}
 		})
@@ -61,6 +65,7 @@ class Artist extends Component {
 		this.setState({
 			keywords:keywords,
 			artists:[],
+			loading:true,
 			total:0,
 			currPage:1,
 			queryCorrected:null
@@ -71,22 +76,26 @@ class Artist extends Component {
 				this.setState({
 					artists:res.data.result.artists,
 					total:res.data.result.artistCount,
-					queryCorrected:res.data.result.queryCorrected
+					queryCorrected:res.data.result.queryCorrected,
+					loading:false
 				})
 			}
 		})
 	}
 	render() {
-		const {artists,total,keywords,currPage,queryCorrected} = this.state
-		return (
-			<div className="ztag n-srchrst f-pr" id="search_result">
-				<div className="snote s-fc4 ztag">
-					搜索“{keywords}”，找到 <em className="s-fc6">{total}</em> 个歌手
-					{queryCorrected?<span>，您是不是要搜：<Link className="s-fc7" to={`/search/artist?keywords=${queryCorrected}`}>{queryCorrected}</Link></span>:null}
-				</div>
-				<div className="m-sgerlist m-sgerlist-1">
+		const {artists,total,keywords,currPage,queryCorrected,loading} = this.state
+		let main = null;
+		if(loading) {
+			main = <div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			if(!artists || !artists.length){
+				main = <div className="n-nmusic">
+								<h3 className="f-ff2"><i className="u-icn u-icn-21"></i>很抱歉，未能找到相关搜索结果！</h3>
+							</div>
+			}else{
+				main = <div className="m-sgerlist m-sgerlist-1">
 					<ul className="m-cvrlst m-cvrlst-5 f-cb">
-						{artists.length?artists.map((i,index) =>
+						{artists.map((i,index) =>
 							<li key={index}>
 								<div className="u-cover u-cover-5">
 									<Link to={`/artist?id=${i.id}`}>
@@ -99,12 +108,21 @@ class Artist extends Component {
 									{i.accountId?<Link to={`/user/home?id=${i.accountId}`}><i className="u-icn u-icn-5"></i></Link>:null}
 								</p>
 							</li>
-						):<div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>}
+						)}
 					</ul>
 					<div className="u-page" style={{display:total<=30?'none':'block'}}>
 						<Pagination onChange={this.choosePage} current={currPage}   pageSize={30} total={total} />
 					</div>
 				</div>
+			}
+		}
+		return (
+			<div className="ztag n-srchrst f-pr" id="search_result">
+				<div className="snote s-fc4 ztag">
+					搜索“{keywords}”，找到 <em className="s-fc6">{total}</em> 个歌手
+					{queryCorrected?<span>，您是不是要搜：<Link className="s-fc7" to={`/search/artist?keywords=${queryCorrected}`}>{queryCorrected}</Link></span>:null}
+				</div>
+				{main}
 			</div>
 			
 		);

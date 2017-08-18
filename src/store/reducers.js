@@ -8,19 +8,19 @@ import {
    } from './actions'
 
 const initState = {
-  playList:[],//播放列表
-  currMusic:{//当前音乐
-    index:0,
-    info:null,
-    url:null,
-    isPlay:false,
-    lrc:[]
+  playList:[],    //播放列表
+  currMusic:{     //当前音乐
+    index:0, //索引
+    info:null,//信息
+    url:null,//文件地址
+    isPlay:false,//是否播放
+    lrc:[]//歌词
   },
-  logBox:{
+  logBox:{      //登录框
     name:'登录',
     show:false
   },
-  userInfo:null
+  userInfo:null //用户信息
 }
 
 function playList(state=initState.playList,action) {

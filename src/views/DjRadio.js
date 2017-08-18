@@ -7,6 +7,8 @@ import {pos} from '../util/dom'
 import {Link} from 'react-router-dom'
 import {Spin,Pagination} from 'antd'
 import axios from 'axios'
+import { connect } from 'react-redux';
+import { changePlayList,addPlayItem,asyncChangeCurrMusic as ac } from '../store/actions'
 
 class DjRadio extends Component {
 	constructor(props) {
@@ -32,8 +34,22 @@ class DjRadio extends Component {
 			setTimeout(() => {
 				window.scrollTo.apply(null,sp)
 			},1)
-			
 		}
+		//播放全部
+		this.changePlaylist = () => {
+			const id = qs.parse(this.props.location.search).id; 
+			api.getDjPrograms(id,0,9999).then(res => {
+				if(res.data.code == 200) {
+					const programs = Object.assign([],res.data.programs)
+		      programs.forEach(i => {
+		      	i.source = `/djradio?id=${id}`
+		      })
+		      this.props.dispatch(changePlayList(programs))
+		      this.props.dispatch(ac(0,programs[0].mainTrackId,true))
+				}
+			}) 
+      
+    }
 	}
 	componentDidMount() {
 		const query = qs.parse(this.props.location.search)
@@ -60,7 +76,7 @@ class DjRadio extends Component {
 			}
 		})
 		.then(res => {
-			console.log(res)
+			// console.log(res)
 			if(res[0].data.code == 200) {
 				this.setState({
 					programs:res[0].data.programs,
@@ -76,6 +92,9 @@ class DjRadio extends Component {
 		})
 	}
 	componentWillReceiveProps(np) {
+		if(this.props.location == np.location) {
+			return false;
+		}
 		const query = qs.parse(np.location.search)
 		const lastQuery = qs.parse(this.props.location.search)
 		const id = query.id;
@@ -111,7 +130,7 @@ class DjRadio extends Component {
 			}
 		})
 		.then(res => {
-			console.log(res)
+			// console.log(res)
 			if(res[0].data.code == 200) {
 				this.setState({
 					programs:res[0].data.programs,
@@ -189,13 +208,13 @@ class DjRadio extends Component {
 										}
 									</div>
 									<div className="btns f-cb">
-										<a href="" className="u-btni u-btni-sub">
+										<a href="javascript:;" className="u-btni u-btni-sub">
 											<i>订阅({numberFormat(djRadio.subCount)})</i>
 										</a>
-										<a href="" className="u-btni u-btni-playall">
+										<a onClick={this.changePlaylist} href="javascript:;" className="u-btni u-btni-playall">
 											<i>播放全部</i>
 										</a>
-										<a href="" className="u-btni u-btni-share">
+										<a href="javascript:;" className="u-btni u-btni-share">
 											<i>分享({numberFormat(djRadio.shareCount)})</i>
 										</a>
 									</div>
@@ -219,7 +238,7 @@ class DjRadio extends Component {
 									<a className="s-fc7" href="javascript:;">生成外链播放器</a>
 								</div>
 							</div>
-							<ProgramList programs={programs} page={currPage} order={order} total={total} />
+							<ProgramList {...this.props} programs={programs} page={currPage} order={order} total={total} />
 							<div className="u-page" style={{display:total>100?'block':'none'}}>
 								<Pagination onChange={this.choosePage} pageSize={100} current={Number(currPage)} total={total} />
 							</div>
@@ -262,9 +281,14 @@ class DjRadio extends Component {
 
 //节目列表
 class ProgramList extends Component {
+	playProgram = (index) => {
+		const id = qs.parse(this.props.location.search).id;
+    const item = Object.assign({},this.props.programs[index])
+    item.source = `/djradio?id=${id}`
+    this.props.dispatch(addPlayItem(item))
+  }
 	render() {
-		const {programs,order,page,total} = this.props;
-		console.log(page)
+		const {programs,order,page,total,currMusic} = this.props;
 		if(!programs.length) {
 			return <div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>;
 		}
@@ -277,7 +301,7 @@ class ProgramList extends Component {
 								<tr key={index} className={index%2 == 0?'even':null}>
 									<td className="col1">
 										<div className="hd">
-											<span className="ply"></span>
+											<span onClick={e => this.playProgram(index)} className={currMusic.info&&currMusic.info.mainTrackId === i.mainTrackId?'ply curr':'ply'}></span>
 											<span className="num">{order== 1?((page-1)*100+index+1):(total-(page-1)*100-index)}</span>
 										</div>
 									</td>
@@ -307,4 +331,11 @@ class ProgramList extends Component {
 		}
 }
 
-export default DjRadio
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(DjRadio)

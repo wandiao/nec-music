@@ -507,7 +507,7 @@ class Sidebar extends Component {
     if(artists.length) {
       artistsList = artists.map((artist,index) => (
         <li key={index}>
-          <Link to={`/user/home?id=${artist.id}`} className="itm f-tdn">
+          <Link to={`/artist?id=${artist.id}`} className="itm f-tdn">
             <div className="head">
               <img className="j-img" src={artist.img1v1Url} />
             </div>

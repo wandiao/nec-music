@@ -1,5 +1,6 @@
 import React, { Component} from 'react';
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router-dom';
+import {areaParse} from '../../util'
 
 class InfoComp extends Component {
 	render() {
@@ -50,7 +51,7 @@ class InfoComp extends Component {
 						</ul>
 						<div className="inf s-fc3 f-brk">个人介绍：{profile.signature}</div>
 						<div className="inf s-fc3">
-							<span>所在地区：{profile.province} - {profile.city}</span>
+							<span>所在地区：{areaParse(profile.province,1)} - {areaParse(profile.city,2)}</span>
 						</div>
 					</dd>
 				</dl>

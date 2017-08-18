@@ -8,6 +8,7 @@ import axios from 'axios'
 import {parseLrc} from '../util'
 import { connect } from 'react-redux';
 import {addPlayItem } from '../store/actions'
+import {download} from '../util/query'
 
 
 class Song extends Component {
@@ -20,7 +21,7 @@ class Song extends Component {
 			showLrcMore:false
 		}
 		this.choosePage = (page,pageSize,pos) => {
-			console.log(page-1)
+			// console.log(page-1)
 			const id = qs.parse(this.props.location.search).id;
 			api.getSongComment(id,page-1).then(res => {
 				if(res.data.code == 200) {
@@ -40,7 +41,9 @@ class Song extends Component {
 		}
 		//播放歌曲
 		this.playSong = () => {
-      const item = this.songDetail
+      const item = Object.assign({},this.state.songDetail)
+      item.source = `/song?id=${item.id}`
+      // console.log(item)
       if(item.st <0) {
       	message.error('需要付费，无法播放');
       }else{
@@ -54,7 +57,7 @@ class Song extends Component {
 		const id = query.id
 		axios.all([api.getSongDetail(id),api.getSongComment(id),api.getLyric(id)])
 		.then(res => {
-			console.log(res)
+			// console.log(res)
 			if(res[0].data.code == 200) {
 				this.setState({
 					songDetail:res[0].data.songs[0]
@@ -77,7 +80,6 @@ class Song extends Component {
 	}
   render() {
   	const {songDetail,commentData,lyric,showLrcMore} = this.state
-  	console.log(lyric)
   	let main = null
   	if(!songDetail || !commentData || !lyric) {
   		main =  <div style={{height:(document.body.clientHeight-105)+'px'}} className="loading"><Spin tip="Loading..." /></div>
@@ -126,17 +128,17 @@ class Song extends Component {
 		      										<em className="ply"></em>播放
 		      									</i>
 		      								</a>
-		      								<a href="" className="u-btni u-btni-add"></a>
-		      								<a href="" className="u-btni u-btni-fav ">
+		      								<a href="javascript:;" className="u-btni u-btni-add"></a>
+		      								<a href="javascript:;"href="" className="u-btni u-btni-fav ">
 		      									<i>收藏</i>
 		      								</a>
-		      								<a href="" className="u-btni u-btni-share">
+		      								<a href="javascript:;" className="u-btni u-btni-share">
 		      									<i>分享</i>
 		      								</a>
-		      								<a href="" className="u-btni u-btni-dl ">
+		      								<a href="javascript:;" onClick={e => download(songDetail.id)} className="u-btni u-btni-dl ">
 		      									<i>下载</i>
 		      								</a>
-		      								<a href="" className="u-btni u-btni-cmmt ">
+		      								<a href="javascript:;" className="u-btni u-btni-cmmt ">
 		      									<i>({commentData.total})</i>
 		      								</a>
 		      							</div>

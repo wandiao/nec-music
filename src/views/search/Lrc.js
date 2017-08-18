@@ -9,6 +9,7 @@ import {formatSongTime} from '../../util/date'
 import {drop} from '../../util/array'
 import { connect } from 'react-redux';
 import {addPlayItem } from '../../store/actions'
+import {download} from '../../util/query'
 
 class Lrc extends Component {
 	constructor(props) {
@@ -17,21 +18,23 @@ class Lrc extends Component {
 			songs:[],
 			total:0,
 			keywords:'',
-			moreLrc:false,
+			loading:false,
+			moreLrcIndex:-1,
 			currPage:1,
 			queryCorrected:null
 		}
 		this.choosePage = (page,pageSize) => {
 			this.setState({
 				currPage:page,
-				songs:[]
+				loading:true
 			})
 			const query = qs.parse(this.props.location.search)
 			const keywords = query.keywords	
 			api.search(keywords,1006,page-1).then(res => {
 				if(res.data.code == 200) {
 					this.setState({
-						songs:res.data.result.songs
+						songs:res.data.result.songs,
+						loading:false
 					})
 					const sp = pos(document.getElementById('search_result'))
 					window.scrollTo.apply(null,sp)
@@ -49,6 +52,14 @@ class Lrc extends Component {
       	this.props.dispatch(addPlayItem(item))
       } 
     }
+    this.showLrc = (index) => {
+    	if(this.state.moreLrcIndex === index) {
+    		index = -1
+    	}
+    	this.setState({
+    		moreLrcIndex:index
+    	})
+    }
 	}
 	componentDidMount() {
 		const keywords = qs.parse(this.props.location.search).keywords
@@ -56,7 +67,8 @@ class Lrc extends Component {
 			return false
 		}
 		this.setState({
-			keywords:keywords
+			keywords:keywords,
+			loading:true
 		})
 		api.search(keywords,1006).then(res => {
 			console.log(res)
@@ -64,12 +76,16 @@ class Lrc extends Component {
 				this.setState({
 					songs:res.data.result.songs,
 					total:res.data.result.songCount,
-					queryCorrected:res.data.result.queryCorrected
+					queryCorrected:res.data.result.queryCorrected,
+					loading:false
 				})
 			}
 		})
 	}
 	componentWillReceiveProps(nextProps) {
+		if(this.props.location == nextProps.location) {
+      return false;
+    }
 		const keywords = qs.parse(nextProps.location.search).keywords
 		if(keywords === undefined || keywords == this.state.keywords) {
 			return false
@@ -77,6 +93,7 @@ class Lrc extends Component {
 		this.setState({
 			keywords:keywords,
 			songs:[],
+			loading:true,
 			total:0,
 			currPage:1,
 			queryCorrected:null
@@ -87,22 +104,26 @@ class Lrc extends Component {
 				this.setState({
 					songs:res.data.result.songs,
 					total:res.data.result.songCount,
-					queryCorrected:res.data.result.queryCorrected
+					queryCorrected:res.data.result.queryCorrected,
+					loading:false
 				})
 			}
 		})
 	}
 	render() {
-		const {songs,total,keywords,currPage,queryCorrected,moreLrc} = this.state
-		return (
-			<div className="ztag n-srchrst f-pr" id="search_result">
-				<div className="snote s-fc4 ztag">
-					搜索“{keywords}”，找到 <em className="s-fc6">{total}</em> 个歌词
-					{queryCorrected?<span>，您是不是要搜：<Link className="s-fc7" to={`/search/song?keywords=${queryCorrected}`}>{queryCorrected}</Link></span>:null}
-				</div>
-				<div className="srchsongst">
+		const {songs,total,keywords,currPage,queryCorrected,moreLrcIndex,loading} = this.state
+		let main = null;
+		if(loading) {
+			main = <div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			if(!songs || !songs.length){
+				main = <div className="n-nmusic">
+								<h3 className="f-ff2"><i className="u-icn u-icn-21"></i>很抱歉，未能找到相关搜索结果！</h3>
+							</div>
+			}else{
+				main = <div className="srchsongst">
 					<ul className="m-mvlist f-cb">
-						{songs.length?songs.map((i,index) =>
+						{songs.map((i,index) =>
 							<div key={index}>
 								<div className={index%2 != 0?'item f-cb even':'item f-cb'}>
 									<div className="td">
@@ -126,7 +147,7 @@ class Lrc extends Component {
 											<a href="javascript:;" className="u-icn u-icn-81 icn-add"></a>
 											<span className="icn icn-fav"></span>
 											<span className="icn icn-share"></span>
-											<span className="icn icn-dl"></span>
+											<span onClick={e =>download(i.id)} className="icn icn-dl"></span>
 										</div>
 									</div>
 									<div className="td w1">
@@ -151,33 +172,42 @@ class Lrc extends Component {
 									<div className="td">{formatSongTime(i.duration/1000)}</div>
 								</div>
 								<div className="lyric">
-									<div className={moreLrc?'f-hide':null}>
-										{drop(i.lyrics,li => li.indexOf(keywords) == -1).slice(0,4).map((li,index) =>
+									<div className={moreLrcIndex == index?'f-hide':null}>
+										{drop(i.lyrics,li => new RegExp(keywords,'gi').test(li) == false).slice(0,4).map((li,index) =>
 											<p key={index} 
 											dangerouslySetInnerHTML={{__html:li}}
 											></p>
 										)}
 										
 									</div>
-									<div className={moreLrc?null:'f-hide'}>
-										{drop(i.lyrics,li => li.indexOf(keywords) == -1).map((li,index) =>
+									<div className={moreLrcIndex == index?null:'f-hide'}>
+										{drop(i.lyrics,li => new RegExp(keywords,'gi').test(li) == false).map((li,index) =>
 											<p key={index}
 											dangerouslySetInnerHTML={{__html:li}}
 											></p>
 										)}
 									</div>
-									<div className="crl">
-										<a onClick={e => this.setState({moreLrc:!moreLrc})} href="javascript:void(0)" className="s-fc3">{moreLrc?'收起':'展开'}<i className={moreLrc?'u-icn u-icn-70':"u-icn u-icn-69"}></i></a>
+									<div className="crl" style={{display:drop(i.lyrics,li => new RegExp(keywords,'gi').test(li) == false).length>4?'block':'none'}}>
+										<a onClick={e => this.showLrc(index)} href="javascript:void(0)" className="s-fc3">{moreLrcIndex == index?'收起':'展开'}<i className={moreLrcIndex == index?'u-icn u-icn-70':"u-icn u-icn-69"}></i></a>
 									</div>
 								</div>
 							</div>
-						):<div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>}
+						)}
 					</ul>
-					
+					<div className="u-page" style={{display:total<=30?'none':'block'}}>
+						<Pagination onChange={this.choosePage} current={currPage}   pageSize={30} total={total} />
+					</div>
 				</div>
-				<div className="u-page" style={{display:total<=30?'none':'block'}}>
-					<Pagination onChange={this.choosePage} current={currPage}   pageSize={30} total={total} />
+			}
+		}
+		return (
+			<div className="ztag n-srchrst f-pr" id="search_result">
+				<div className="snote s-fc4 ztag">
+					搜索“{keywords}”，找到 <em className="s-fc6">{total}</em> 个歌词
+					{queryCorrected?<span>，您是不是要搜：<Link className="s-fc7" to={`/search/song?keywords=${queryCorrected}`}>{queryCorrected}</Link></span>:null}
 				</div>
+				{main}
+				
 			</div>
 			
 		);

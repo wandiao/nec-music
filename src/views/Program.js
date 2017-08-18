@@ -7,6 +7,7 @@ import * as api from '../api'
 import qs from 'query-string'
 import { connect } from 'react-redux';
 import { addPlayItem } from '../store/actions'
+import {download} from '../util/query'
 
 function formatSongTime(time) {
   var minute = Math.floor(time / 60);
@@ -21,6 +22,7 @@ class Program extends Component {
 			program:null,
 			showList:true,
 			commentData:null,
+			showMoreDesc:false,
 			otherPrograms:[]
 		}
 		this.toggleShowList = () => {
@@ -120,7 +122,7 @@ class Program extends Component {
 		})
 	}
 	render() {
-		const {program,showList,commentData,otherPrograms} = this.state;
+		const {program,showList,commentData,otherPrograms,showMoreDesc} = this.state;
 		const {dispatch} = this.props
 		let otherList = null
 		if(!program) {
@@ -207,15 +209,20 @@ class Program extends Component {
 								<span className="s-fc4 sep">{dateFormat(program.createTime,'yyyy-MM-dd')} 创建</span>
 								<span className="sep s-fc4">播放：<em id="play-count" className="f-fw1 s-fc6">{program.listenerCount}</em>次</span>
 							</div>
-							<p className="s-fc3">
-								介绍： {program.description}
-							</p>
-							<p className="s-fc3 f-hide">
-								介绍： {program.description}
-							</p>
+							<p className="s-fc3" style={{display:showMoreDesc?'none':'block'}}
+							dangerouslySetInnerHTML={{__html:('介绍：'+program.description.substring(0,98)+'...').replace(/\n/g,'<br />')}}
+							></p>
+							<p className="s-fc3" style={{display:showMoreDesc?'block':'none'}}
+							dangerouslySetInnerHTML={{__html:('介绍：'+program.description).replace(/\n/g,'<br />')}}
+							></p>
+							<div className={program.description.length<=98?'f-cb f-hide':'f-cb'}>
+								<a onClick={e => this.setState({showMoreDesc:!showMoreDesc})} href="javascript:;" className="s-fc7 f-fr">
+								{showMoreDesc?<span>收起 <i className="u-icn u-icn-70"></i></span>:<span>展开 <i className="u-icn u-icn-69"></i></span>}
+								</a>
+							</div>
 						</div>
 						<div className="n-songtb">
-							<div className="prohead">
+							<div className="prohead" style={{display:program.songs.length?'block':'none'}}>
 								<a onClick={this.toggleShowList} href="javascript:;" className={showList?'open s-fc3':'open-close open sfc3'}>
 									{showList?'收起':'展开'}<i className="icn u-icn2 u-icn2-9"></i>
 								</a>
@@ -279,7 +286,7 @@ class SongList extends Component {
     }
 	}
 	render() {
-		const { tracks,show } = this.props
+		const { tracks,show,currMusic } = this.props
 		if(!tracks.length) {
 			return null
 		}
@@ -292,7 +299,7 @@ class SongList extends Component {
 								<tr key={index} className={index%2 == 0?'even':null}>
 									<td className="left">
 										<div className="hd">
-											<span onClick={e =>this.playSong(index)} className="ply"></span>
+											<span onClick={e =>this.playSong(index)} className={currMusic.info&&currMusic.info.id === track.id?'ply curr':'ply'}></span>
 											<span className="num">{index+1}</span>
 										</div>
 									</td>
@@ -317,7 +324,7 @@ class SongList extends Component {
 											<a href="javascript:;" className="u-icn u-icn-81 icn-add"></a>
 											<span className="icn icn-fav"></span>
 											<span className="icn icn-share"></span>
-											<span className="icn icn-dl"></span>
+											<span onClick={e=>download(track.id)} className="icn icn-dl"></span>
 										</div>
 									</td>
 									<td>

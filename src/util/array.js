@@ -21,7 +21,7 @@ export function chunk(array, size) {
 }
 
 /**
- * 对数组进行截取，从第一个不满足predicate 条件的元素开始截取数组。predicate接受三个参数（value,index,array）
+ * 对数组进行截取，从第一个不满足predicate 条件的元素开始截取数组
  *
  * @param {Array} array 需要处理的数组.
  * @param {Function} predicate 迭代判断条件.

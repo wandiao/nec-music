@@ -4,7 +4,10 @@ import qs from 'query-string'
 import  * as api from '../api';
 import {dateFormat,formatSongTime} from '../util/date'
 import {Link} from 'react-router-dom'
-import {Spin} from 'antd'
+import {Spin,message} from 'antd'
+import { connect } from 'react-redux';
+import { changePlayList,addPlayItem,asyncChangeCurrMusic as ac } from '../store/actions'
+import {download} from '../util/query'
 
 //歌单详情页面
 class PlayList extends Component {
@@ -28,6 +31,16 @@ class PlayList extends Component {
 				}
 			})	
 		}
+		//播放歌单
+		this.changePlaylist = () => {
+			const plDetail = this.state.plDetail   
+      let songs = Object.assign([],plDetail.tracks)
+      songs.forEach(i => {
+      	i.source = `/playlist?id=${plDetail.id}`
+      })
+      this.props.dispatch(changePlayList(songs))
+      this.props.dispatch(ac(0,songs[0].id,true))
+    }
 	}
 	componentDidMount() {
 		const id = qs.parse(this.props.location.search).id;
@@ -58,7 +71,45 @@ class PlayList extends Component {
 				})
 			}
 		})
-
+	}
+	componentWillReceiveProps(nextProps) {
+		if(this.props.location == nextProps.location) {
+			return false;
+		}
+		const id = qs.parse(nextProps.location.search).id;
+		if(!id){
+			return false;
+		}
+		this.setState({
+			plDetail:null,
+			showMoreDesc:false,
+			commentData:null,
+			hotList:[]
+		})
+		api.getPlayListDetail(id).then(res => {
+			if(res.data.code == 200) {
+				this.setState({
+					plDetail:res.data.playlist
+				})
+			}
+		})
+		api.getPlayListComment(id).then(res => {
+			if(res.data.code == 200) {
+				this.setState({
+					commentData:res.data
+				})
+			}
+		})
+		api.getPlayList({
+			limit:5
+		}).then(res => {
+			if(res.data.code == 200) {
+				console.log(res)
+				this.setState({
+					hotList:res.data.playlists
+				})
+			}
+		})
 	}
   render() {
   	const {plDetail,showMoreDesc,commentData,hotList} = this.state
@@ -126,22 +177,22 @@ class PlayList extends Component {
       								<span className="time s-fc4">{dateFormat(plDetail.createTime,'yyyy-MM-dd')}&nbsp;创建</span>
       							</div>
       							<div className="btns clearfix">
-      								<a href="" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
+      								<a onClick={this.changePlaylist} href="javascript:;" className="u-btn2 u-btn2-2 u-btni-addply f-fl">
       									<i>
       										<em className="ply"></em>播放
       									</i>
       								</a>
-      								<a href="" className="u-btni u-btni-add"></a>
-      								<a href="" className="u-btni u-btni-fav ">
+      								<a href="javascript:;" className="u-btni u-btni-add"></a>
+      								<a href="javascript:;" className="u-btni u-btni-fav ">
       									<i>({plDetail.subscribedCount})</i>
       								</a>
-      								<a href="" className="u-btni u-btni-share">
+      								<a href="javascript:;" className="u-btni u-btni-share">
       									<i>({plDetail.shareCount})</i>
       								</a>
-      								<a href="" className="u-btni u-btni-dl ">
+      								<a href="javascript:;" className="u-btni u-btni-dl ">
       									<i>下载</i>
       								</a>
-      								<a href="" className="u-btni u-btni-cmmt ">
+      								<a href="javascript:;" className="u-btni u-btni-cmmt ">
       									<i>({plDetail.commentCount})</i>
       								</a>
       							</div>
@@ -187,7 +238,7 @@ class PlayList extends Component {
 										<a href="javascript:;" className="des s-fc7">生成外链播放器</a>
 									</div>
 								</div>
-								<SongList tracks={plDetail.tracks}/>
+								<SongList {...this.props} tracks={plDetail.tracks}/>
 							</div>
       				<Comments type="playlist" onChange={this.choosePage} id={plDetail.id} data={commentData} />
       			</div>
@@ -226,8 +277,19 @@ class PlayList extends Component {
 
 //音乐列表
 class SongList extends Component {
+	//播放音乐
+	playSong = (index) => {
+    const item = Object.assign({},this.props.tracks[index])
+    const id = qs.parse(this.props.location.search).id;
+    item.source = `/playlist?id=${id}`
+    if(item.st<0) {
+      message.error('需要付费，无法播放');
+      return false;
+    }
+    this.props.dispatch(addPlayItem(item))
+  }
 	render() {
-		const { tracks } = this.props
+		const { tracks,currMusic } = this.props
 		if(!tracks.length) {
 			return null
 		}
@@ -259,7 +321,7 @@ class SongList extends Component {
 								<tr key={index} className={index%2 == 0?'even':null}>
 									<td className="left">
 										<div className="hd">
-											<span className="ply"></span>
+											<span onClick={e =>this.playSong(index)} className={currMusic.info&&currMusic.info.id === track.id?'ply curr':'ply'}></span>
 											<span className="num">{index+1}</span>
 										</div>
 									</td>
@@ -284,7 +346,7 @@ class SongList extends Component {
 											<a href="javascript:;" className="u-icn u-icn-81 icn-add"></a>
 											<span className="icn icn-fav"></span>
 											<span className="icn icn-share"></span>
-											<span className="icn icn-dl"></span>
+											<span onClick={e=>download(track.id)} className="icn icn-dl"></span>
 										</div>
 									</td>
 									<td>
@@ -314,5 +376,11 @@ class SongList extends Component {
 		}
 }
 
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
 
-export default PlayList
+export default connect(select)(PlayList)

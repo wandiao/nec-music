@@ -128,3 +128,18 @@ export function pos(elem) {
     }
     return [x, y];
 }
+
+/**
+ * 下载歌曲
+ *
+ * @param {String} url url地址.
+ * @returns
+ */
+export function downloadFile(url) { 
+  var a = document.createElement('a');
+  a.setAttribute('href',url)
+  a.setAttribute('download','true')
+  document.body.appendChild(a) 
+  a.click()
+  document.body.removeChild(a)
+} 

@@ -1,1 +1,3 @@
-export const reqUrl = "http://localhost:7010/";
+export default {
+	reqUrl:"http://localhost:7010/"
+}

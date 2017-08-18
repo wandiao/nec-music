@@ -5,6 +5,7 @@ import * as api from '../api'
 import qs from 'query-string'
 import {Spin} from 'antd'
 import {numberFormat} from '../util'
+import config from '../config'
 
 class MV extends Component {
 	constructor(props) {
@@ -103,7 +104,7 @@ class MV extends Component {
 								</span>
 							</div>
 							<div className="mv">
-								<video controls src={`http://localhost:7010/mv/url?url=${mv.brs['720']}`}></video>
+								<video controls src={mv?`${config.reqUrl}mv/url?url=${mv.brs['720']}`:null}></video>
 							</div>
 							<div className="btns f-cb">
 								<a className="j-flag u-btni u-btni-fav" href="javascript:;"><i>收藏</i></a>

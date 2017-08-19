@@ -7,6 +7,7 @@ import {chunk} from '../../util/array';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {Spin,message} from 'antd'
+import config from '../../config'
 
 class Recommend extends Component {
   constructor(props) {
@@ -205,7 +206,7 @@ class MainCon extends Component {
             <HotRcmd hotRecommends={hotRecommends} {...this.props} />
             <div className="n-clmnad">
               <a href="" className="dm_ad_hover"></a>
-              <img src="/static/img/ad-ex.jpg" />
+              <img src={`${config.baseUrl}static/img/ad-ex.jpg`}/>
             </div>
             <Disk topAlbums={topAlbums}  {...this.props} />
             <Bill topLists={topLists} {...this.props}  />

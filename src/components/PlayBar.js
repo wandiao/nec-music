@@ -7,6 +7,7 @@ import {download} from '../util/query'
 import { Slider,message } from 'antd';
 import {Link} from 'react-router-dom'
 import { withRouter } from 'react-router'
+import config from '../config'
 
 //播放组件
 class PlayBar extends Component {
@@ -228,7 +229,7 @@ class PlayBar extends Component {
               <a onClick={e => this.chooseSong('next')} href="javascript:;" className="b-next">下一首</a>
             </div>
             <div className="head">
-              <img src={picUrl?picUrl:"/static/img/default_album.jpg"}/>
+              <img src={picUrl?picUrl:config.baseUrl+"static/img/default_album.jpg"}/>
               <a href="javascript:;" className="mask"></a>
             </div>
             <div className="play">
@@ -342,6 +343,18 @@ class ListTab extends Component {
     const {show,playList,currIndex,currMusic,dispatch} = this.props
     const lrclist = currMusic.lrc
     let playListCon = null;
+    let blurPicUrl = null;
+    if(currMusic.info) {
+      if(currMusic.info.blurCoverUrl) {
+        blurPicUrl = currMusic.info.blurCoverUrl
+      }
+      if(currMusic.info.al) {
+        blurPicUrl = currMusic.info.al.blurPicUrl
+      }
+      if(currMusic.info.album) {
+        blurPicUrl = currMusic.info.album.blurPicUrl
+      }
+    }
     if(!playList.length) {
       playListCon = <div className="nocnt">
                       <i className="ico ico-face"></i> 
@@ -412,7 +425,7 @@ class ListTab extends Component {
           </div>
         </div>
         <div className="listbd">
-          <img className="imgbg j-flag" src="http://music.163.com/api/img/blur/65970697667341" style={{top: '-360px'}} />
+          <img className="imgbg j-flag" src={blurPicUrl} style={{top: '-360px'}} />
           <div className="msk"></div>
           <div className="listbdc" id="slistWrapper">
             {playListCon}

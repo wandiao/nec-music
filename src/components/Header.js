@@ -123,7 +123,7 @@ class Header extends Component {
 	render() {
 		const {searchSuggests,keywords} = this.state
 		const {dispatch,userInfo} = this.props
-		const pathname = window.location.pathname
+		const pathname = this.props.location.pathname
 		let userBox = null;
 		if(!userInfo) {
 			userBox = <div className="m-dt pr">

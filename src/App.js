@@ -13,7 +13,7 @@ class App extends Component {
     return (
       <div>
         <Header />
-        <div>{this.props.children}</div>
+        <div className="g-bd">{this.props.children}</div>
         <Footer/>
         <PlayBar/>
         <LoginBox />

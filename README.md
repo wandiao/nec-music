@@ -1,12 +1,11 @@
 # react网易云音乐
- 模仿网易云音乐pc版的一个项目（基本上不用写样式），技术栈：react+react-router+redux+axios+antd+less
+ 模仿网易云音乐pc版的一个项目（基本上不用写样式），直接用的官方脚手架create-react-app,技术选型：react+react-router+redux+axios+antd+less
 
 ### 下载
 ```
   git clone https://github.com/wandiao/nec-music.git
   cd nec-music
   npm install (安装依赖模块)
-  npm install webpack -g (没有安装webpack的需要安装)
 ```
 
 ### 运行
@@ -15,19 +14,18 @@
   npm run build （发布生产版本）
 ```
 ###接口
-
 非常感谢Binaryify提供的网易云音乐接口，传送门：[https://github.com/Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
 我在此基础上做了一点点改动，项目地址：[https://github.com/wandiao/NeteaseCloudMusicApi](https://github.com/wandiao/NeteaseCloudMusicApi)
 
-######下载：
+###接口下载：
 ```
   git clone https://github.com/wandiao/NeteaseCloudMusicApi.git
   git branch dev(切换到dev分支)
   cd NeteaseCloudMusicApi
   npm install(安装依赖模块)
 ```
-######运行
+###运行
 ```
 node app.js(默认访问地址http://localhost:7010)
 ```

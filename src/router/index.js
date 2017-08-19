@@ -1,60 +1,62 @@
-import React from 'react';
+import React from'react';
 import { BrowserRouter, HashRouter,Route, Switch, Redirect} from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory'
 import ExtendRoute from '../components/ExtendRoute'
 
 import App from '../App'
-import NoMatch from '../components/NoMatch'
+const NoMatch = () => import('../components/NoMatch')
 
-import DRecommend from '../views/discover/Recommend'
-import DTopList from '../views/discover/TopList'
-import DPlayList from '../views/discover/PlayList'
-import DDjRadio from '../views/discover/djradio/Index'
-import DDjRadioRecommend from '../views/discover/djradio/Recommend'
-import DDjRadioRank from '../views/discover/djradio/Rank'
-import DDjRadioCategory from '../views/discover/djradio/Category'
-import DArtist from '../views/discover/artist/Index'
-import DArtistCat from '../views/discover/artist/Cat'
-import DArtistRcmd from '../views/discover/artist/Recommend'
-import DArtistSigned from '../views/discover/artist/Signed'
-import DAlbum from '../views/discover/Album'
+const DRecommend = () => import('../views/discover/Recommend')
 
-import PlayList from '../views/Playlist'
+const DTopList = () => import('../views/discover/TopList')
+const DPlayList = () => import('../views/discover/PlayList')
+const DDjRadio = () => import('../views/discover/djradio/Index')
+const DDjRadioRecommend = () => import('../views/discover/djradio/Recommend')
+const DDjRadioRank = () => import('../views/discover/djradio/Rank')
+const DDjRadioCategory = () => import('../views/discover/djradio/Category')
+const DArtist = () => import('../views/discover/artist/Index')
+const DArtistCat = () => import('../views/discover/artist/Cat')
+const DArtistRcmd = () => import('../views/discover/artist/Recommend')
+const DArtistSigned = () => import('../views/discover/artist/Signed')
+const DAlbum = () => import('../views/discover/Album')
 
-import Song from '../views/Song'
+const PlayList = () => import('../views/Playlist')
 
-import Program from '../views/Program'
+const Song = () => import('../views/Song')
 
-import MV from '../views/MV'
+const Program = () => import('../views/Program')
 
-import DjRadio from '../views/DjRadio'
+const MV = () => import('../views/MV')
 
-import UserHome from '../views/user/Home'
-import UserEvent from '../views/user/Event'
-import UserFollows from '../views/user/Follows'
-import UserFans from '../views/user/Fans'
+const DjRadio = () => import('../views/DjRadio')
 
-import Artist from '../views/artist/Index'
-import ATop50 from '../views/artist/Top50'
-import AAlbum from '../views/artist/Album'
-import AMV from '../views/artist/MV'
-import ADesc from '../views/artist/Desc'
+const UserHome = () => import('../views/user/Home')
+const UserEvent = () => import('../views/user/Event')
+const UserFollows = () => import('../views/user/Follows')
+const UserFans = () => import('../views/user/Fans')
 
-import MToLogin from '../views/my/ToLogin'
+const Artist = () => import('../views/artist/Index')
+const ATop50 = () => import('../views/artist/Top50')
+const AAlbum = () => import('../views/artist/Album')
+const AMV = () => import('../views/artist/MV')
+const ADesc = () => import('../views/artist/Desc')
 
-import FToLogin from '../views/friend/ToLogin'
+const MToLogin = () => import('../views/my/ToLogin')
 
-import Search from '../views/search/Index'
-import SSong from '../views/search/Song'
-import SArtist from '../views/search/Artist'
-import SAlbum from '../views/search/Album'
-import SMV from '../views/search/MV'
-import SLrc from '../views/search/Lrc'
-import SPlaylist from '../views/search/Playlist'
-import SRadio from '../views/search/Radio'
-import SUser from '../views/search/User'
+const FToLogin = () => import('../views/friend/ToLogin')
 
-import Album from '../views/Album'
+const Search = () => import('../views/search/Index')
+const SSong = () => import('../views/search/Song')
+const SArtist = () => import('../views/search/Artist')
+const SAlbum = () => import('../views/search/Album')
+const SMV = () => import('../views/search/MV')
+const SLrc = () => import('../views/search/Lrc')
+const SPlaylist = () => import('../views/search/Playlist')
+const SRadio = () => import('../views/search/Radio')
+const SUser = () => import('../views/search/User')
+
+const Album = () => import('../views/Album')
+
 
 const history = createBrowserHistory();
 
@@ -82,12 +84,12 @@ const routes = [
 		exact:true,
 		component:DDjRadio
 	},
-	//发现音乐/主播电台/推荐
+	//发现音乐/主播电台/节目推荐
 	{
 		path:'/discover/djradio/recommend',
 		component:DDjRadioRecommend
 	},
-	//发现音乐/主播电台/排行榜
+	//发现音乐/主播电台/节目排行榜
 	{
 		path:'/discover/djradio/rank',
 		component:DDjRadioRank

@@ -53,6 +53,7 @@ class Lrc extends Component {
       } 
     }
     this.showLrc = (index) => {
+    	console.log(index)
     	if(this.state.moreLrcIndex === index) {
     		index = -1
     	}
@@ -164,7 +165,7 @@ class Lrc extends Component {
 									</div>
 									<div className="td w2">
 										<div className="text">
-											<Link className="s-fc3" to={`/album?id=${i.album.id}`} title="《成都》"
+											<Link className="s-fc3" to={`/album?id=${i.album.id}`} title={i.album.name}
 											dangerouslySetInnerHTML={{__html:'《'+i.album.name.replace(new RegExp(keywords,'gi'),rs =>`<span class="s-fc7">${rs}</span>`)+'》'}}
 											></Link>
 										</div>
@@ -188,7 +189,7 @@ class Lrc extends Component {
 										)}
 									</div>
 									<div className="crl" style={{display:drop(i.lyrics,li => new RegExp(keywords,'gi').test(li) == false).length>4?'block':'none'}}>
-										<a onClick={e => this.showLrc(index)} href="javascript:void(0)" className="s-fc3">{moreLrcIndex == index?'收起':'展开'}<i className={moreLrcIndex == index?'u-icn u-icn-70':"u-icn u-icn-69"}></i></a>
+										<a onClick={e => this.showLrc(index)} href="javascript:;" className="s-fc3">{moreLrcIndex == index?'收起':'展开'}<i className={moreLrcIndex == index?'u-icn u-icn-70':"u-icn u-icn-69"}></i></a>
 									</div>
 								</div>
 							</div>

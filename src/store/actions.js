@@ -6,6 +6,7 @@ import {parseLrc} from '../util';
 
 
 export const CHANGE_PLAY_LIST = 'CHANGE_PLAY_LIST'
+export const DELETE_PLAY_ITEM = 'DELETE_PLAY_LIST_ITEM'
 export const CHANGE_CURR_MUSIC = 'CHANGE_CURR_MUSIC'
 export const CLEAR_CURR_MUSIC = 'CLEAR_CURR_MUSIC'
 export const CHOOSE_BOX = 'CHOOSE_BOX'
@@ -39,6 +40,11 @@ export function addPlayItem(item,isPlay=true) {
 			}
 		}
 	}
+}
+
+//删除歌单歌曲
+export function deletePlayItem(index) {
+	return {type:DELETE_PLAY_ITEM,index}
 }
 
  //切换当前歌曲

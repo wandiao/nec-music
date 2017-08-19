@@ -1,6 +1,6 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
-import {changeCurrMusic,changePlayList,asyncChangeCurrMusic as ac,clearCurrMusic } from '../store/actions'
+import {changeCurrMusic,changePlayList,asyncChangeCurrMusic as ac,clearCurrMusic,deletePlayItem } from '../store/actions'
 import {formatSongTime} from '../util/date'
 import {initScroll} from '../util/dom'
 import {download} from '../util/query'
@@ -339,7 +339,7 @@ class ListTab extends Component {
     }
   }
   render() {
-    const {show,playList,currIndex,currMusic} = this.props
+    const {show,playList,currIndex,currMusic,dispatch} = this.props
     const lrclist = currMusic.lrc
     let playListCon = null;
     if(!playList.length) {
@@ -362,7 +362,7 @@ class ListTab extends Component {
                         <div className="col col-2">{item.name}</div>
                         <div className="col col-3">
                           <div className="icns">
-                            <i className="ico ico-del" title="删除">删除</i>
+                            <i onClick={e => dispatch(deletePlayItem(index))} className="ico ico-del" title="删除">删除</i>
                             <i onClick={e => download((item.mainTrackId || item.id))} className="ico ico-dl" title="下载">下载</i>
                             <i className="ico ico-share" title="分享">分享</i>
                             <i className="ico ico-add" title="收藏">收藏</i>

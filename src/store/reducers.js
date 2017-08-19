@@ -4,7 +4,8 @@ import {
   CHOOSE_BOX, 
   ADD_PLAY_ITEM,
   CLEAR_CURR_MUSIC,
-  CHANGE_USER_INFO
+  CHANGE_USER_INFO,
+  DELETE_PLAY_ITEM
    } from './actions'
 
 const initState = {
@@ -33,6 +34,10 @@ function playList(state=initState.playList,action) {
       let pl = Object.assign([],state)
       pl.unshift(action.item)
       localStorage.playList = JSON.stringify(pl)
+      return pl;
+    case DELETE_PLAY_ITEM:
+      pl = Object.assign([],state)
+      pl.splice(action.index,1)
       return pl;
     default:
       return state;

@@ -27,7 +27,7 @@
   
   cd NeteaseCloudMusicApi
 
-  git branch dev(切换到dev分支)
+  git checkout dev(切换到dev分支)
 
   npm install(安装依赖模块)
 ```

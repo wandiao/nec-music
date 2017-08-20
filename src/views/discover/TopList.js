@@ -35,7 +35,12 @@ class TopList extends Component {
 		this.changePlaylist = () => {
 			const id = qs.parse(this.props.location.search).id;
 			const tracks = this.state.listDetail.tracks.map((i) => {
-				i.source = `/discover/toplist?id=${id}`
+				if(id) {
+					i.source = `/discover/toplist?id=${id}`
+				}else{
+					i.source = '/discover/toplist'
+				}
+				
 				return i
 			})  
       this.props.dispatch(changePlayList(tracks))
@@ -240,7 +245,11 @@ class SongList extends Component {
 		this.playSong = (index) => {
 			const id = qs.parse(this.props.location.search).id;
       const item = Object.assign({},this.props.tracks[index])
-      item.source = `/discover/topList?id=${id}`
+      if(id) {
+				item.source = `/discover/toplist?id=${id}`
+			}else{
+				item.source = '/discover/toplist'
+			}
       if(item.st <0) {
       	message.error('需要付费，无法播放');
       }else{

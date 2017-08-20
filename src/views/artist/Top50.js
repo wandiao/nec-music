@@ -90,7 +90,7 @@ class SongList extends Component {
 	playSong = (index) => {
     const item = Object.assign({},this.props.tracks[index])
     const id = qs.parse(this.props.location.search).id;
-    item.source = `/playlist?id=${id}`
+    item.source = `/artist?id=${id}`
     if(item.st<0) {
       message.error('需要付费，无法播放');
       return false;

@@ -33,8 +33,9 @@ class TopList extends Component {
 		}
 		//播放排放榜
 		this.changePlaylist = () => {
+			const id = qs.parse(this.props.location.search).id;
 			const tracks = this.state.listDetail.tracks.map((i) => {
-				i.source = `/discover/toplist?id=${i.id}`
+				i.source = `/discover/toplist?id=${id}`
 				return i
 			})  
       this.props.dispatch(changePlayList(tracks))
@@ -237,7 +238,9 @@ class SongList extends Component {
 		super(props)
 		//播放歌曲
 		this.playSong = (index) => {
-      const item = this.props.tracks[index]
+			const id = qs.parse(this.props.location.search).id;
+      const item = Object.assign({},this.props.tracks[index])
+      item.source = `/discover/topList?id=${id}`
       if(item.st <0) {
       	message.error('需要付费，无法播放');
       }else{
@@ -247,7 +250,7 @@ class SongList extends Component {
     }
 	} 
 	render() {
-		const {tracks} = this.props
+		const {tracks,currMusic} = this.props
 		if(!tracks.length) {
 			return null 
 		}
@@ -281,7 +284,7 @@ class SongList extends Component {
 											<img className="rpic" src={i.album.picUrl}/>
 										</a>:null
 									 }
-										<div onClick={e =>this.playSong(index)} className="ply"></div>
+										<div onClick={e =>this.playSong(index)} className={currMusic.info&&currMusic.info.id === i.id?'ply curr':'ply'}></div>
 										<div className="ttc">
 											<div className="txt">
 												<Link to={`/song?id=${i.id}`}>

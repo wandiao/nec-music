@@ -227,7 +227,7 @@ class Album extends Component {
 					</div>*/}
 					<h3 className="u-hd3">
 						<span className="f-fl">Ta的其他热门专辑</span>
-						<a href="/artist/album?id=2116" className="more f-ff1 s-fc3">全部&gt;</a>
+						<Link to={`/artist/album?id=${album.artist.id}`} className="more f-ff1 s-fc3">全部&gt;</Link>
 					</h3>
 					<div className="m-rctlist f-cb">
 						{oAlbums.length?oAlbums.map((i,index) =>

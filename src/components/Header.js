@@ -63,11 +63,11 @@ class Header extends Component {
 					})
 				},500)	
 			}
-			if(this.searchInput.value) {
-				bool = false;
-			}
 			if(!bool) {
 				this.searchInput.focus();
+			}
+			if(this.searchInput.value) {
+				bool = false;
 			}
 			this.setState({
 				showPlaceholder:bool
@@ -115,15 +115,46 @@ class Header extends Component {
 	}
 	componentDidMount() {
 		let userInfo;
+		if(localStorage.expireTime) {
+			const now = new Date().getTime();
+			if(now - Number(localStorage.expireTime) >= 0) {
+				localStorage.userInfo = '';
+				localStorage.tokenString = '';
+			}
+		}
 		if(localStorage.userInfo) {
 			userInfo = JSON.parse(localStorage.userInfo)
 			this.props.dispatch(changeUserInfo(userInfo))
 		}
-	}	
+	}
+	componentWillReceiveProps(nextProps) {
+			if(this.props.location == nextProps.location) {
+				return false;
+			}
+			if(localStorage.expireTime) {
+				const now = new Date().getTime();
+				if(now - Number(localStorage.expireTime) >= 0) {
+					localStorage.userInfo = '';
+					localStorage.tokenString = '';
+					this.props.dispatch(changeUserInfo(null))
+				}
+			}
+			if(localStorage.tokenString) {
+				const tokenObj = JSON.parse(localStorage.tokenString);
+				const refresh_token = tokenObj.refresh_token;
+				api.refresh(refresh_token).then(res => {
+					if(res.data.code == 200) {
+						const expireTime = new Date().getTime() + Number(tokenObj.expiresIn);
+						localStorage.expireTime = expireTime;
+					}
+				}) 
+			}
+
+		}	
 	render() {
 		const {searchSuggests,keywords} = this.state
 		const {dispatch,userInfo} = this.props
-		const pathname = window.location.pathname
+		const pathname = this.props.location.pathname
 		let userBox = null;
 		if(!userInfo) {
 			userBox = <div className="m-dt pr">
@@ -359,4 +390,4 @@ function select(state) {
   }
 }
 
-export default connect(select,undefined,undefined,{pure:false})(withRouter(Header))
+export default withRouter(connect(select)(Header))

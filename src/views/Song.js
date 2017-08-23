@@ -129,7 +129,7 @@ class Song extends Component {
 		      									</i>
 		      								</a>
 		      								<a href="javascript:;" className="u-btni u-btni-add"></a>
-		      								<a href="javascript:;"href="" className="u-btni u-btni-fav ">
+		      								<a href="javascript:;" className="u-btni u-btni-fav ">
 		      									<i>收藏</i>
 		      								</a>
 		      								<a href="javascript:;" className="u-btni u-btni-share">

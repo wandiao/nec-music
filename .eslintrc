@@ -8,6 +8,7 @@
     "eqeqeq":0,
     "no-useless-constructor":0,
     "react/jsx-no-target-blank":0,
-    "react/no-danger-with-children":0
+    "react/no-danger-with-children":0,
+    "import/no-webpack-loader-syntax":0
   }
 }

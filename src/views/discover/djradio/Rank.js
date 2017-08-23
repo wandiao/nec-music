@@ -3,6 +3,8 @@ import * as api from '../../../api'
 import {dateFormat} from '../../../util/date'
 import {Spin} from 'antd'
 import {Link} from 'react-router-dom'
+import { connect } from 'react-redux';
+import {addPlayItem } from '../../../store/actions'
 
 class Rank extends Component {
 	constructor(props) {
@@ -11,6 +13,12 @@ class Rank extends Component {
 			topPrograms:[],
 			updateTime:null
 		}
+		//播放节目
+		this.playProgram = (index) => {
+			const item = Object.assign({},this.state.topPrograms[index].program)
+			item.source = '/discover/djradio/rank'
+	    this.props.dispatch(addPlayItem(item))
+    }
 	}
 	componentDidMount() {
 		api.getTopProgram(0,100).then(res => {
@@ -55,7 +63,7 @@ class Rank extends Component {
 										:<span className="u-rnk u-rnk-dn f-ff0"><i className="u-icn u-icn-74"></i>{Math.abs(i.rank-i.lastRank)}</span>
 									}
 								</div>
-								<a className="col cvr u-cover u-cover-tiny" title="播放">
+								<a href="javascript:;" onClick={e => this.playProgram(index)} className="col cvr u-cover u-cover-tiny" title="播放">
 									<img src={i.program.coverUrl} alt="" />
 									<i className="ply f-pa f-dn f-alpha"></i>
 								</a>
@@ -80,4 +88,11 @@ class Rank extends Component {
 	}	
 }
 
-export default Rank
+function select(state) {
+  return {
+    playList:state.playList,
+    currMusic:state.currMusic
+  }
+}
+
+export default connect(select)(Rank)

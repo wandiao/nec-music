@@ -46,6 +46,9 @@ class LoginBox extends Component {
 						wrongMessage:res.data.msg
 					})
 				}else{
+					localStorage.tokenString = res.data.bindings[1].tokenJsonStr;
+					localStorage.expireTime = new Date().getTime() + Number(res.data.bindings[1].expiresIn);
+					this.props.dispatch(chooseBox('登录',false))
 					this.props.dispatch(changeUserInfo(res.data.profile))
 				}
 			})

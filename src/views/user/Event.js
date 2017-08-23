@@ -21,6 +21,7 @@ class Event extends Component {
 			userInfo:null,
 			events:[],
 			eventSize:0,
+			loading:false,
 			canLoad:true,
 			page:0,
 			follows:[]
@@ -29,6 +30,9 @@ class Event extends Component {
 	componentDidMount() {
 		const query = qs.parse(this.props.location.search)
 		const id = query.id;
+		this.setState({
+			loading:true
+		})
 		api.getUserInfo(id).then(res => {
 			// console.log(res)
 			if(res.data.code == 200) {
@@ -42,7 +46,8 @@ class Event extends Component {
 			if(res.data.code == 200) {
 				this.setState({
 					events:res.data.events,
-					eventSize:res.data.size
+					eventSize:res.data.size,
+					loading:false
 				})
 			}
 		})
@@ -65,7 +70,8 @@ class Event extends Component {
 			let totalHeight = document.body.scrollHeight
 			if(seeHeight+scrollTop+100>=totalHeight) {
 				this.setState({
-					canLoad:false
+					canLoad:false,
+
 				})
 				api.getUserEvent(id,this.state.page+1,20).then(res => {
 					console.log(res)
@@ -84,7 +90,7 @@ class Event extends Component {
 		window.addEventListener('scroll',debounce(fn,100))
 	}
 	render() {
-		const {userInfo,events,eventSize,follows} = this.state
+		const {userInfo,events,eventSize,follows,loading} = this.state
 		
 		if(!userInfo) {
 			return <div className="g-bd">
@@ -93,8 +99,13 @@ class Event extends Component {
 		}
 		const profile = userInfo.profile
 		let eventlist,eventbody;
-		if(!events.length) {
+		if(loading) {
 			eventlist = <div style={{height:'300px'}} className="loading"><Spin tip="Loading..." /></div>
+		}else{
+			if(!events.length) {
+			eventlist = <div className="n-nmusic">
+									<h3 className="f-ff2"><i className="u-icn u-icn-21"></i>暂时还没有动态</h3>
+								</div>
 		}else{
 			eventlist = events.map((i,index) => {
 				const ed = JSON.parse(i.json)
@@ -246,6 +257,8 @@ class Event extends Component {
 								</li>
 			})
 		}
+		}
+		
 		return (
 		<div className="g-bd">
 			<div className="g-wrap p-prf">
@@ -267,7 +280,7 @@ class Event extends Component {
 					</div>
 					<div className="g-sd1">
 						<div className="g-wrap11">
-							<h4 className="v-hd4">TA的关注</h4>
+							<h4 style={{display:follows.length?'block':'none'}} className="v-hd4">TA的关注</h4>
 							<ul className="m-gz f-cb">
 								{follows.length?follows.map((i,index) =>
 									<li key={index}>
@@ -280,7 +293,7 @@ class Event extends Component {
 											i.authStatus?<sup className="u-icn u-icn-1 "></sup>:null}
 										</p>
 									</li>
-								):<div style={{height:'100px'}} className="loading"><Spin tip="Loading..." /></div>}
+								):null}
 							</ul>
 						</div>
 					</div>

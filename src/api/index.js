@@ -6,6 +6,9 @@ axios.defaults.baseURL = config.reqUrl;
 //手机登录
 export const telLogin = (phone,password) => axios.get(`login/cellphone?phone=${phone}&password=${password}`)
 
+//刷新登录
+export const refresh = (token) => axios.get(`login/refresh?t=${token}`);
+
 //banner
 export const getBanner = () => axios.get('banner');
 
@@ -53,7 +56,7 @@ export const getTopAlbum = (area,offset=0,limit=35) => axios.get('top/album',{
 });
 
 //热门新碟
-export const getHotAlbum = (offset=0,limit=10) => axios.get('hot/album');
+export const getHotAlbum = () => axios.get('hot/album');
 
 //排行榜
 export const getTops = () => axios.get('toplist');
@@ -212,7 +215,7 @@ export const getUserInfo = uid => axios.get(`user/detail?uid=${uid}`)
 export const getUserDj = uid => axios.get(`user/audio?uid=${uid}`)
 
 //获取用户听歌记录
-export const getUserRecord = uid => axios.get(`user/record?uid=${uid}`)
+export const getUserRecord = (uid,type=0) => axios.get(`user/record?uid=${uid}&type=${type}`)
 
 //获取用户歌单
 export const getUserPlaylist = uid => axios.get(`user/playlist?uid=${uid}`)

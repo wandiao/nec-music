@@ -1,7 +1,8 @@
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
-import {chooseBox,changeUserInfo} from '../store/actions'
-import * as api from '../api'
+import {chooseBox,changeUserInfo} from '../store/actions';
+import PropTypes from 'prop-types';
+import * as api from '../api';
 
 class LoginBox extends Component {
 	constructor(props) {
@@ -191,6 +192,10 @@ class LoginBox extends Component {
 		)
 	}
 }
+LoginBox.propTypes = {
+	logBox:PropTypes.object.isRequired
+}
+
 function select(state) {
   return {
     logBox:state.logBox,

@@ -2,6 +2,7 @@ import axios from 'axios'
 import config from '../config'
 
 axios.defaults.baseURL = config.reqUrl;
+axios.defaults.withCredentials = true;
 
 //手机登录
 export const telLogin = (phone,password) => axios.get(`login/cellphone?phone=${phone}&password=${password}`)
@@ -276,6 +277,16 @@ export const getAlbumComment = (id,offset=0,limit=20) => axios.get('comment/albu
 
 //获取最近听歌用户
 export const getListenUser = id => axios.get(`simi/user?id=${id}`)
+
+//给评论点赞
+export const commentLike = (id,cid,t,type) => axios.get('comment/like',{
+	params:{
+		id,
+		cid,
+		t,
+		type
+	}
+})
 
 
 

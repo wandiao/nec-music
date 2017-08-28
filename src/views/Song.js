@@ -166,7 +166,7 @@ class Song extends Component {
 	      					</p>
 	      				</div>
       				</div>
-      				<Comments onChange={this.choosePage} data={this.state.commentData} />
+      				<Comments type={0} id={songDetail.id} onChange={this.choosePage} data={this.state.commentData} />
       			</div>
       		</div>
       	</div>

@@ -3,6 +3,8 @@ import { Pagination } from 'antd';
 import {Link} from 'react-router-dom'
 import {dateBeautify} from '../util/date'
 import {pos} from '../util/dom'
+import PropTypes from 'prop-types';
+import * as api from '../api'
 
 //评论组件
 class Comments extends Component {
@@ -46,9 +48,9 @@ class Comments extends Component {
 						</div>
 					</div>
 					<div className="cmmts">
-							<Comment title="精彩评论" comments={data.hotComments} />
+							<Comment title="精彩评论" {...this.props} comments={data.hotComments} />
 							
-							<Comment title="最新评论" total={data.total} comments={data.comments} />
+							<Comment title="最新评论" {...this.props} total={data.total} comments={data.comments} />
 					</div>
 					<div className="u-page">
 						<Pagination onChange={this.choosePage} defaultCurrent={1} pageSize={20} total={data.total} />
@@ -58,7 +60,28 @@ class Comments extends Component {
 		)
 	}
 }
+
 class Comment extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			liking:false
+		}
+		this.toggleLike = (comment) => {
+			let t = 1;
+			if(comment.liked){
+				t = 0;
+			}
+			api.commentLike(this.props.id,comment.commentId,t,this.props.type).then(res => {
+				if(res.data.code == 200) {
+					comment.liked = !comment.liked;
+					t === 1 ? comment.likedCount++:comment.likedCount--
+					this.forceUpdate();
+				}
+				console.log(res)
+			})
+		}
+	}
 	render() {
 		const {title,comments,total} = this.props
 		if(!comments || !comments.length) {
@@ -98,8 +121,8 @@ class Comment extends Component {
 								}
 								<div className="rp">
 									<div className="time s-fc4">{dateBeautify(comment.time)}</div>
-									<a href="">
-										<i className="zan u-icn2 u-icn2-12"></i>{comment.likedCount?`(${comment.likedCount})`:null}
+									<a href="javascript:;" onClick={e => this.toggleLike(comment)}>
+										<i className={comment.liked?'zan u-icn2 u-icn2-13':"zan u-icn2 u-icn2-12"}></i>{comment.likedCount?`(${comment.likedCount})`:null}
 									</a>
 									<span className="sep">|</span>
 									<a href="" className="s-fc3">回复</a>
@@ -110,7 +133,12 @@ class Comment extends Component {
 				}
 			</div>	
 		)
-	}
-	
+	}	
 }
+Comment.propTypes = {
+	title:PropTypes.string.isRequired,
+	comments:PropTypes.array,
+	total:PropTypes.number
+}
+
 export default Comments

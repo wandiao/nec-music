@@ -240,7 +240,7 @@ class PlayList extends Component {
 								</div>
 								<SongList {...this.props} tracks={plDetail.tracks}/>
 							</div>
-      				<Comments type="playlist" onChange={this.choosePage} id={plDetail.id} data={commentData} />
+      				<Comments type={2} onChange={this.choosePage} id={plDetail.id} data={commentData} />
       			</div>
       		</div>
       	</div>

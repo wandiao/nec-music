@@ -240,7 +240,7 @@ class PlayList extends Component {
 								</div>
 								<SongList {...this.props} tracks={plDetail.tracks}/>
 							</div>
-      				<Comments type={2} onChange={this.choosePage} id={plDetail.id} data={commentData} />
+      				<Comments userInfo={this.props.userInfo} type={2} onChange={this.choosePage} id={plDetail.id} data={commentData} />
       			</div>
       		</div>
       	</div>
@@ -379,7 +379,8 @@ class SongList extends Component {
 function select(state) {
   return {
     playList:state.playList,
-    currMusic:state.currMusic
+    currMusic:state.currMusic,
+    userInfo:state.userInfo
   }
 }
 

@@ -87,7 +87,7 @@ function userInfo(state=initState.userInfo,action) {
       }else{
         localStorage.userInfo = JSON.stringify(action.info)
       }
-      console.log(action.info)
+      // console.log(action.info)
       return action.info;
     default:
       return state

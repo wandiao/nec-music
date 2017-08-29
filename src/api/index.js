@@ -288,5 +288,23 @@ export const commentLike = (id,cid,t,type) => axios.get('comment/like',{
 	}
 })
 
+//新增评论
+export const commentAdd = (id,content,type) => axios.get('comment/add',{
+	params:{
+		id,
+		content,
+		type
+	}
+})
+
+//删除评论
+export const commentDelete = (id,cid,type) => axios.get('comment/delete',{
+	params:{
+		id,
+		cid,
+		type
+	}
+})
+
 
 

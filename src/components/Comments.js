@@ -1,5 +1,5 @@
 import React, { Component} from 'react';
-import { Pagination } from 'antd';
+import { Pagination, message } from 'antd';
 import {Link} from 'react-router-dom'
 import {dateBeautify} from '../util/date'
 import {pos} from '../util/dom'
@@ -10,13 +10,36 @@ import * as api from '../api'
 class Comments extends Component {
 	constructor(props) {
 		super(props)
+		this.state = {
+			content:''
+		}
 		this.choosePage = (page,pageSize) => {
 			var commentPos = pos(document.getElementById("commentWrap"));
 			this.props.onChange(page,pageSize,commentPos)
 		}
+		this.commentAdd = () => {
+			if(!this.props.userInfo) {
+				message.error('未登录，请先登录');
+				return false;
+			}
+			if(!this.state.content) {
+				message.error('请输入评论内容');
+				return false;
+			}
+			api.commentAdd(this.props.id,this.state.content,this.props.type).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					message.success('评论成功');
+					this.props.data.comments.unshift(res.data.comment);
+					this.forceUpdate();
+				}else{
+					message.error(res.data.msg);
+				}
+			})
+		}
 	}
 	render() {
-		const {data} = this.props
+		const {data,userInfo} = this.props
 		if(!data) {
 			return null
 		}
@@ -29,16 +52,16 @@ class Comments extends Component {
 				<div className="m-cmmt">
 					<div className="iptarea">
 						<div className="head">
-							<img src="http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50" />
+							<img src={userInfo?userInfo.avatarUrl:"http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=50y50"} />
 						</div>
 						<div className="m-cmmtipt f-cb f-pr">
 							<div className="u-txtwrap holder-parent f-pr">
-								<textarea placeholder="评论" className="u-txt area"></textarea>
+								<textarea onChange={e => this.setState({content:e.target.value})} placeholder="评论" className="u-txt area"></textarea>
 							</div>
 							<div className="btns f-cb f-pr">
 								<i className="icn u-icn u-icn-36"></i>
 								<i className="icn u-icn u-icn-41"></i>
-								<a href="" className="btn u-btn u-btn-1">评论</a>
+								<a onClick={e => this.commentAdd()} href="javascript:;" className="btn u-btn u-btn-1">评论</a>
 								<span className="zs s-fc4">140</span>
 							</div>
 							<div className="corr u-arr">
@@ -65,9 +88,13 @@ class Comment extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			liking:false
+			loading:false
 		}
 		this.toggleLike = (comment) => {
+			if(!this.props.userInfo) {
+				message.error('未登录，请先登录');
+				return false;
+			}
 			let t = 1;
 			if(comment.liked){
 				t = 0;
@@ -77,8 +104,22 @@ class Comment extends Component {
 					comment.liked = !comment.liked;
 					t === 1 ? comment.likedCount++:comment.likedCount--
 					this.forceUpdate();
+				}else{
+					message.error(res.data.msg)
 				}
+			})
+		}
+		this.commentDelete = (commentId,index) => {
+			api.commentDelete(this.props.id,commentId,this.props.type).then(res => {
 				console.log(res)
+				if(res.data.code == 200) {
+					message.success('删除成功');
+					this.props.comments.splice(index,1);
+					this.forceUpdate();
+				}else{
+					message.error(res.data.msg);
+				}
+
 			})
 		}
 	}
@@ -105,7 +146,7 @@ class Comment extends Component {
 									：{comment.content}
 								</div>
 								{
-									comment.beReplied.length?<div className="que f-brk f-pr s-fc3">
+									comment.beReplied&&comment.beReplied.length?<div className="que f-brk f-pr s-fc3">
 									<span className="darr">
 										<i className="bd">◆</i>
 										<i className="bg">◆</i>
@@ -121,11 +162,17 @@ class Comment extends Component {
 								}
 								<div className="rp">
 									<div className="time s-fc4">{dateBeautify(comment.time)}</div>
+
+									{this.props.userInfo&&comment.user.userId == this.props.userInfo.userId?
+										<span className="dlt">
+											<a onClick={e => this.commentDelete(comment.commentId,index)} href="javascript:void(0)" className="s-fc3">删除</a>
+											<span className="sep">|</span>
+										</span>:null}
 									<a href="javascript:;" onClick={e => this.toggleLike(comment)}>
 										<i className={comment.liked?'zan u-icn2 u-icn2-13':"zan u-icn2 u-icn2-12"}></i>{comment.likedCount?`(${comment.likedCount})`:null}
 									</a>
 									<span className="sep">|</span>
-									<a href="" className="s-fc3">回复</a>
+									<a href="javascript:;" className="s-fc3">回复</a>
 								</div>
 							</div>
 						</div>
@@ -135,6 +182,8 @@ class Comment extends Component {
 		)
 	}	
 }
+
+
 Comment.propTypes = {
 	title:PropTypes.string.isRequired,
 	comments:PropTypes.array,

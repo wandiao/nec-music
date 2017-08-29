@@ -144,7 +144,7 @@ class Header extends Component {
 				const refresh_token = tokenObj.refresh_token;
 				api.refresh(refresh_token).then(res => {
 					if(res.data.code == 200) {
-						const expireTime = new Date().getTime() + Number(tokenObj.expiresIn);
+						const expireTime = new Date().getTime() + Number(tokenObj.expires_in);
 						localStorage.expireTime = expireTime;
 					}
 				}) 

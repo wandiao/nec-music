@@ -1,5 +1,5 @@
 import React from'react';
-import { BrowserRouter, HashRouter,Route, Switch, Redirect} from 'react-router-dom';
+import { Router,Route, Switch, Redirect} from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory'
 import ExtendRoute from '../components/ExtendRoute'
 
@@ -265,7 +265,6 @@ const routes = [
 ]
 
 
-let Router = process.env.NODE_ENV !== 'production' ? BrowserRouter : HashRouter;
 const router = (
 	<Router history={history}>
 		<App history={history}>

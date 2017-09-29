@@ -1,5 +1,5 @@
-import * as api from '../api'
-import {downloadFile} from './dom'
+import * as api from '../api';
+import { downloadFile } from './dom';
 
 /**
  * 下载歌曲
@@ -9,12 +9,11 @@ import {downloadFile} from './dom'
  */
 export function download(id) {
   api.getMusicUrl(id).then(res => {
-    console.log(res)
-    if(res.data.code == 200) {
+    if (res.data.code === 200) {
       const url = res.data.data[0].url;
-      if(url) {
-        downloadFile(url)
+      if (url) {
+        downloadFile(url);
       }
     }
-  })
+  });
 }

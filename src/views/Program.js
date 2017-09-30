@@ -268,10 +268,6 @@ class Program extends Component {
     );
   }
 }
-Program.propTypes = {
-  location: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
-};
 
 // 音乐列表
 class SongList extends Component {
@@ -356,7 +352,6 @@ class SongList extends Component {
 
 SongList.propTypes = {
   tracks: PropTypes.array,
-  dispatch: PropTypes.func.isRequired,
   show: PropTypes.bool.isRequired,
   currMusic: PropTypes.object,
 };

@@ -1,14 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import router from './router'
-import store from './store'
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 
-import './assets/less/style'
+import router from './router';
+import store from './store';
+
+import './assets/less/style';
 
 
 ReactDOM.render(
-	<Provider store={store}>
-    	{router}
-  	</Provider>, document.getElementById('root'));
+  <Provider store={store}>
+    {router}
+  </Provider>, document.getElementById('root'),
+);
 

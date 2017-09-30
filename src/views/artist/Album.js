@@ -3,7 +3,6 @@ import { Pagination, message, Spin } from 'antd';
 import { connect } from 'react-redux';
 import qs from 'query-string';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 import * as api from '../../api';
 import { dateFormat } from '../../util/date';
@@ -111,10 +110,6 @@ class Album extends Component {
     );
   }
 }
-Album.propTypes = {
-  location: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
-};
 
 function select(state) {
   return {

@@ -279,8 +279,6 @@ class PlayList extends Component {
 }
 
 PlayList.propTypes = {
-  location: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
   userInfo: PropTypes.object,
 };
 
@@ -386,9 +384,7 @@ class SongList extends Component {
 
 SongList.propTypes = {
   tracks: PropTypes.array,
-  dispatch: PropTypes.func.isRequired,
   currMusic: PropTypes.object,
-  location: PropTypes.object.isRequired,
 };
 
 function select(state) {

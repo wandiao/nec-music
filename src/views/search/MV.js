@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import qs from 'query-string';
 import { Spin, Pagination } from 'antd';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 import * as api from '../../api';
 import { pos } from '../../util/dom';
@@ -161,8 +160,5 @@ class MV extends Component {
   }
 }
 
-MV.propTypes = {
-  location: PropTypes.Object.isRequired,
-};
 
 export default MV;

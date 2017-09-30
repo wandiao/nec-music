@@ -200,13 +200,11 @@ class LoginBox extends Component {
 }
 LoginBox.propTypes = {
   logBox: PropTypes.object.isRequired,
-  dispatch: PropTypes.object.isRequired,
 };
 
 function select(state) {
   return {
     logBox: state.logBox,
-    userInfo: state.userInfo,
   };
 }
 

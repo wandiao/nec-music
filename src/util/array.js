@@ -6,13 +6,13 @@
  * @returns {Array} 返回处理后的数组 .
  */
 export function chunk(array, size) {
-  var length = array == null ? 0 : array.length;
+  const length = array == null ? 0 : array.length;
   if (!length || size < 1) {
     return [];
   }
-  var index = 0,
-      resIndex = 0,
-      result = Array(Math.ceil(length / size));
+  let index = 0;
+  let resIndex = 0;
+  const result = Array(Math.ceil(length / size));
 
   while (index < length) {
     result[resIndex++] = array.slice(index, (index += size));
@@ -29,9 +29,9 @@ export function chunk(array, size) {
  * @param {boolean} [fromRight] 指定从开始还是末尾开始判断.
  * @returns {Array} 返回处理后的数组.
  */
-export function drop(array, predicate, isDrop=true, fromRight=false) {
-  var length = array.length,
-      index = fromRight ? length : -1;
+export function drop(array, predicate, isDrop = true, fromRight = false) {
+  const length = array.length;
+  let index = fromRight ? length : -1;
   while ((fromRight ? index-- : ++index < length) &&
     predicate(array[index], index, array)) {}
   return isDrop

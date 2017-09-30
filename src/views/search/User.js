@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Spin, Pagination } from 'antd';
 import qs from 'query-string';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 import * as api from '../../api';
 import { pos } from '../../util/dom';
@@ -167,8 +166,5 @@ class User extends Component {
     );
   }
 }
-User.propTypes = {
-  location: PropTypes.object.isRequired,
-};
 
 export default User;

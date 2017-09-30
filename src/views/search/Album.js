@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import qs from 'query-string';
 import { Spin, Pagination, message } from 'antd';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 import * as api from '../../api';
 import { pos } from '../../util/dom';
@@ -137,7 +136,11 @@ class Album extends Component {
                     </p>
                     <p>
                       <span className="nm f-thide" title={i.artist.name}>
-                        <Link to={`/artist?id=${i.artist.id}`} className="s-fc3" dangerouslySetInnerHTML={{ __html: i.artist.name.replace(new RegExp(keywords, 'gi'), rs => `<span class="s-fc7">${rs}</span>`) }} />
+                        <Link
+                          to={`/artist?id=${i.artist.id}`}
+                          className="s-fc3"
+                          dangerouslySetInnerHTML={{ __html: i.artist.name.replace(new RegExp(keywords, 'gi'), rs => `<span class="s-fc7">${rs}</span>`) }}
+                        />
                       </span>
                     </p>
                   </li>
@@ -168,10 +171,6 @@ class Album extends Component {
   }
 }
 
-Album.propTypes = {
-  location: PropTypes.Object.isRequired,
-  dispatch: PropTypes.func.isRequired,
-};
 
 function select(state) {
   return {

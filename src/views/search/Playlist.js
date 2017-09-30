@@ -3,7 +3,6 @@ import qs from 'query-string';
 import { Spin, Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import * as api from '../../api';
 import { pos } from '../../util/dom';
@@ -192,10 +191,6 @@ class Playlist extends Component {
   }
 }
 
-Playlist.propTypes = {
-  location: PropTypes.Object.isRequired,
-  dispatch: PropTypes.func.isRequired,
-};
 
 function select(state) {
   return {

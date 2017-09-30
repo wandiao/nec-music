@@ -90,8 +90,8 @@ class Comments extends Component {
 Comments.propTypes = {
   onChange: PropTypes.func,
   userInfo: PropTypes.object,
-  id: PropTypes.number.isRequired,
-  type: PropTypes.string.isRequired,
+  id: PropTypes.number,
+  type: PropTypes.string,
   data: PropTypes.object,
 };
 
@@ -205,8 +205,8 @@ Comment.propTypes = {
   comments: PropTypes.array,
   total: PropTypes.number,
   userInfo: PropTypes.object,
-  id: PropTypes.number.isRequired,
-  type: PropTypes.string.isRequired,
+  id: PropTypes.number,
+  type: PropTypes.string,
 };
 
 export default Comments;

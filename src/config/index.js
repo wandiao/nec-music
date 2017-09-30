@@ -1,4 +1,4 @@
 export default {
-	baseUrl:"/",
-	reqUrl:"http://localhost:7010/"
-}
+  baseUrl: '/',
+  reqUrl: 'http://localhost:7010/',
+};

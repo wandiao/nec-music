@@ -1,5 +1,5 @@
-import provinces from './config/provinces'
-import cities from './config/cities'
+import provinces from './config/provinces';
+import cities from './config/cities';
 
 /**
  * 格式化数字
@@ -8,12 +8,12 @@ import cities from './config/cities'
  * @returns {Number|String} 返回格式化之后的数字或字符串.
  */
 export function numberFormat(num) {
-	num = parseInt(num,10);
-	if(num <= 99999) {
-		return num
-	}
-	num = Math.round(parseInt(num/10000,10));
-	return `${num}万`
+  num = parseInt(num, 10);
+  if (num <= 99999) {
+    return num;
+  }
+  num = Math.round(parseInt(num / 10000, 10));
+  return `${num}万`;
 }
 
 /**
@@ -23,15 +23,15 @@ export function numberFormat(num) {
  * @param {Number} type 地区类型，1省，2市.
  * @returns {Number|String} 返回地区字符串.
  */
-export function areaParse(value,type) {
+export function areaParse(value, type) {
   let currArea;
-  if(type === 1) {
-    currArea = provinces.filter(i => i.code == value)
-  }else if(type === 2) {
-    currArea = cities.filter(i => i.code == value)
+  if (type === 1) {
+    currArea = provinces.filter(i => i.code === value);
+  } else if (type === 2) {
+    currArea = cities.filter(i => i.code === value);
   }
-  if(!currArea.length) {
-    return null
+  if (!currArea.length) {
+    return null;
   }
   return currArea[0].name;
 }
@@ -43,35 +43,35 @@ export function areaParse(value,type) {
  *
  */
 export function parseLrc(data) {
-  var pattern = /\[\d{2}:\d{2}.\d{2,}\]/g;
-  if(!pattern.test(data)) {
+  const pattern = /\[\d{2}:\d{2}.\d{2,}\]/g;
+  if (!pattern.test(data)) {
     return [];
   }
-  var lines = data.split('\n');
-  
-  var result = [];
-  while(!pattern.test(lines[0])) {
-    lines = lines.slice(1)
-  };
-  for(var i = 0; i < lines.length; i++) {
-    if(lines[i] == "" || typeof(lines[i]) == "undefined") {
+  let lines = data.split('\n');
+
+  const result = [];
+  while (!pattern.test(lines[0])) {
+    lines = lines.slice(1);
+  }
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i] === '' || typeof (lines[i]) === 'undefined') {
       delete lines[i];
     }
   }
-  lines.forEach(function(item, index, data) {
-    var time = item.match(pattern);
-    var value = item.replace(pattern, '');
-    time.forEach(function(v, i, a) {
-      var t = v.slice(1, -1);
+  lines.forEach((item) => {
+    const time = item.match(pattern);
+    const value = item.replace(pattern, '');
+    time.forEach((v) => {
+      let t = v.slice(1, -1);
       t = t.split(':');
-      result.push([parseInt(t[0], 10) * 60 + parseFloat(t[1]), value]);
-    })
-  })
-  result.sort(function(a, b) {
+      result.push([(parseInt(t[0], 10) * 60) + parseFloat(t[1]), value]);
+    });
+  });
+  result.sort((a, b) => {
     return a[0] - b[0];
   });
-  return result
-};
+  return result;
+}
 
 /**
  * 获取url参数
@@ -80,10 +80,10 @@ export function parseLrc(data) {
  *
  */
 export function getUrlParam(name) {
-  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-  var r = window.location.search.substr(1).match(reg); //匹配目标参数
-  if(r != null) return unescape(r[2]);
-  return null; //返回参数值
+  const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)'); // 构造一个含有目标参数的正则表达式对象
+  const r = window.location.search.substr(1).match(reg); // 匹配目标参数
+  if (r != null) return unescape(r[2]);
+  return null; // 返回参数值
 }
 
 /**
@@ -93,13 +93,13 @@ export function getUrlParam(name) {
  *@return {function} 调用函数
  *
  */
-export function debounce(fn,delay) {
-  var last
-  return function(){
-    var ctx = this, args = arguments
-    clearTimeout(last)
-    last = setTimeout(function(){
-        fn.apply(ctx, args)
-    }, delay)
-  }
+export function debounce(fn, delay) {
+  let last;
+  return (...args) => {
+    const ctx = this;
+    clearTimeout(last);
+    last = setTimeout(() => {
+      fn.apply(ctx, args);
+    }, delay);
+  };
 }

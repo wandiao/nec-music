@@ -300,7 +300,6 @@ class HotRcmd extends Component {
   }
 }
 HotRcmd.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   hotRecommends: PropTypes.array,
 };
 
@@ -411,7 +410,6 @@ class Disk extends Component {
 }
 Disk.propTypes = {
   topAlbums: PropTypes.array,
-  dispatch: PropTypes.func,
 };
 
 // 排行榜
@@ -496,7 +494,6 @@ class Bill extends Component {
   }
 }
 Bill.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   topLists: PropTypes.array,
 };
 

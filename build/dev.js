@@ -34,7 +34,7 @@ module.exports = {
       template: path.join(__dirname, '../src/index.html'),
       hash: true,
       filename: 'index.html',
-      favicon: './src/favicon.png',
+      favicon: './src/favicon.ico',
       inject: 'body',
     }),
   ],

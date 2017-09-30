@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import qs from 'query-string';
 import { Spin, Pagination } from 'antd';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 import * as api from '../../api';
 import { pos } from '../../util/dom';
@@ -107,7 +106,12 @@ class Artist extends Component {
                       </Link>
                     </div>
                     <p>
-                      <Link className="nm f-thide s-fc0" to={`/artist?id=${i.id}`} title={i.name} dangerouslySetInnerHTML={{ __html: i.name.replace(new RegExp(keywords, 'gi'), rs => `<span class="s-fc7">${rs}</span>`) }} />
+                      <Link
+                        className="nm f-thide s-fc0"
+                        to={`/artist?id=${i.id}`}
+                        title={i.name}
+                        dangerouslySetInnerHTML={{ __html: i.name.replace(new RegExp(keywords, 'gi'), rs => `<span class="s-fc7">${rs}</span>`) }}
+                      />
                       { i.accountId ? <Link to={`/user/home?id=${i.accountId}`}><i className="u-icn u-icn-5" /></Link> : null }
                     </p>
                   </li>
@@ -138,8 +142,5 @@ class Artist extends Component {
   }
 }
 
-Artist.propTypes = {
-  location: PropTypes.Object.isRequired,
-};
 
 export default Artist;

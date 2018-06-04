@@ -1,5 +1,5 @@
 # react网易云音乐
- 模仿网易云音乐pc版的一个项目（基本上不用写样式），直接使用的官方脚手架create-react-app,技术选型：react+react-router+redux+axios+antd+less
+ 模仿网易云音乐pc版的一个项目，技术选型：react+react-router+redux+axios+antd+less
 
 
 ### 下载

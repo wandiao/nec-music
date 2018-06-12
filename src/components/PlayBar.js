@@ -19,6 +19,8 @@ class PlayBar extends Component {
       showList: false, // 是否展示播放列表
       currPlayTime: 0, // 当前播放时间
       timePro: 0, // 播放进度
+      lockBar: false, // 锁定播放栏
+      showBar: true, // 展示播放栏
       modes: [
         {
           type: 'loop',
@@ -48,6 +50,22 @@ class PlayBar extends Component {
       }
       ));
     };
+
+    this.toggleBar = () => {
+      localStorage.lockBar = !this.state.lockBar;
+      this.setState(ps => ({
+        lockBar: !ps.lockBar,
+      }));
+    };
+    this.handleShowBar = (bool) => {
+      if (this.state.lockBar) {
+        return false;
+      }
+      this.setState({
+        showBar: bool,
+      });
+    };
+
     // 播放
     this.play = () => {
       if (!this.player) {
@@ -152,6 +170,11 @@ class PlayBar extends Component {
         this.props.dispatch(ac(currMusic.index, id, false));
       }
     }
+    if (localStorage.lockBar) {
+      this.setState({
+        lockBar: localStorage.lockBar === 'true',
+      });
+    }
     this.player.oncanplay = () => {
       currMusic = this.props.currMusic;
       if (currMusic.isPlay) {
@@ -181,6 +204,7 @@ class PlayBar extends Component {
       });
     }
   }
+
   render() {
     const { playList, currMusic, dispatch } = this.props;
 
@@ -205,7 +229,7 @@ class PlayBar extends Component {
         picUrl = currMusic.info.album.picUrl;
       }
     }
-    const { currPlayTime, timePro, currModeIndex, modes, showVloumeTab } = this.state;
+    const { currPlayTime, timePro, currModeIndex, modes, showVloumeTab, lockBar, showBar } = this.state;
     if (currMusic.isPlay) {
       this.play();
     } else {
@@ -213,15 +237,19 @@ class PlayBar extends Component {
     }
     return (
       <div className="g-btmbar">
-        <div className="m-playbar m-playbar-lock">
+        <div
+          className={lockBar ? 'm-playbar m-playbar-lock' : 'm-playbar m-playbar-unlock'}
+          style={{ top: showBar ? '-53px' : '-7px', transition: showBar ? 'top 0.2s' : 'top 1s ease 0.4s' }}
+          onMouseLeave={() => this.handleShowBar(false)}
+        >
           <div className="updn">
-            <div className="left fl">
-              <a href="javascript:;" className="btn" />
+            <div className="left fl" onMouseEnter={() => this.handleShowBar(true)}>
+              <a href="javascript:;" className="btn" onClick={this.toggleBar} />
             </div>
             <div className="right fl" />
           </div>
           <div className="bg" />
-          <div className="hand" title="展开播放条" />
+          <div className="hand" onMouseEnter={() => this.handleShowBar(true)} title="展开播放条" />
           <div className="wrapper">
             <div className="btns">
               <a onClick={() => this.chooseSong('prev')} href="javascript:;" className="b-prev">上一首</a>

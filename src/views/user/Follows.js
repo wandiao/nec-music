@@ -116,7 +116,7 @@ class Follows extends Component {
                     <Link to={`/user/home?id=${i.userId}`} className="s-fc7 f-fs1 nm f-thide" title={i.nickname}>{i.nickname}</Link>
                       &nbsp;
                     {i.userType ? <sup className="icn u-icn2 u-icn2-music2" />
-                      : i.authStatus ? <sup className="u-icn u-icn-1" /> : null}
+                    : i.authStatus ? <sup className="u-icn u-icn-1" /> : null}
                       &nbsp;
                     {i.gender === 1 ? <i className="icn u-icn u-icn-s-01" /> : <i className="icn u-icn u-icn-s-02" />}
 
